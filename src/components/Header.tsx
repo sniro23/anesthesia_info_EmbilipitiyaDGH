@@ -28,36 +28,6 @@ const Header: React.FC = () => {
               {t('nav.home')}
             </NavLink>
             <NavLink 
-              to="/before-surgery" 
-              className={({ isActive }) => 
-                isActive 
-                  ? "text-indigo font-medium px-2 py-1" 
-                  : "text-neutral-dark hover:text-indigo transition px-2 py-1"
-              }
-            >
-              {t('nav.before')}
-            </NavLink>
-            <NavLink 
-              to="/during-surgery" 
-              className={({ isActive }) => 
-                isActive 
-                  ? "text-indigo font-medium px-2 py-1" 
-                  : "text-neutral-dark hover:text-indigo transition px-2 py-1"
-              }
-            >
-              {t('nav.during')}
-            </NavLink>
-            <NavLink 
-              to="/after-surgery" 
-              className={({ isActive }) => 
-                isActive 
-                  ? "text-indigo font-medium px-2 py-1" 
-                  : "text-neutral-dark hover:text-indigo transition px-2 py-1"
-              }
-            >
-              {t('nav.after')}
-            </NavLink>
-            <NavLink 
               to="/resources" 
               className={({ isActive }) => 
                 isActive 
