@@ -43,7 +43,7 @@ const HomePage: React.FC = () => {
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 md:mb-6 text-center">
               {t('about.title')}
             </h2>
-            <div className="shadow-md rounded-2xl p-4 sm:p-6 md:p-8 bg-slate-200">
+            <div className="shadow-md p-4 sm:p-6 md:p-8 rounded-xl bg-slate-100">
               <div className="mb-4 md:mb-6">
                 <h3 className="text-lg sm:text-xl font-semibold mb-2">{t('about.whoTitle')}</h3>
                 <p className="text-sm sm:text-base">{t('about.who')}</p>
@@ -58,7 +58,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Feature Cards */}
-      <section className="py-8 md:py-16 bg-slate-200">
+      <section className="py-8 md:py-16 bg-slate-50">
         <div className="container mx-auto px-4">
           <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 md:mb-10 text-center">
             {t('whatToExpect.title')}

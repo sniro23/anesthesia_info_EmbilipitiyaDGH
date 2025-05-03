@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
   const {
     t
   } = useLanguage();
-  return <footer className="border-t border-neutral-mid py-10 mt-20 bg-slate-300">
+  return <footer className="border-t border-neutral-mid py-10 mt-20 bg-slate-100">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
