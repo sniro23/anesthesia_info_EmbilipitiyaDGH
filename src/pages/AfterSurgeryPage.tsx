@@ -1,235 +1,231 @@
 
 import React from 'react';
 import QASection from '@/components/QASection';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const AfterSurgeryPage: React.FC = () => {
+  const { t } = useLanguage();
+
   return (
     <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">After Surgery</h1>
+      <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">{t('after.title')}</h1>
       <p className="text-lg text-neutral-dark max-w-3xl mx-auto mb-10 text-center">
-        Understanding what to expect after your procedure can help you prepare for recovery and recognize normal versus abnormal symptoms.
+        {t('after.intro')}
       </p>
 
       <div className="max-w-3xl mx-auto">
-        <QASection question="What happens in the recovery room?" defaultOpen={true}>
+        <QASection question={t('after.qa1.question')} defaultOpen={true}>
           <p>
-            After your surgery, you'll be transferred to the Post-Anaesthesia Care Unit (PACU), 
-            also called the recovery room. This is a specialized area where you'll be closely monitored as you 
-            emerge from anaesthesia.
+            {t('after.qa1.intro')}
           </p>
           
           <div className="mt-4">
-            <h4 className="font-semibold">In the PACU, you can expect:</h4>
+            <h4 className="font-semibold">{t('after.qa1.expect')}</h4>
             <ul className="list-disc pl-6 mt-2 space-y-2">
               <li>
-                <strong>Continuous monitoring</strong> of your vital signs (blood pressure, heart rate, oxygen levels)
+                <strong>{t('after.qa1.monitoring')}</strong> {t('after.qa1.monitoringDesc')}
               </li>
               <li>
-                <strong>One-to-one nursing care</strong> until you're fully awake and stable
+                <strong>{t('after.qa1.nursing')}</strong> {t('after.qa1.nursingDesc')}
               </li>
               <li>
-                <strong>Regular assessments</strong> of your pain levels and administration of pain medication as needed
+                <strong>{t('after.qa1.assessments')}</strong> {t('after.qa1.assessmentsDesc')}
               </li>
               <li>
-                <strong>Oxygen therapy</strong> via a face mask or nasal prongs if required
+                <strong>{t('after.qa1.oxygen')}</strong> {t('after.qa1.oxygenDesc')}
               </li>
               <li>
-                <strong>Warming blankets</strong> if you're cold or shivering
+                <strong>{t('after.qa1.warming')}</strong> {t('after.qa1.warmingDesc')}
               </li>
               <li>
-                <strong>IV fluids</strong> until you're able to drink
+                <strong>{t('after.qa1.iv')}</strong> {t('after.qa1.ivDesc')}
               </li>
             </ul>
           </div>
           
           <div className="mt-4">
-            <h4 className="font-semibold">How long will I stay in recovery?</h4>
+            <h4 className="font-semibold">{t('after.qa1.howLong')}</h4>
             <p>
-              Most patients stay in the PACU for 30 minutes to 2 hours, depending on:
+              {t('after.qa1.timeFrame')}
             </p>
             <ul className="list-disc pl-6 mt-2 space-y-1">
-              <li>The type of surgery and anaesthesia you received</li>
-              <li>How quickly you wake up and become stable</li>
-              <li>How well your pain and any nausea are controlled</li>
-              <li>If there were any complications during surgery</li>
+              <li>{t('after.qa1.timeList1')}</li>
+              <li>{t('after.qa1.timeList2')}</li>
+              <li>{t('after.qa1.timeList3')}</li>
+              <li>{t('after.qa1.timeList4')}</li>
             </ul>
             <p className="mt-2">
-              You'll be transferred to a ward or discharged home once the recovery team is satisfied with your condition.
+              {t('after.qa1.transfer')}
             </p>
           </div>
         </QASection>
 
-        <QASection question="Common post-op side effects & pain control">
+        <QASection question={t('after.qa2.question')}>
           <div>
-            <h4 className="font-semibold">Common Side Effects:</h4>
+            <h4 className="font-semibold">{t('after.qa2.sideEffects')}</h4>
             <ul className="list-disc pl-6 mt-2 space-y-2">
               <li>
-                <strong>Sore throat</strong> - From the breathing tube; usually resolves within 24-48 hours
+                <strong>{t('after.qa2.throat')}</strong> {t('after.qa2.throatDesc')}
               </li>
               <li>
-                <strong>Nausea and vomiting</strong> - Can be treated with anti-sickness medications
+                <strong>{t('after.qa2.nausea')}</strong> {t('after.qa2.nauseaDesc')}
               </li>
               <li>
-                <strong>Dizziness</strong> - Often improves with gentle movement and hydration
+                <strong>{t('after.qa2.dizziness')}</strong> {t('after.qa2.dizzinessDesc')}
               </li>
               <li>
-                <strong>Drowsiness</strong> - Gradually improves as anaesthesia wears off
+                <strong>{t('after.qa2.drowsiness')}</strong> {t('after.qa2.drowsinessDesc')}
               </li>
               <li>
-                <strong>Shivering</strong> - Usually temporary; treated with warming blankets
+                <strong>{t('after.qa2.shivering')}</strong> {t('after.qa2.shiveringDesc')}
               </li>
               <li>
-                <strong>Confusion</strong> - More common in older adults; usually temporary
+                <strong>{t('after.qa2.confusion')}</strong> {t('after.qa2.confusionDesc')}
               </li>
             </ul>
           </div>
           
           <div className="mt-4">
-            <h4 className="font-semibold">Pain Management Options:</h4>
+            <h4 className="font-semibold">{t('after.qa2.painManagement')}</h4>
             <ul className="list-disc pl-6 mt-2 space-y-2">
               <li>
-                <strong>IV pain medications</strong> - Often opioids like morphine for immediate relief
+                <strong>{t('after.qa2.ivPain')}</strong> {t('after.qa2.ivPainDesc')}
               </li>
               <li>
-                <strong>Patient-Controlled Analgesia (PCA)</strong> - Allows you to self-administer small doses of pain medication by pressing a button
+                <strong>{t('after.qa2.pca')}</strong> {t('after.qa2.pcaDesc')}
               </li>
               <li>
-                <strong>Oral pain medications</strong> - Pills or liquids once you can drink fluids
+                <strong>{t('after.qa2.oral')}</strong> {t('after.qa2.oralDesc')}
               </li>
               <li>
-                <strong>Regional blocks</strong> - May continue to provide pain relief for hours after surgery
+                <strong>{t('after.qa2.blocks')}</strong> {t('after.qa2.blocksDesc')}
               </li>
               <li>
-                <strong>Local anaesthetic infiltration</strong> - Injected around the surgical site
+                <strong>{t('after.qa2.local')}</strong> {t('after.qa2.localDesc')}
               </li>
               <li>
-                <strong>Non-medication techniques</strong> - Ice packs, positioning, relaxation techniques
+                <strong>{t('after.qa2.nonMed')}</strong> {t('after.qa2.nonMedDesc')}
               </li>
             </ul>
           </div>
           
           <div className="mt-4 bg-neutral-light p-4 rounded-lg">
-            <h4 className="font-semibold">Important Pain Management Tips:</h4>
+            <h4 className="font-semibold">{t('after.qa2.tips')}</h4>
             <ul className="list-disc pl-6 mt-2 space-y-1">
-              <li>Don't wait until pain is severe before requesting pain relief</li>
-              <li>Rate your pain on a scale from 0-10 when asked by healthcare staff</li>
-              <li>Tell your nurses if pain medication isn't working or wears off quickly</li>
-              <li>Report any unusual symptoms or side effects from pain medications</li>
+              <li>{t('after.qa2.tipsList1')}</li>
+              <li>{t('after.qa2.tipsList2')}</li>
+              <li>{t('after.qa2.tipsList3')}</li>
+              <li>{t('after.qa2.tipsList4')}</li>
             </ul>
           </div>
         </QASection>
 
-        <QASection question="When can I eat and drink?">
+        <QASection question={t('after.qa3.question')}>
           <p>
-            Returning to eating and drinking after surgery depends on several factors including the type of surgery, 
-            anaesthesia used, and your individual recovery.
+            {t('after.qa3.intro')}
           </p>
           
           <div className="mt-4">
-            <h4 className="font-semibold">General Guidelines:</h4>
+            <h4 className="font-semibold">{t('after.qa3.guidelines')}</h4>
             <ul className="list-disc pl-6 mt-2 space-y-2">
               <li>
-                <strong>Clear fluids</strong> (water, apple juice) - Often allowed within 2-4 hours after fully waking from anaesthesia, 
-                once you can swallow safely
+                <strong>{t('after.qa3.fluids')}</strong> {t('after.qa3.fluidsDesc')}
               </li>
               <li>
-                <strong>Light foods</strong> (crackers, toast, soup) - Usually permitted once you're tolerating fluids well, 
-                often 4-6 hours after surgery
+                <strong>{t('after.qa3.light')}</strong> {t('after.qa3.lightDesc')}
               </li>
               <li>
-                <strong>Regular diet</strong> - Typically resumed gradually as tolerated, often by the next day for minor surgeries
+                <strong>{t('after.qa3.regular')}</strong> {t('after.qa3.regularDesc')}
               </li>
             </ul>
           </div>
           
           <div className="mt-4">
-            <h4 className="font-semibold">Special Considerations:</h4>
+            <h4 className="font-semibold">{t('after.qa3.considerations')}</h4>
             <ul className="list-disc pl-6 mt-2 space-y-2">
               <li>
-                <strong>Abdominal surgery</strong> - May require waiting until bowel sounds return and gas or bowel movements occur
+                <strong>{t('after.qa3.abdominal')}</strong> {t('after.qa3.abdominalDesc')}
               </li>
               <li>
-                <strong>Throat or mouth surgery</strong> - May require special dietary restrictions
+                <strong>{t('after.qa3.throat')}</strong> {t('after.qa3.throatDesc')}
               </li>
               <li>
-                <strong>Nausea or vomiting</strong> - May delay return to eating until symptoms improve
+                <strong>{t('after.qa3.nausea')}</strong> {t('after.qa3.nauseaDesc')}
               </li>
               <li>
-                <strong>Some medications</strong> - May need to be taken with food, affecting when you can restart them
+                <strong>{t('after.qa3.medications')}</strong> {t('after.qa3.medicationsDesc')}
               </li>
             </ul>
             <p className="mt-4 text-sm bg-amber/10 p-3 rounded-lg border border-amber">
-              Always follow your healthcare provider's specific instructions about eating and drinking after your procedure. 
-              Start slowly and increase gradually as tolerated.
+              {t('after.qa3.always')}
             </p>
           </div>
         </QASection>
 
-        <QASection question="Discharge instructions & follow-up">
+        <QASection question={t('after.qa4.question')}>
           <div>
-            <h4 className="font-semibold">Common Discharge Instructions:</h4>
+            <h4 className="font-semibold">{t('after.qa4.instructions')}</h4>
             <ul className="list-disc pl-6 mt-2 space-y-2">
               <li>
-                <strong>Activity restrictions</strong> - When you can return to normal activities, driving, work, and exercise
+                <strong>{t('after.qa4.activity')}</strong> {t('after.qa4.activityDesc')}
               </li>
               <li>
-                <strong>Wound care</strong> - How to clean and dress the surgical site
+                <strong>{t('after.qa4.wound')}</strong> {t('after.qa4.woundDesc')}
               </li>
               <li>
-                <strong>Medication instructions</strong> - When and how to take prescribed medications
+                <strong>{t('after.qa4.medication')}</strong> {t('after.qa4.medicationDesc')}
               </li>
               <li>
-                <strong>Signs of infection</strong> - What to watch for (increased pain, redness, swelling, discharge, fever)
+                <strong>{t('after.qa4.infection')}</strong> {t('after.qa4.infectionDesc')}
               </li>
               <li>
-                <strong>Diet guidelines</strong> - Any special dietary requirements during recovery
+                <strong>{t('after.qa4.diet')}</strong> {t('after.qa4.dietDesc')}
               </li>
               <li>
-                <strong>Showering/bathing</strong> - When it's safe to get the surgical area wet
+                <strong>{t('after.qa4.showering')}</strong> {t('after.qa4.showeringDesc')}
               </li>
               <li>
-                <strong>Contact information</strong> - Who to call if you have questions or problems
+                <strong>{t('after.qa4.contact')}</strong> {t('after.qa4.contactDesc')}
               </li>
             </ul>
           </div>
           
           <div className="mt-4">
-            <h4 className="font-semibold">Follow-up Appointments:</h4>
+            <h4 className="font-semibold">{t('after.qa4.appointments')}</h4>
             <p>
-              Your discharge instructions will include details about follow-up visits. Typically, you'll have:
+              {t('after.qa4.appointmentsDesc')}
             </p>
             <ul className="list-disc pl-6 mt-2 space-y-1">
-              <li>An appointment with your surgeon to check your healing</li>
-              <li>Instructions for any suture or staple removal</li>
-              <li>Information about any required physical therapy</li>
+              <li>{t('after.qa4.appointmentsList1')}</li>
+              <li>{t('after.qa4.appointmentsList2')}</li>
+              <li>{t('after.qa4.appointmentsList3')}</li>
             </ul>
             <p className="mt-2">
-              Be sure to keep all follow-up appointments, even if you're feeling well.
+              {t('after.qa4.keepAppts')}
             </p>
           </div>
           
           <div className="mt-4 bg-amber/10 p-4 rounded-lg border border-amber">
-            <h4 className="font-semibold">When to Seek Immediate Medical Attention:</h4>
+            <h4 className="font-semibold">{t('after.qa4.seekHelp')}</h4>
             <ul className="list-disc pl-6 mt-2 space-y-1">
-              <li>Difficulty breathing or shortness of breath</li>
-              <li>Chest pain or irregular heartbeat</li>
-              <li>Severe pain not controlled by prescribed medications</li>
-              <li>Excessive bleeding or wound drainage</li>
-              <li>Signs of infection (fever above 38°C/100.4°F, increasing redness or warmth)</li>
-              <li>Inability to urinate within 8-10 hours after surgery</li>
-              <li>Persistent nausea and vomiting</li>
-              <li>Calf pain, swelling, or redness (possible blood clot)</li>
+              <li>{t('after.qa4.seekList1')}</li>
+              <li>{t('after.qa4.seekList2')}</li>
+              <li>{t('after.qa4.seekList3')}</li>
+              <li>{t('after.qa4.seekList4')}</li>
+              <li>{t('after.qa4.seekList5')}</li>
+              <li>{t('after.qa4.seekList6')}</li>
+              <li>{t('after.qa4.seekList7')}</li>
+              <li>{t('after.qa4.seekList8')}</li>
             </ul>
           </div>
           
           <div className="mt-4">
-            <p className="font-semibold">Recovery Pathway:</p>
+            <p className="font-semibold">{t('after.qa4.pathway')}</p>
             <p>
-              Your recovery will follow a general pattern, but everyone heals at their own pace. Be patient with your body 
-              and follow all medical advice to ensure the best outcome.
+              {t('after.qa4.pathwayDesc')}
             </p>
             <p className="mt-2">
-              Keep your discharge instructions in an easily accessible place and bring them with you to follow-up appointments.
+              {t('after.qa4.keepInstructions')}
             </p>
           </div>
         </QASection>

@@ -54,11 +54,11 @@ const HomePage: React.FC = () => {
             </h2>
             <div className="bg-white shadow-md rounded-2xl p-6 md:p-8">
               <div className="mb-6">
-                <h3 className="text-xl font-semibold mb-2">Who We Are</h3>
+                <h3 className="text-xl font-semibold mb-2">{t('about.whoTitle')}</h3>
                 <p>{t('about.who')}</p>
               </div>
               <div>
-                <h3 className="text-xl font-semibold mb-2">Our Mission</h3>
+                <h3 className="text-xl font-semibold mb-2">{t('about.whyTitle')}</h3>
                 <p>{t('about.why')}</p>
               </div>
             </div>
@@ -70,19 +70,19 @@ const HomePage: React.FC = () => {
       <section className="py-12 md:py-20 bg-neutral-light">
         <div className="container mx-auto px-4">
           <h2 className="text-2xl md:text-3xl font-bold mb-10 text-center">
-            What to Expect
+            {t('whatToExpect.title')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="bg-white shadow-md rounded-2xl p-6 hover:shadow-lg transition-shadow">
-              <h3 className="text-xl font-semibold mb-3 text-indigo">Before Surgery</h3>
+              <h3 className="text-xl font-semibold mb-3 text-indigo">{t('whatToExpect.before.title')}</h3>
               <p className="text-neutral-dark mb-4">
-                Learn about pre-operative assessments, fasting requirements, and how to prepare mentally and physically for your procedure.
+                {t('whatToExpect.before.description')}
               </p>
               <Link 
                 to="/before-surgery" 
                 className="text-indigo hover:text-indigo-light font-medium inline-flex items-center"
               >
-                Learn more
+                {t('whatToExpect.learnMore')}
                 <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
                 </svg>
@@ -90,15 +90,15 @@ const HomePage: React.FC = () => {
             </div>
 
             <div className="bg-white shadow-md rounded-2xl p-6 hover:shadow-lg transition-shadow">
-              <h3 className="text-xl font-semibold mb-3 text-indigo">During Surgery</h3>
+              <h3 className="text-xl font-semibold mb-3 text-indigo">{t('whatToExpect.during.title')}</h3>
               <p className="text-neutral-dark mb-4">
-                Discover different types of anaesthesia, how they work, potential complications, and the role of your anaesthesia team.
+                {t('whatToExpect.during.description')}
               </p>
               <Link 
                 to="/during-surgery" 
                 className="text-indigo hover:text-indigo-light font-medium inline-flex items-center"
               >
-                Learn more
+                {t('whatToExpect.learnMore')}
                 <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
                 </svg>
@@ -106,15 +106,15 @@ const HomePage: React.FC = () => {
             </div>
 
             <div className="bg-white shadow-md rounded-2xl p-6 hover:shadow-lg transition-shadow">
-              <h3 className="text-xl font-semibold mb-3 text-indigo">After Surgery</h3>
+              <h3 className="text-xl font-semibold mb-3 text-indigo">{t('whatToExpect.after.title')}</h3>
               <p className="text-neutral-dark mb-4">
-                Find out what happens in the recovery room, common side effects, pain management strategies, and when you can resume normal activities.
+                {t('whatToExpect.after.description')}
               </p>
               <Link 
                 to="/after-surgery" 
                 className="text-indigo hover:text-indigo-light font-medium inline-flex items-center"
               >
-                Learn more
+                {t('whatToExpect.learnMore')}
                 <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
                 </svg>
