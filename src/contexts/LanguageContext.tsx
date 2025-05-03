@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 type Language = 'en' | 'si' | 'ta';
@@ -351,4 +352,72 @@ const translations: Record<Language, Record<string, string>> = {
     'before.qa2.siptext1': 'බොහෝ රෝහල් දැන් ශල්‍යකර්මයට පැය 2කට පෙර තෙක් පැහැදිලි ද්‍රව පානය කිරීමට රෝගීන් දිරිමත් කරයි. මෙය ජල විරහිත වීම වැළැක්වීමට උපකාරී වන අතර ඔබේ සුවය වැඩිදියුණු කළ හැක. "සිප් ටිල් සෙන්ඩ්" ක්‍රමලේඛය ගැන ඔබේ සෞඛ්‍ය සේවා සපයන්නාගෙන් විමසන්න.',
     'before.qa2.siptext2': 'සිප් ටිල් සෙන්ඩ් උපවාස තොරතුරු ගැන වැඩිදුර දැනගන්න',
     'before.qa3.question': 'මඟ හැරිය යුතු ඖෂධ මොනවාද?',
-    'before.qa3.answer1': 'සමහර ඖෂධ නිර්වේදනයට බාධා කළ හැකි හෝ ශල්‍යකර්ම ලේ ගැලීමේ අවදානම වැඩි කළ හැකිය. ඔබ ගන්නා සිය
+    'before.qa3.answer1': 'සමහර ඖෂධ නිර්වේදනයට බාධා කළ හැකි හෝ ශල්‍යකර්ම ලේ ගැලීමේ අවදානම වැඩි කළ හැකිය. ඔබ ගන්නා සියලුම ඖෂධ, ප්‍රතිඅපහරණ ඖෂධ සහ අතිරේක ඇතුළු, ගැන සැම විටම ඔබේ නිර්වේදකයාට දැනුම් දෙන්න.',
+    'before.qa3.subtitle': 'නැවැත්වීමට හෝ සකස් කිරීමට අවශ්‍ය විය හැකි ඖෂධ ඇතුළත්:',
+    'before.qa3.list1': 'ලේ තුනී කරන: ඇස්පිරින්, ක්ලොපිඩොග්රෙල්, වෝෆරින්',
+    'before.qa3.list2': 'NSAIDs: අයිබූප්‍රෝෆන්, ඩයික්ලෝෆෙනැක්',
+    'before.qa3.list3': 'පැළෑටි අතිරේක: ගින්කෝ, සුදුලූණු, මාළු තෙල්',
+    'before.qa3.important': 'වැදගත්: ඔබේ වෛද්‍යවරයා හෝ නිර්වේදකයා හා සාකච්ඡා කිරීමෙන් තොරව කිසිවිටෙකත් බෙහෙත් දීම නතර නොකරන්න.',
+    'before.qa4.question': 'මානසිකව හා ශාරීරිකව සූදානම් වන්නේ කෙසේද?',
+    'before.qa4.physical': 'ශාරීරික සූදානම:',
+    'before.qa4.plist1': 'ශල්‍යකර්මයට පෙර හොඳ රාත්‍රී නින්දක් ලබා ගන්න',
+    'before.qa4.plist2': 'උපවාසය ආරම්භ වන තෙක් ජලය පානය කරන්න',
+    'before.qa4.plist3': 'ඔබේ ශල්‍ය කණ්ඩායමගෙන් ලැබෙන විශේෂිත උපදෙස් අනුගමනය කරන්න',
+    'before.qa4.plist4': 'ශල්‍යකර්මයට පැය 24කට පෙර සිට මධ්‍යසාර භාවිතයෙන් වළකින්න',
+    'before.qa4.plist5': 'ඔබ දුම්පානය කරන්නේ නම්, ශල්‍යකර්මයට පෙර එය නැවැත්වීමට හෝ අඩු කිරීමට උත්සාහ කරන්න',
+    'before.qa4.mental': 'මානසික සූදානම:',
+    'before.qa4.mlist1': 'ඔබේ ශල්‍යකර්මයට පෙර තක්සේරුවේදී ඕනෑම ගැටළුවක් විසඳීමට ප්‍රශ්න අසන්න',
+    'before.qa4.mlist2': 'ගැඹුරු හුස්ම ගැනීම හෝ භාවනාව වැනි සැහැල්ලු කිරීමේ ක්‍රම පුහුණු කරන්න',
+    'before.qa4.mlist3': 'රෝහල් මාර්ගෝපදේශ තුළ සනසන අයිතම රැගෙන එන්න',
+    'before.qa4.mlist4': 'නිකුත් කිරීමෙන් පසු පවුලේ අය හෝ මිතුරන්ගේ සහය සලසා ගන්න',
+    'before.qa4.practical': 'ප්‍රායෝගික සූදානම:',
+    'before.qa4.prlist1': 'රෝහලට යාමට සහ රෝහලෙන් ආපසු පැමිණීමට ප්‍රවාහනය සකස් කරන්න',
+    'before.qa4.prlist2': 'ඔබේ ආපසු පැමිණීම සඳහා ඔබේ නිවස සූදානම් කරන්න (පහසු ආහාර, පහසු සුවය ලැබීමේ ප්‍රදේශය)',
+    'before.qa4.prlist3': 'ඔබේ ඖෂධ, ඇලජි සහ පෙර නිර්වේදන අත්දැකීම් ලැයිස්තුවක් රැගෙන එන්න',
+    'before.qa4.prlist4': 'ශල්‍යකර්මයට පෙර ආභරණ, පැළඳුම් සහ නිය තීන්ත ඉවත් කරන්න',
+    'before.qa4.prlist5': 'ශල්‍යකර්මයට පෙර ස්නානය කිරීම පිළිබඳ විශේෂිත උපදෙස් අනුගමනය කරන්න',
+    
+    // ... fill in other translations for Sinhala 
+  },
+  ta: {
+    // ... Tamil translations can be added here like in Sinhala
+  }
+};
+
+export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [currentLanguage, setCurrentLanguage] = useState<Language>('en');
+
+  const setLanguage = (language: Language) => {
+    setCurrentLanguage(language);
+  };
+
+  // Translate function to get text for current language
+  const t = (key: string): string => {
+    // First try to get translation in current language
+    if (translations[currentLanguage][key]) {
+      return translations[currentLanguage][key];
+    }
+    
+    // Fallback to English if translation is missing
+    if (translations.en[key]) {
+      return translations.en[key];
+    }
+    
+    // Return key if no translation found
+    return key;
+  };
+
+  return (
+    <LanguageContext.Provider value={{ currentLanguage, setLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
+
+export const useLanguage = () => {
+  const context = useContext(LanguageContext);
+  if (context === undefined) {
+    throw new Error('useLanguage must be used within a LanguageProvider');
+  }
+  return context;
+};
