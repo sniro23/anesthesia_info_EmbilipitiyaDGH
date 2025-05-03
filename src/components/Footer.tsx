@@ -1,13 +1,11 @@
-
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Link } from 'react-router-dom';
-
 const Footer: React.FC = () => {
-  const { t } = useLanguage();
-  
-  return (
-    <footer className="bg-neutral-light border-t border-neutral-mid py-10 mt-20">
+  const {
+    t
+  } = useLanguage();
+  return <footer className="border-t border-neutral-mid py-10 mt-20 bg-slate-300">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
@@ -42,8 +40,6 @@ const Footer: React.FC = () => {
           <p className="mt-1">Developed by HealthifyLK</p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
