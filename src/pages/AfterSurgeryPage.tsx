@@ -1,4 +1,3 @@
-
 import React from 'react';
 import QASection from '@/components/QASection';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -7,21 +6,21 @@ const AfterSurgeryPage: React.FC = () => {
   const { t } = useLanguage();
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">{t('after.title')}</h1>
-      <p className="text-lg text-neutral-dark max-w-3xl mx-auto mb-10 text-center">
+    <div className="container mx-auto px-4 py-6 md:py-12">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-center">{t('after.title')}</h1>
+      <p className="text-base sm:text-lg text-neutral-dark max-w-3xl mx-auto mb-6 md:mb-10 text-center">
         {t('after.intro')}
       </p>
 
       <div className="max-w-3xl mx-auto">
         <QASection question={t('after.qa1.question')} defaultOpen={true}>
-          <p>
+          <p className="text-sm sm:text-base">
             {t('after.qa1.intro')}
           </p>
           
-          <div className="mt-4">
-            <h4 className="font-semibold">{t('after.qa1.expect')}</h4>
-            <ul className="list-disc pl-6 mt-2 space-y-2">
+          <div className="mt-3 md:mt-4">
+            <h4 className="font-semibold text-sm sm:text-base">{t('after.qa1.expect')}</h4>
+            <ul className="list-disc pl-4 sm:pl-6 mt-2 space-y-1 sm:space-y-2 text-sm sm:text-base">
               <li>
                 <strong>{t('after.qa1.monitoring')}</strong> {t('after.qa1.monitoringDesc')}
               </li>
@@ -43,18 +42,18 @@ const AfterSurgeryPage: React.FC = () => {
             </ul>
           </div>
           
-          <div className="mt-4">
-            <h4 className="font-semibold">{t('after.qa1.howLong')}</h4>
-            <p>
+          <div className="mt-3 md:mt-4">
+            <h4 className="font-semibold text-sm sm:text-base">{t('after.qa1.howLong')}</h4>
+            <p className="text-sm sm:text-base">
               {t('after.qa1.timeFrame')}
             </p>
-            <ul className="list-disc pl-6 mt-2 space-y-1">
+            <ul className="list-disc pl-4 sm:pl-6 mt-1 sm:mt-2 space-y-1 text-sm sm:text-base">
               <li>{t('after.qa1.timeList1')}</li>
               <li>{t('after.qa1.timeList2')}</li>
               <li>{t('after.qa1.timeList3')}</li>
               <li>{t('after.qa1.timeList4')}</li>
             </ul>
-            <p className="mt-2">
+            <p className="mt-1 sm:mt-2 text-sm sm:text-base">
               {t('after.qa1.transfer')}
             </p>
           </div>
@@ -62,8 +61,8 @@ const AfterSurgeryPage: React.FC = () => {
 
         <QASection question={t('after.qa2.question')}>
           <div>
-            <h4 className="font-semibold">{t('after.qa2.sideEffects')}</h4>
-            <ul className="list-disc pl-6 mt-2 space-y-2">
+            <h4 className="font-semibold text-sm sm:text-base">{t('after.qa2.sideEffects')}</h4>
+            <ul className="list-disc pl-4 sm:pl-6 mt-1 sm:mt-2 space-y-1 sm:space-y-2 text-sm sm:text-base">
               <li>
                 <strong>{t('after.qa2.throat')}</strong> {t('after.qa2.throatDesc')}
               </li>
@@ -85,9 +84,9 @@ const AfterSurgeryPage: React.FC = () => {
             </ul>
           </div>
           
-          <div className="mt-4">
-            <h4 className="font-semibold">{t('after.qa2.painManagement')}</h4>
-            <ul className="list-disc pl-6 mt-2 space-y-2">
+          <div className="mt-3 md:mt-4">
+            <h4 className="font-semibold text-sm sm:text-base">{t('after.qa2.painManagement')}</h4>
+            <ul className="list-disc pl-4 sm:pl-6 mt-1 sm:mt-2 space-y-1 sm:space-y-2 text-sm sm:text-base">
               <li>
                 <strong>{t('after.qa2.ivPain')}</strong> {t('after.qa2.ivPainDesc')}
               </li>
@@ -109,9 +108,9 @@ const AfterSurgeryPage: React.FC = () => {
             </ul>
           </div>
           
-          <div className="mt-4 bg-neutral-light p-4 rounded-lg">
-            <h4 className="font-semibold">{t('after.qa2.tips')}</h4>
-            <ul className="list-disc pl-6 mt-2 space-y-1">
+          <div className="mt-3 md:mt-4 bg-neutral-light p-3 sm:p-4 rounded-lg">
+            <h4 className="font-semibold text-sm sm:text-base">{t('after.qa2.tips')}</h4>
+            <ul className="list-disc pl-4 sm:pl-6 mt-1 sm:mt-2 space-y-1 text-sm sm:text-base">
               <li>{t('after.qa2.tipsList1')}</li>
               <li>{t('after.qa2.tipsList2')}</li>
               <li>{t('after.qa2.tipsList3')}</li>
@@ -125,9 +124,9 @@ const AfterSurgeryPage: React.FC = () => {
             {t('after.qa3.intro')}
           </p>
           
-          <div className="mt-4">
-            <h4 className="font-semibold">{t('after.qa3.guidelines')}</h4>
-            <ul className="list-disc pl-6 mt-2 space-y-2">
+          <div className="mt-3 md:mt-4">
+            <h4 className="font-semibold text-sm sm:text-base">{t('after.qa3.guidelines')}</h4>
+            <ul className="list-disc pl-4 sm:pl-6 mt-2 space-y-2 text-sm sm:text-base">
               <li>
                 <strong>{t('after.qa3.fluids')}</strong> {t('after.qa3.fluidsDesc')}
               </li>
@@ -140,9 +139,9 @@ const AfterSurgeryPage: React.FC = () => {
             </ul>
           </div>
           
-          <div className="mt-4">
-            <h4 className="font-semibold">{t('after.qa3.considerations')}</h4>
-            <ul className="list-disc pl-6 mt-2 space-y-2">
+          <div className="mt-3 md:mt-4">
+            <h4 className="font-semibold text-sm sm:text-base">{t('after.qa3.considerations')}</h4>
+            <ul className="list-disc pl-4 sm:pl-6 mt-2 space-y-2 text-sm sm:text-base">
               <li>
                 <strong>{t('after.qa3.abdominal')}</strong> {t('after.qa3.abdominalDesc')}
               </li>
@@ -164,8 +163,8 @@ const AfterSurgeryPage: React.FC = () => {
 
         <QASection question={t('after.qa4.question')}>
           <div>
-            <h4 className="font-semibold">{t('after.qa4.instructions')}</h4>
-            <ul className="list-disc pl-6 mt-2 space-y-2">
+            <h4 className="font-semibold text-sm sm:text-base">{t('after.qa4.instructions')}</h4>
+            <ul className="list-disc pl-4 sm:pl-6 mt-2 space-y-2 text-sm sm:text-base">
               <li>
                 <strong>{t('after.qa4.activity')}</strong> {t('after.qa4.activityDesc')}
               </li>
@@ -190,24 +189,24 @@ const AfterSurgeryPage: React.FC = () => {
             </ul>
           </div>
           
-          <div className="mt-4">
-            <h4 className="font-semibold">{t('after.qa4.appointments')}</h4>
+          <div className="mt-3 md:mt-4">
+            <h4 className="font-semibold text-sm sm:text-base">{t('after.qa4.appointments')}</h4>
             <p>
               {t('after.qa4.appointmentsDesc')}
             </p>
-            <ul className="list-disc pl-6 mt-2 space-y-1">
+            <ul className="list-disc pl-4 sm:pl-6 mt-2 space-y-1 text-sm sm:text-base">
               <li>{t('after.qa4.appointmentsList1')}</li>
               <li>{t('after.qa4.appointmentsList2')}</li>
               <li>{t('after.qa4.appointmentsList3')}</li>
             </ul>
-            <p className="mt-2">
+            <p className="mt-2 text-sm sm:text-base">
               {t('after.qa4.keepAppts')}
             </p>
           </div>
           
-          <div className="mt-4 bg-amber/10 p-4 rounded-lg border border-amber">
-            <h4 className="font-semibold">{t('after.qa4.seekHelp')}</h4>
-            <ul className="list-disc pl-6 mt-2 space-y-1">
+          <div className="mt-3 md:mt-4 bg-amber/10 p-3 sm:p-4 rounded-lg border border-amber">
+            <h4 className="font-semibold text-sm sm:text-base">{t('after.qa4.seekHelp')}</h4>
+            <ul className="list-disc pl-4 sm:pl-6 mt-2 space-y-1 text-sm sm:text-base">
               <li>{t('after.qa4.seekList1')}</li>
               <li>{t('after.qa4.seekList2')}</li>
               <li>{t('after.qa4.seekList3')}</li>
@@ -219,12 +218,12 @@ const AfterSurgeryPage: React.FC = () => {
             </ul>
           </div>
           
-          <div className="mt-4">
-            <p className="font-semibold">{t('after.qa4.pathway')}</p>
+          <div className="mt-3 md:mt-4">
+            <p className="font-semibold text-sm sm:text-base">{t('after.qa4.pathway')}</p>
             <p>
               {t('after.qa4.pathwayDesc')}
             </p>
-            <p className="mt-2">
+            <p className="mt-2 text-sm sm:text-base">
               {t('after.qa4.keepInstructions')}
             </p>
           </div>
