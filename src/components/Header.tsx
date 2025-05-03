@@ -15,7 +15,7 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-between">
         <div className="flex items-center mb-3 sm:mb-0">
           <NavLink to="/" className="text-2xl font-semibold text-indigo mx-0 my-[2px]">
-            {t('site.title')}
+            Safe Anaesthesia SL
           </NavLink>
         </div>
         
