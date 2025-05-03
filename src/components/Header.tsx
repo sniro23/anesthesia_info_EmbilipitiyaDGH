@@ -3,6 +3,13 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+// Define language buttons for better maintainability
+const LANGUAGE_OPTIONS = [
+  { code: 'en', label: 'EN' },
+  { code: 'si', label: 'සිං' },
+  { code: 'ta', label: 'தமி' }
+];
+
 const Header: React.FC = () => {
   const {
     t,
@@ -21,28 +28,34 @@ const Header: React.FC = () => {
         
         <div className="flex flex-col sm:flex-row items-center w-full sm:w-auto justify-center sm:justify-end">
           <nav className="flex flex-wrap items-center justify-center space-x-1 md:space-x-4 text-sm md:text-base mb-3 sm:mb-0">
-            <NavLink to="/" className={({
-            isActive
-          }) => isActive ? "text-indigo font-medium px-2 py-1" : "text-neutral-dark hover:text-indigo transition px-2 py-1"}>
+            <NavLink to="/" className={({isActive}) => 
+              isActive ? "text-indigo font-medium px-2 py-1" : "text-neutral-dark hover:text-indigo transition px-2 py-1"
+            }>
               {t('nav.home')}
             </NavLink>
-            <NavLink to="/resources" className={({
-            isActive
-          }) => isActive ? "text-indigo font-medium px-2 py-1" : "text-neutral-dark hover:text-indigo transition px-2 py-1"}>
+            <NavLink to="/resources" className={({isActive}) => 
+              isActive ? "text-indigo font-medium px-2 py-1" : "text-neutral-dark hover:text-indigo transition px-2 py-1"
+            }>
               {t('nav.resources')}
             </NavLink>
           </nav>
           
-          <div className="flex items-center space-x-2 sm:ml-4 mb-2 sm:mb-0">
-            <button onClick={() => setLanguage('en')} className={`text-xs px-3 py-1.5 rounded-full ${currentLanguage === 'en' ? 'bg-indigo text-white' : 'bg-neutral-mid/50 text-neutral-dark hover:bg-neutral-mid'}`}>
-              EN
-            </button>
-            <button onClick={() => setLanguage('si')} className={`text-xs px-3 py-1.5 rounded-full ${currentLanguage === 'si' ? 'bg-indigo text-white' : 'bg-neutral-mid/50 text-neutral-dark hover:bg-neutral-mid'}`}>
-              සිං
-            </button>
-            <button onClick={() => setLanguage('ta')} className={`text-xs px-3 py-1.5 rounded-full ${currentLanguage === 'ta' ? 'bg-indigo text-white' : 'bg-neutral-mid/50 text-neutral-dark hover:bg-neutral-mid'}`}>
-              தமி
-            </button>
+          <div className="flex flex-wrap items-center justify-center gap-2 sm:ml-4 mb-2 sm:mb-0">
+            {LANGUAGE_OPTIONS.map(lang => (
+              <button 
+                key={lang.code}
+                onClick={() => setLanguage(lang.code)} 
+                className={`text-xs px-3 py-1.5 rounded-full ${
+                  currentLanguage === lang.code 
+                    ? 'bg-indigo text-white' 
+                    : 'bg-neutral-mid/50 text-neutral-dark hover:bg-neutral-mid'
+                }`}
+                aria-label={`Switch to ${lang.code} language`}
+                aria-pressed={currentLanguage === lang.code}
+              >
+                {lang.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
