@@ -28,7 +28,7 @@ const translations: Record<Language, Record<string, string>> = {
     'cta.after': 'After Surgery',
     'about.title': 'About Us',
     'about.whoTitle': 'Who We Are',
-    'about.who': 'A collaborative initiative by Sri Lankan anaesthesia and critical care teams to share trustworthy patient information.',
+    'about.who': 'A collaborative initiative by anaesthesia and critical care teams at DGH Hambantota, to share trustworthy patient information.',
     'about.whyTitle': 'Our Mission',
     'about.why': 'To answer common patient questions, reduce anxiety, and promote informed consent.',
     
