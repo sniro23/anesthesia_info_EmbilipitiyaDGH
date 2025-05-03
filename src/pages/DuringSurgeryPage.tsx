@@ -114,9 +114,9 @@ const DuringSurgeryPage: React.FC = () => {
             <h4 className="font-semibold">Serious but Rare Complications:</h4>
             <ul className="list-disc pl-6 mt-2 space-y-1">
               <li><strong>Anaphylaxis</strong> (1 in 10,000) - Identified by monitoring and treated with epinephrine</li>
-              <li><strong>Malignant hyperthermia</strong> (< 1 in 50,000) - Genetic condition treated with dantrolene</li>
-              <li><strong>Permanent nerve injury</strong> (< 1 in 100,000) - Prevented by careful positioning and technique</li>
-              <li><strong>Awareness during general anaesthesia</strong> (< 1 in 1,000) - Monitored using BIS technology</li>
+              <li><strong>Malignant hyperthermia</strong> (&lt; 1 in 50,000) - Genetic condition treated with dantrolene</li>
+              <li><strong>Permanent nerve injury</strong> (&lt; 1 in 100,000) - Prevented by careful positioning and technique</li>
+              <li><strong>Awareness during general anaesthesia</strong> (&lt; 1 in 1,000) - Monitored using BIS technology</li>
             </ul>
           </div>
           
@@ -124,8 +124,8 @@ const DuringSurgeryPage: React.FC = () => {
             <h4 className="font-semibold">Airway Complications:</h4>
             <ul className="list-disc pl-6 mt-2 space-y-1">
               <li><strong>Difficult intubation</strong> (1-3%) - Managed with specialized equipment and techniques</li>
-              <li><strong>Aspiration</strong> (< 1%) - Prevented with fasting and rapid sequence induction</li>
-              <li><strong>Dental damage</strong> (< 0.5%) - Minimized with careful technique</li>
+              <li><strong>Aspiration</strong> (&lt; 1%) - Prevented with fasting and rapid sequence induction</li>
+              <li><strong>Dental damage</strong> (&lt; 0.5%) - Minimized with careful technique</li>
             </ul>
             <p className="mt-4 text-sm bg-neutral-light p-3 rounded-lg">
               Remember: Your anaesthetist is highly trained to prevent, detect, and manage these complications. The vast majority of anaesthetics are administered without any serious problems.
@@ -158,7 +158,7 @@ const DuringSurgeryPage: React.FC = () => {
           <div className="mt-4">
             <h4 className="font-semibold">Normal Target Values:</h4>
             <ul className="list-disc pl-6 mt-2 space-y-1">
-              <li><strong>SpO₂:</strong> > 95%</li>
+              <li><strong>SpO₂:</strong> &gt; 95%</li>
               <li><strong>ETCO₂:</strong> 35-45 mmHg</li>
               <li><strong>MAP (Mean Arterial Pressure):</strong> 65-90 mmHg</li>
               <li><strong>Temperature:</strong> 36-37°C (97-99°F)</li>
