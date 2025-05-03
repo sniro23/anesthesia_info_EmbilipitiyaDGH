@@ -6,26 +6,20 @@ interface QASectionProps {
   question: string;
   children: React.ReactNode;
   defaultOpen?: boolean;
-  id?: string; // Added ID to track QA sections
 }
 
 const QASection: React.FC<QASectionProps> = ({ 
   question, 
   children, 
-  defaultOpen = false,
-  id 
+  defaultOpen = false 
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div 
-      className="border rounded-lg md:rounded-2xl overflow-hidden mb-3 md:mb-4"
-      data-qa-id={id}
-    >
+    <div className="border rounded-lg md:rounded-2xl overflow-hidden mb-3 md:mb-4">
       <button
         className="w-full flex justify-between items-center p-3 sm:p-4 md:p-6 text-left bg-neutral-light hover:bg-neutral-mid/20 transition-colors"
         onClick={() => setIsOpen(!isOpen)}
-        aria-expanded={isOpen}
       >
         <h3 className="text-base sm:text-lg md:text-xl font-medium pr-2">{question}</h3>
         <ChevronDown 
