@@ -2,13 +2,12 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { LanguageCode } from '@/translations';
 
 // Define language buttons for better maintainability
 const LANGUAGE_OPTIONS = [
-  { code: 'en' as LanguageCode, label: 'EN' },
-  { code: 'si' as LanguageCode, label: 'සිං' },
-  { code: 'ta' as LanguageCode, label: 'தமி' }
+  { code: 'en', label: 'EN' },
+  { code: 'si', label: 'සිං' },
+  { code: 'ta', label: 'தமி' }
 ];
 
 const Header: React.FC = () => {
