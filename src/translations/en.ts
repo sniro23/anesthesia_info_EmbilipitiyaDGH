@@ -12,25 +12,50 @@ const enTranslations = {
     resources: "Resources",
     beforeSurgery: "Before Surgery",
     duringSurgery: "During Surgery",
-    afterSurgery: "After Surgery"
+    afterSurgery: "After Surgery",
+    before: "Before Surgery",
+    during: "During Surgery",
+    after: "After Surgery"
   },
   
-  // Home page
-  home: {
+  // Hero section
+  hero: {
     title: "Understanding Cataract Surgery",
     subtitle: "A comprehensive guide for patients",
-    intro: "Welcome to the Cataract Surgery Guide. This resource aims to help you understand what to expect before, during, and after your cataract surgery procedure.",
-    cardBefore: {
+    intro: "Welcome to the Cataract Surgery Guide. This resource aims to help you understand what to expect before, during, and after your cataract surgery procedure."
+  },
+  
+  // Call to action buttons
+  cta: {
+    before: "Before Surgery",
+    during: "During Surgery",
+    after: "After Surgery"
+  },
+  
+  // About section
+  about: {
+    title: "About This Guide",
+    whoTitle: "Who We Are",
+    who: "The Cataract Surgery Guide is created by healthcare professionals specializing in ophthalmology and patient education. Our goal is to provide clear, accessible information to patients.",
+    whyTitle: "Why This Guide",
+    why: "Cataract surgery is one of the most common surgical procedures worldwide. Understanding the process can help reduce anxiety and lead to better outcomes."
+  },
+  
+  // What to expect section
+  whatToExpect: {
+    title: "What To Expect",
+    learnMore: "Learn more",
+    before: {
       title: "Before Surgery",
-      description: "Learn about preparation steps and what to expect."
+      description: "Learn about preparation steps, initial consultations, and what tests you might need before your procedure."
     },
-    cardDuring: {
+    during: {
       title: "During Surgery",
-      description: "Understand the surgical procedure and process."
+      description: "Understand what happens during the surgery, how long it takes, and what you might experience."
     },
-    cardAfter: {
+    after: {
       title: "After Surgery",
-      description: "Recovery tips and post-operative care guidelines."
+      description: "Get information on recovery, follow-up appointments, and when you can return to normal activities."
     }
   },
   

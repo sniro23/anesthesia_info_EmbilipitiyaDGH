@@ -2,9 +2,10 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { LanguageCode } from '@/translations';
 
 // Define language buttons for better maintainability
-const LANGUAGE_OPTIONS = [
+const LANGUAGE_OPTIONS: {code: LanguageCode; label: string}[] = [
   { code: 'en', label: 'EN' },
   { code: 'si', label: 'සිං' },
   { code: 'ta', label: 'தமி' }
