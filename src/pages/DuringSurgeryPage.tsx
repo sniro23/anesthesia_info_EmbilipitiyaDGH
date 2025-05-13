@@ -1,3 +1,4 @@
+
 import React from 'react';
 import QASection from '@/components/QASection';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -13,7 +14,12 @@ const DuringSurgeryPage: React.FC = () => {
       </p>
 
       <div className="max-w-3xl mx-auto">
-        <QASection question={t('during.qa1.question')} defaultOpen={true}>
+        <QASection 
+          question={t('during.qa1.question')} 
+          defaultOpen={true}
+          image="public/lovable-uploads/e374c481-b3c7-4d58-a55e-a37d73a41c31.png"
+          imageAlt={t('during.qa1.imageAlt') || "Patient during surgery with monitoring equipment"}
+        >
           <div>
             <h4 className="font-semibold">{t('during.qa1.general')}</h4>
             <p>{t('during.qa1.generalDesc')}</p>

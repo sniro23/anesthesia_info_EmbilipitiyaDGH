@@ -6,12 +6,16 @@ interface QASectionProps {
   question: string;
   children: React.ReactNode;
   defaultOpen?: boolean;
+  image?: string;
+  imageAlt?: string;
 }
 
 const QASection: React.FC<QASectionProps> = ({ 
   question, 
   children, 
-  defaultOpen = false 
+  defaultOpen = false,
+  image,
+  imageAlt = "Illustrative image"
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
@@ -31,6 +35,16 @@ const QASection: React.FC<QASectionProps> = ({
       {isOpen && (
         <div className="p-3 sm:p-4 md:p-6 bg-white prose max-w-none text-sm sm:text-base">
           {children}
+          
+          {image && (
+            <div className="mt-4">
+              <img 
+                src={image} 
+                alt={imageAlt} 
+                className="w-full max-w-2xl mx-auto rounded-lg shadow-md" 
+              />
+            </div>
+          )}
         </div>
       )}
     </div>
