@@ -1,4 +1,3 @@
-
 import React from 'react';
 import QASection from '@/components/QASection';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -17,7 +16,7 @@ const DuringSurgeryPage: React.FC = () => {
         <QASection 
           question={t('during.qa1.question')} 
           defaultOpen={true}
-          image="public/lovable-uploads/e374c481-b3c7-4d58-a55e-a37d73a41c31.png"
+          image="public/lovable-uploads/0ea6d54e-390a-4ee9-ba5c-109568840422.png"
           imageAlt={t('during.qa1.imageAlt') || "Patient during surgery with monitoring equipment"}
         >
           <div>
