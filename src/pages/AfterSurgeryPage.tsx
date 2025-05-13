@@ -1,7 +1,5 @@
-
 import React from 'react';
 import QASection from '@/components/QASection';
-import ImageSection from '@/components/ImageSection';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const AfterSurgeryPage: React.FC = () => {
@@ -15,12 +13,6 @@ const AfterSurgeryPage: React.FC = () => {
       </p>
 
       <div className="max-w-3xl mx-auto">
-        <ImageSection 
-          imagePath="/lovable-uploads/82af36d2-1142-4e33-9981-42de8cdebb4e.png" 
-          altText="Nurse's station in recovery area"
-          caption={t('after.nursesStation')}
-        />
-        
         <QASection question={t('after.qa1.question')} defaultOpen={true}>
           <p className="text-sm sm:text-base">
             {t('after.qa1.intro')}
@@ -92,12 +84,6 @@ const AfterSurgeryPage: React.FC = () => {
             </ul>
           </div>
           
-          <ImageSection 
-            imagePath="/lovable-uploads/f49d3076-062b-4065-847a-37b4fc4916a3.png" 
-            altText="Operating room equipment"
-            caption={t('after.recoveryEquipment')}
-          />
-          
           <div className="mt-3 md:mt-4">
             <h4 className="font-semibold text-sm sm:text-base">{t('after.qa2.painManagement')}</h4>
             <ul className="list-disc pl-4 sm:pl-6 mt-1 sm:mt-2 space-y-1 sm:space-y-2 text-sm sm:text-base">
@@ -152,12 +138,6 @@ const AfterSurgeryPage: React.FC = () => {
               </li>
             </ul>
           </div>
-          
-          <ImageSection 
-            imagePath="/lovable-uploads/82ea82fe-4421-4b0a-b809-eb874a4bcff8.png" 
-            altText="Hospital floor directory sign"
-            caption={t('after.hospitalSign')}
-          />
           
           <div className="mt-3 md:mt-4">
             <h4 className="font-semibold text-sm sm:text-base">{t('after.qa3.considerations')}</h4>

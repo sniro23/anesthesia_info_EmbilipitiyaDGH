@@ -1,7 +1,5 @@
-
 import React from 'react';
 import QASection from '@/components/QASection';
-import ImageSection from '@/components/ImageSection';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const DuringSurgeryPage: React.FC = () => {
@@ -15,12 +13,6 @@ const DuringSurgeryPage: React.FC = () => {
       </p>
 
       <div className="max-w-3xl mx-auto">
-        <ImageSection 
-          imagePath="/lovable-uploads/15c9e1f1-0006-410c-93d8-a9c5953cb7b0.png" 
-          altText="Surgical Theater Sign"
-          caption={t('during.surgicalTheater')}
-        />
-        
         <QASection question={t('during.qa1.question')} defaultOpen={true}>
           <div>
             <h4 className="font-semibold">{t('during.qa1.general')}</h4>
@@ -63,12 +55,6 @@ const DuringSurgeryPage: React.FC = () => {
               {t('during.qa2.generalEnd')}
             </p>
           </div>
-          
-          <ImageSection 
-            imagePath="/lovable-uploads/f7ba945f-6fef-4ad8-a617-7b481dbd61cc.png" 
-            altText="Patient under anesthesia with monitoring equipment"
-            caption={t('during.patientMonitoring')}
-          />
           
           <div className="mt-4">
             <h4 className="font-semibold">{t('during.qa2.spinal')}</h4>
@@ -149,12 +135,6 @@ const DuringSurgeryPage: React.FC = () => {
         </QASection>
 
         <QASection question={t('during.qa4.question')}>
-          <ImageSection 
-            imagePath="/lovable-uploads/dbda5c25-5667-4d04-bff6-865cf577d567.png" 
-            altText="Anaesthesia equipment and monitors"
-            caption={t('during.equipment')}
-          />
-
           <div>
             <h4 className="font-semibold">{t('during.qa4.standard')}</h4>
             <ul className="list-disc pl-6 mt-2 space-y-1">
@@ -205,12 +185,6 @@ const DuringSurgeryPage: React.FC = () => {
           <p>
             {t('during.qa5.intro')}
           </p>
-          
-          <ImageSection 
-            imagePath="/lovable-uploads/1972c871-c38b-4929-9994-210f4458b895.png" 
-            altText="Surgical team in operating room"
-            caption={t('during.surgicalTeam')}
-          />
           
           <div className="mt-4">
             <h4 className="font-semibold">{t('during.qa5.responsibilities')}</h4>

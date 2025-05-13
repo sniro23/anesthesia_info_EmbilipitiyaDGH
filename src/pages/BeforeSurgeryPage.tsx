@@ -1,7 +1,5 @@
-
 import React from 'react';
 import QASection from '@/components/QASection';
-import ImageSection from '@/components/ImageSection';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 const BeforeSurgeryPage: React.FC = () => {
@@ -15,12 +13,6 @@ const BeforeSurgeryPage: React.FC = () => {
       </p>
 
       <div className="max-w-3xl mx-auto">
-        <ImageSection 
-          imagePath="/lovable-uploads/36dbc04b-890e-45d2-9347-ca375dc5525a.png" 
-          altText="Patients waiting in pre-operative area"
-          caption={t('before.waitingRoom')}
-        />
-        
         <QASection question={t('before.qa1.question')} defaultOpen={true}>
           <p className="text-sm sm:text-base">
             {t('before.qa1.answer1')}
@@ -35,12 +27,6 @@ const BeforeSurgeryPage: React.FC = () => {
             <li>{t('before.qa1.list4')}</li>
             <li>{t('before.qa1.list5')}</li>
           </ul>
-          
-          <ImageSection 
-            imagePath="/lovable-uploads/7c19deaa-b716-4c3d-a389-bc93e760d53c.png" 
-            altText="Patient with IV cannula before surgery"
-            caption={t('before.ivPrep')}
-          />
         </QASection>
 
         <QASection question={t('before.qa2.question')}>
@@ -87,12 +73,6 @@ const BeforeSurgeryPage: React.FC = () => {
               {t('before.qa3.important')}
             </p>
           </div>
-          
-          <ImageSection 
-            imagePath="/lovable-uploads/8e883d3d-646d-471d-8a25-e8843925875f.png" 
-            altText="Elderly patient prepared for surgery"
-            caption={t('before.patientPrep')}
-          />
         </QASection>
 
         <QASection question={t('before.qa4.question')}>
