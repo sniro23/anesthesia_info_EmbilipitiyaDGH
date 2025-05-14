@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import ImageGallery, { ImageData } from './ImageGallery';
 
 interface QASectionProps {
   question: string;
@@ -8,6 +9,8 @@ interface QASectionProps {
   defaultOpen?: boolean;
   image?: string;
   imageAlt?: string;
+  images?: ImageData[];
+  imageLayout?: 'single' | 'grid' | 'carousel';
 }
 
 const QASection: React.FC<QASectionProps> = ({ 
@@ -15,9 +18,16 @@ const QASection: React.FC<QASectionProps> = ({
   children, 
   defaultOpen = false,
   image,
-  imageAlt = "Illustrative image"
+  imageAlt = "Illustrative image",
+  images = [],
+  imageLayout = 'single'
 }) => {
   const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  // Convert legacy single image prop to images array format
+  const imageArray: ImageData[] = image 
+    ? [{ src: image, alt: imageAlt }].concat(images) 
+    : images;
 
   return (
     <div className="border rounded-lg md:rounded-2xl overflow-hidden mb-3 md:mb-4">
@@ -36,14 +46,12 @@ const QASection: React.FC<QASectionProps> = ({
         <div className="p-3 sm:p-4 md:p-6 bg-white prose max-w-none text-sm sm:text-base">
           {children}
           
-          {image && (
-            <div className="mt-4">
-              <img 
-                src={image} 
-                alt={imageAlt} 
-                className="w-full max-w-2xl mx-auto rounded-lg shadow-md" 
-              />
-            </div>
+          {imageArray.length > 0 && (
+            <ImageGallery 
+              images={imageArray} 
+              layout={imageLayout} 
+              className="mt-4"
+            />
           )}
         </div>
       )}

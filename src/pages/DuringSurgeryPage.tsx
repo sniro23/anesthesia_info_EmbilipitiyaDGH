@@ -1,9 +1,11 @@
 import React from 'react';
 import QASection from '@/components/QASection';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useImageData } from '@/contexts/ImageDataContext';
 
 const DuringSurgeryPage: React.FC = () => {
   const { t } = useLanguage();
+  const { getImagesForSection } = useImageData();
   
   return (
     <div className="container mx-auto px-4 py-12">
@@ -16,8 +18,8 @@ const DuringSurgeryPage: React.FC = () => {
         <QASection 
           question={t('during.qa1.question')} 
           defaultOpen={true}
-          image="public/lovable-uploads/0ea6d54e-390a-4ee9-ba5c-109568840422.png"
-          imageAlt={t('during.qa1.imageAlt') || "Patient during surgery with monitoring equipment"}
+          images={getImagesForSection('during.qa1')}
+          imageLayout="carousel"
         >
           <div>
             <h4 className="font-semibold">{t('during.qa1.general')}</h4>
@@ -44,7 +46,11 @@ const DuringSurgeryPage: React.FC = () => {
           </div>
         </QASection>
 
-        <QASection question={t('during.qa2.question')}>
+        <QASection 
+          question={t('during.qa2.question')}
+          images={getImagesForSection('during.qa2')}
+          imageLayout="single"
+        >
           <div>
             <h4 className="font-semibold">{t('during.qa2.general')}</h4>
             <p>
@@ -96,7 +102,10 @@ const DuringSurgeryPage: React.FC = () => {
           </div>
         </QASection>
 
-        <QASection question={t('during.qa3.question')}>
+        <QASection 
+          question={t('during.qa3.question')}
+          images={getImagesForSection('during.qa3')}
+        >
           <div>
             <h4 className="font-semibold">{t('during.qa3.minor')}</h4>
             <ul className="list-disc pl-6 mt-2 space-y-1">
@@ -139,7 +148,10 @@ const DuringSurgeryPage: React.FC = () => {
           </div>
         </QASection>
 
-        <QASection question={t('during.qa4.question')}>
+        <QASection 
+          question={t('during.qa4.question')}
+          images={getImagesForSection('during.qa4')}
+        >
           <div>
             <h4 className="font-semibold">{t('during.qa4.standard')}</h4>
             <ul className="list-disc pl-6 mt-2 space-y-1">
@@ -186,7 +198,10 @@ const DuringSurgeryPage: React.FC = () => {
           </div>
         </QASection>
 
-        <QASection question={t('during.qa5.question')}>
+        <QASection 
+          question={t('during.qa5.question')}
+          images={getImagesForSection('during.qa5')}
+        >
           <p>
             {t('during.qa5.intro')}
           </p>

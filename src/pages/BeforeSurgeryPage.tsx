@@ -1,9 +1,11 @@
 import React from 'react';
 import QASection from '@/components/QASection';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useImageData } from '@/contexts/ImageDataContext';
 
 const BeforeSurgeryPage: React.FC = () => {
   const { t } = useLanguage();
+  const { getImagesForSection } = useImageData();
   
   return (
     <div className="container mx-auto px-4 py-6 md:py-12">
@@ -13,7 +15,11 @@ const BeforeSurgeryPage: React.FC = () => {
       </p>
 
       <div className="max-w-3xl mx-auto">
-        <QASection question={t('before.qa1.question')} defaultOpen={true}>
+        <QASection 
+          question={t('before.qa1.question')} 
+          defaultOpen={true}
+          images={getImagesForSection('before.qa1')}
+        >
           <p className="text-sm sm:text-base">
             {t('before.qa1.answer1')}
           </p>
@@ -29,7 +35,10 @@ const BeforeSurgeryPage: React.FC = () => {
           </ul>
         </QASection>
 
-        <QASection question={t('before.qa2.question')}>
+        <QASection 
+          question={t('before.qa2.question')}
+          images={getImagesForSection('before.qa2')}
+        >
           <p className="text-sm sm:text-base">
             {t('before.qa2.answer1')}
           </p>
@@ -58,7 +67,10 @@ const BeforeSurgeryPage: React.FC = () => {
           </div>
         </QASection>
 
-        <QASection question={t('before.qa3.question')}>
+        <QASection 
+          question={t('before.qa3.question')}
+          images={getImagesForSection('before.qa3')}
+        >
           <p>
             {t('before.qa3.answer1')}
           </p>
@@ -75,7 +87,10 @@ const BeforeSurgeryPage: React.FC = () => {
           </div>
         </QASection>
 
-        <QASection question={t('before.qa4.question')}>
+        <QASection 
+          question={t('before.qa4.question')}
+          images={getImagesForSection('before.qa4')}
+        >
           <div>
             <h4 className="font-semibold">{t('before.qa4.physical')}</h4>
             <ul className="list-disc pl-6 mt-2 space-y-2">

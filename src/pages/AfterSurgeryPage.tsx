@@ -1,9 +1,11 @@
 import React from 'react';
 import QASection from '@/components/QASection';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useImageData } from '@/contexts/ImageDataContext';
 
 const AfterSurgeryPage: React.FC = () => {
   const { t } = useLanguage();
+  const { getImagesForSection } = useImageData();
 
   return (
     <div className="container mx-auto px-4 py-6 md:py-12">
@@ -13,7 +15,11 @@ const AfterSurgeryPage: React.FC = () => {
       </p>
 
       <div className="max-w-3xl mx-auto">
-        <QASection question={t('after.qa1.question')} defaultOpen={true}>
+        <QASection 
+          question={t('after.qa1.question')} 
+          defaultOpen={true}
+          images={getImagesForSection('after.qa1')}
+        >
           <p className="text-sm sm:text-base">
             {t('after.qa1.intro')}
           </p>
@@ -59,7 +65,10 @@ const AfterSurgeryPage: React.FC = () => {
           </div>
         </QASection>
 
-        <QASection question={t('after.qa2.question')}>
+        <QASection 
+          question={t('after.qa2.question')}
+          images={getImagesForSection('after.qa2')}
+        >
           <div>
             <h4 className="font-semibold text-sm sm:text-base">{t('after.qa2.sideEffects')}</h4>
             <ul className="list-disc pl-4 sm:pl-6 mt-1 sm:mt-2 space-y-1 sm:space-y-2 text-sm sm:text-base">
@@ -119,7 +128,10 @@ const AfterSurgeryPage: React.FC = () => {
           </div>
         </QASection>
 
-        <QASection question={t('after.qa3.question')}>
+        <QASection 
+          question={t('after.qa3.question')}
+          images={getImagesForSection('after.qa3')}
+        >
           <p>
             {t('after.qa3.intro')}
           </p>
@@ -161,7 +173,10 @@ const AfterSurgeryPage: React.FC = () => {
           </div>
         </QASection>
 
-        <QASection question={t('after.qa4.question')}>
+        <QASection 
+          question={t('after.qa4.question')}
+          images={getImagesForSection('after.qa4')}
+        >
           <div>
             <h4 className="font-semibold text-sm sm:text-base">{t('after.qa4.instructions')}</h4>
             <ul className="list-disc pl-4 sm:pl-6 mt-2 space-y-2 text-sm sm:text-base">
