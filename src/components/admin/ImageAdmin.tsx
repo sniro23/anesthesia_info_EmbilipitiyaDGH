@@ -1,9 +1,10 @@
-
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useImageData } from '@/contexts/ImageDataContext';
 import { ImageData } from '@/components/ImageGallery';
-import { Plus, X, Upload, Edit } from 'lucide-react';
+import { Plus, X, Upload, Edit, Image } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
 
 interface ImageFormProps {
   image: ImageData;
@@ -11,42 +12,113 @@ interface ImageFormProps {
 }
 
 const ImageForm: React.FC<ImageFormProps> = ({ image, onChange }) => {
+  const [isUploading, setIsUploading] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Before upload, show a local preview
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        setPreviewUrl(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+    
+    // Start upload process
+    setIsUploading(true);
+    
+    // We're using a simple FormData to upload the file
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+      
+      const data = await response.json();
+      onChange({ ...image, src: data.url });
+      toast.success('Image uploaded successfully');
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Failed to upload image. Please try again.');
+    } finally {
+      setIsUploading(false);
+    }
+  }, [image, onChange]);
+
   return (
     <div className="space-y-4">
-      <div>
-        <label className="block text-sm font-medium mb-1">Image URL</label>
-        <input
-          type="text"
-          value={image.src}
-          onChange={(e) => onChange({ ...image, src: e.target.value })}
-          className="w-full p-2 border rounded"
-        />
+      <div className="grid gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-1">Image URL</label>
+          <div className="flex gap-2">
+            <Input
+              type="text"
+              value={image.src}
+              onChange={(e) => onChange({ ...image, src: e.target.value })}
+              className="flex-1"
+              placeholder="Enter image URL or upload a file"
+            />
+            <label className="cursor-pointer flex items-center justify-center px-4 py-2 border rounded bg-neutral-100 hover:bg-neutral-200">
+              <Upload size={16} className="mr-2" />
+              <span>Upload</span>
+              <input
+                type="file"
+                className="hidden"
+                accept="image/*"
+                onChange={handleFileChange}
+                disabled={isUploading}
+              />
+            </label>
+          </div>
+          {isUploading && (
+            <div className="mt-2 text-sm text-neutral-500">Uploading image, please wait...</div>
+          )}
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-1">Alt Text</label>
+          <Input
+            type="text"
+            value={image.alt}
+            onChange={(e) => onChange({ ...image, alt: e.target.value })}
+            placeholder="Describe the image for accessibility"
+          />
+        </div>
+        
+        <div>
+          <label className="block text-sm font-medium mb-1">Caption (Optional)</label>
+          <Input
+            type="text"
+            value={image.caption || ''}
+            onChange={(e) => onChange({ ...image, caption: e.target.value })}
+            placeholder="Add a caption to display below the image"
+          />
+        </div>
       </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Alt Text</label>
-        <input
-          type="text"
-          value={image.alt}
-          onChange={(e) => onChange({ ...image, alt: e.target.value })}
-          className="w-full p-2 border rounded"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium mb-1">Caption (Optional)</label>
-        <input
-          type="text"
-          value={image.caption || ''}
-          onChange={(e) => onChange({ ...image, caption: e.target.value })}
-          className="w-full p-2 border rounded"
-        />
-      </div>
-      {image.src && (
+      
+      {(image.src || previewUrl) && (
         <div className="mt-2 p-2 border rounded">
           <img
-            src={image.src}
-            alt={image.alt}
+            src={previewUrl || image.src}
+            alt={image.alt || "Preview"}
             className="max-h-40 mx-auto object-contain"
           />
+          {previewUrl && !image.src && (
+            <div className="text-center text-sm text-neutral-500 mt-2">
+              Preview (upload in progress)
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -106,14 +178,21 @@ const SectionImages: React.FC<SectionImagesProps> = ({ sectionId }) => {
           {images.map((image, index) => (
             <div key={index} className="border rounded-lg overflow-hidden bg-white">
               <div className="h-32 overflow-hidden bg-neutral-100">
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  className="w-full h-full object-cover"
-                />
+                {image.src ? (
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-neutral-400">
+                    <Image size={24} />
+                    <span className="ml-2">No image</span>
+                  </div>
+                )}
               </div>
               <div className="p-3">
-                <p className="text-sm font-medium truncate">{image.alt}</p>
+                <p className="text-sm font-medium truncate">{image.alt || "No alt text"}</p>
                 {image.caption && (
                   <p className="text-xs text-neutral-500 truncate">{image.caption}</p>
                 )}
@@ -178,6 +257,14 @@ const ImageAdmin: React.FC<ImageAdminProps> = ({ sections }) => {
   return (
     <div className="p-6 max-w-4xl mx-auto">
       <h2 className="text-2xl font-bold mb-6">Image Administration</h2>
+      
+      <div className="mb-6 p-4 bg-slate-100 rounded-lg">
+        <h3 className="text-lg font-medium mb-2">Upload Instructions</h3>
+        <p className="text-sm text-neutral-700">
+          Use the upload button to add images directly. You can also enter image URLs manually.
+          For best results, use images that are at least 800x600 pixels. Supported formats: JPEG, PNG, GIF.
+        </p>
+      </div>
       
       <div className="space-y-8">
         {sections.map((sectionId) => (
