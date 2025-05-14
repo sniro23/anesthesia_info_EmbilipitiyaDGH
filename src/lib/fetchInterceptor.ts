@@ -20,6 +20,9 @@ window.fetch = async function(input, init) {
         const existingFiles = JSON.parse(localStorage.getItem('uploaded-files') || '{}');
         existingFiles[response.data.id] = response.data.url;
         localStorage.setItem('uploaded-files', JSON.stringify(existingFiles));
+        
+        // Dispatch a storage event to notify other tabs/windows
+        window.dispatchEvent(new Event('storage'));
       } catch (error) {
         console.error('Failed to store uploaded file info:', error);
       }
@@ -48,7 +51,10 @@ const restoreUploadedFiles = () => {
     
     console.log('Restoring uploaded files from localStorage:', Object.keys(uploadedFiles).length);
     
-    // No need to do anything else as the URLs are already stored in the ImageDataContext
+    // Update the image data context by triggering a storage event
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('storage'));
+    }
   } catch (error) {
     console.error('Failed to restore uploaded files:', error);
   }

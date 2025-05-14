@@ -35,6 +35,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
         : image.src
   }));
 
+  console.log("Rendering images:", processedImages.map(img => img.src));
+
   // For a single image display
   if (layout === 'single' || images.length === 1) {
     return (
@@ -155,4 +157,3 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 };
 
 export default ImageGallery;
-

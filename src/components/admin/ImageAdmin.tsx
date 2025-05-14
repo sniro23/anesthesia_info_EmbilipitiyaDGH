@@ -1,8 +1,8 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useImageData } from '@/contexts/ImageDataContext';
 import { ImageData } from '@/components/ImageGallery';
-import { Plus, X, Upload, Edit, Image } from 'lucide-react';
+import { Plus, X, Upload, Edit, Image, RefreshCcw } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
@@ -159,8 +159,10 @@ const SectionImages: React.FC<SectionImagesProps> = ({ sectionId }) => {
   const handleSaveImage = () => {
     if (editingIndex !== null) {
       updateImage(sectionId, editingIndex, currentImage);
+      toast.success('Image updated successfully');
     } else {
       addImage(sectionId, currentImage);
+      toast.success('Image added successfully');
     }
     setIsDialogOpen(false);
   };
@@ -190,6 +192,10 @@ const SectionImages: React.FC<SectionImagesProps> = ({ sectionId }) => {
                     src={image.src}
                     alt={image.alt}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      console.error("Admin image failed to load:", image.src);
+                      (e.target as HTMLImageElement).src = "/placeholder.svg";
+                    }}
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center text-neutral-400">
@@ -231,6 +237,9 @@ const SectionImages: React.FC<SectionImagesProps> = ({ sectionId }) => {
             <DialogTitle>
               {editingIndex !== null ? 'Edit Image' : 'Add New Image'}
             </DialogTitle>
+            <DialogDescription>
+              {editingIndex !== null ? 'Update image details' : 'Add a new image to this section'}
+            </DialogDescription>
           </DialogHeader>
           <ImageForm 
             image={currentImage}
@@ -261,9 +270,26 @@ interface ImageAdminProps {
 }
 
 const ImageAdmin: React.FC<ImageAdminProps> = ({ sections }) => {
+  // Force refresh to ensure localStorage changes are reflected
+  const [refreshKey, setRefreshKey] = useState(0);
+  
+  const handleRefresh = () => {
+    setRefreshKey(prev => prev + 1);
+    toast.success("Image data refreshed");
+  };
+
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      <h2 className="text-2xl font-bold mb-6">Image Administration</h2>
+    <div className="p-6 max-w-4xl mx-auto" key={refreshKey}>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold">Image Administration</h2>
+        <button 
+          onClick={handleRefresh}
+          className="flex items-center gap-1 px-3 py-2 bg-slate-200 text-slate-800 rounded hover:bg-slate-300"
+        >
+          <RefreshCcw size={14} />
+          Refresh
+        </button>
+      </div>
       
       <div className="mb-6 p-4 bg-slate-100 rounded-lg">
         <h3 className="text-lg font-medium mb-2">Upload Instructions</h3>
@@ -275,7 +301,7 @@ const ImageAdmin: React.FC<ImageAdminProps> = ({ sections }) => {
       
       <div className="space-y-8">
         {sections.map((sectionId) => (
-          <SectionImages key={sectionId} sectionId={sectionId} />
+          <SectionImages key={`${sectionId}-${refreshKey}`} sectionId={sectionId} />
         ))}
       </div>
     </div>

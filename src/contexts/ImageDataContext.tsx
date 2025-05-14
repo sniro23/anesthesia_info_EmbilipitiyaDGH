@@ -56,10 +56,28 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     try {
       localStorage.setItem(IMAGE_STORAGE_KEY, JSON.stringify(images));
+      console.log("Images saved to localStorage:", Object.keys(images).length);
     } catch (error) {
       console.error("Failed to save images:", error);
     }
   }, [images]);
+
+  // Force refresh from localStorage on page load and when localStorage changes
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === IMAGE_STORAGE_KEY) {
+        console.log("Storage changed, reloading images");
+        setImages(loadSavedImages());
+      }
+    };
+
+    // Add event listener for storage changes
+    window.addEventListener('storage', handleStorageChange);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
 
   const processImagePath = (image: ImageData): ImageData => {
     if (!image.src) return image;
@@ -74,22 +92,29 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const getImagesForSection = (sectionId: string) => {
+    // Always get the freshest data from state
     const sectionImages = images[sectionId] || [];
     return sectionImages.map(processImagePath);
   };
 
   const updateImagesForSection = (sectionId: string, newImages: ImageData[]) => {
-    setImages(prev => ({
-      ...prev,
-      [sectionId]: newImages.map(processImagePath)
-    }));
+    setImages(prev => {
+      const updated = {
+        ...prev,
+        [sectionId]: newImages.map(processImagePath)
+      };
+      return updated;
+    });
   };
 
   const addImage = (sectionId: string, image: ImageData) => {
-    setImages(prev => ({
-      ...prev,
-      [sectionId]: [...(prev[sectionId] || []), processImagePath(image)]
-    }));
+    setImages(prev => {
+      const updated = {
+        ...prev,
+        [sectionId]: [...(prev[sectionId] || []), processImagePath(image)]
+      };
+      return updated;
+    });
   };
 
   const removeImage = (sectionId: string, index: number) => {
