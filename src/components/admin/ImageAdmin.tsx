@@ -1,8 +1,9 @@
+
 import React, { useState, useCallback } from 'react';
 import { useImageData } from '@/contexts/ImageDataContext';
 import { ImageData } from '@/components/ImageGallery';
 import { Plus, X, Upload, Edit, Image } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
 
@@ -46,7 +47,10 @@ const ImageForm: React.FC<ImageFormProps> = ({ image, onChange }) => {
       }
       
       const data = await response.json();
-      onChange({ ...image, src: data.url });
+      
+      // Store the URL without the 'public/' prefix since it's served from the root
+      const imagePath = data.url;
+      onChange({ ...image, src: imagePath });
       toast.success('Image uploaded successfully');
     } catch (error) {
       console.error('Upload error:', error);
@@ -113,6 +117,9 @@ const ImageForm: React.FC<ImageFormProps> = ({ image, onChange }) => {
             src={previewUrl || image.src}
             alt={image.alt || "Preview"}
             className="max-h-40 mx-auto object-contain"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = "/placeholder.svg";
+            }}
           />
           {previewUrl && !image.src && (
             <div className="text-center text-sm text-neutral-500 mt-2">

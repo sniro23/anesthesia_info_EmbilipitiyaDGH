@@ -25,6 +25,16 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
   if (!images || images.length === 0) return null;
 
+  // Process image paths to make sure they work correctly
+  const processedImages = images.map(image => ({
+    ...image,
+    src: image.src.startsWith('blob:') 
+      ? image.src 
+      : image.src.startsWith('public/') 
+        ? image.src.replace('public/', '/') 
+        : image.src
+  }));
+
   // For a single image display
   if (layout === 'single' || images.length === 1) {
     return (
@@ -32,14 +42,18 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
         <div className="relative rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={16/9} className="bg-neutral-100">
             <img 
-              src={images[0].src} 
-              alt={images[0].alt || "Image"} 
+              src={processedImages[0].src} 
+              alt={processedImages[0].alt || "Image"} 
               className="w-full h-full object-cover" 
+              onError={(e) => {
+                console.error("Image failed to load:", processedImages[0].src);
+                (e.target as HTMLImageElement).src = "/placeholder.svg";
+              }}
             />
           </AspectRatio>
-          {images[0].caption && (
+          {processedImages[0].caption && (
             <div className="p-2 text-sm text-center text-neutral-600 bg-neutral-50">
-              {images[0].caption}
+              {processedImages[0].caption}
             </div>
           )}
         </div>
@@ -54,9 +68,13 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
         <div className="relative rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={16/9} className="bg-neutral-100">
             <img 
-              src={images[activeIndex].src} 
-              alt={images[activeIndex].alt || "Image"} 
-              className="w-full h-full object-cover" 
+              src={processedImages[activeIndex].src} 
+              alt={processedImages[activeIndex].alt || "Image"} 
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                console.error("Image failed to load:", processedImages[activeIndex].src);
+                (e.target as HTMLImageElement).src = "/placeholder.svg";
+              }}
             />
             
             {/* Navigation buttons */}
@@ -81,9 +99,9 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           </AspectRatio>
           
           {/* Caption */}
-          {images[activeIndex].caption && (
+          {processedImages[activeIndex].caption && (
             <div className="p-2 text-sm text-center text-neutral-600 bg-neutral-50">
-              {images[activeIndex].caption}
+              {processedImages[activeIndex].caption}
             </div>
           )}
           
@@ -112,13 +130,17 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
       images.length >= 3 ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3" : "",
       className
     )}>
-      {images.map((image, index) => (
+      {processedImages.map((image, index) => (
         <div key={index} className="rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={1} className="bg-neutral-100">
             <img 
               src={image.src} 
               alt={image.alt || "Image"} 
-              className="w-full h-full object-cover" 
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                console.error("Image failed to load:", image.src);
+                (e.target as HTMLImageElement).src = "/placeholder.svg";
+              }}
             />
           </AspectRatio>
           {image.caption && (
@@ -133,3 +155,4 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 };
 
 export default ImageGallery;
+

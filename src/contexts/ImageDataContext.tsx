@@ -1,19 +1,19 @@
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ImageData } from '@/components/ImageGallery';
 
 // Sample initial data
 const initialImages: Record<string, ImageData[]> = {
   'during.qa1': [
     { 
-      src: "public/lovable-uploads/0ea6d54e-390a-4ee9-ba5c-109568840422.png", 
+      src: "/lovable-uploads/0ea6d54e-390a-4ee9-ba5c-109568840422.png", 
       alt: "Patient during surgery with monitoring equipment",
       caption: "Anesthesia monitoring during surgery"
     }
   ],
   'during.qa2': [
     { 
-      src: "public/lovable-uploads/f49d3076-062b-4065-847a-37b4fc4916a3.png", 
+      src: "/lovable-uploads/f49d3076-062b-4065-847a-37b4fc4916a3.png", 
       alt: "Different types of anesthesia administration",
       caption: "Regional anesthesia being administered"
     }
@@ -29,26 +29,66 @@ interface ImageContextProps {
   updateImage: (sectionId: string, index: number, image: ImageData) => void;
 }
 
+const IMAGE_STORAGE_KEY = 'anesthesia-site-images';
+
 const ImageDataContext = createContext<ImageContextProps | undefined>(undefined);
 
 export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [images, setImages] = useState<Record<string, ImageData[]>>(initialImages);
+  // Try to load saved images from localStorage
+  const loadSavedImages = (): Record<string, ImageData[]> => {
+    if (typeof window === 'undefined') return initialImages;
+    
+    try {
+      const savedImages = localStorage.getItem(IMAGE_STORAGE_KEY);
+      if (savedImages) {
+        return JSON.parse(savedImages);
+      }
+    } catch (error) {
+      console.error("Failed to load saved images:", error);
+    }
+    
+    return initialImages;
+  };
+
+  const [images, setImages] = useState<Record<string, ImageData[]>>(loadSavedImages);
+  
+  // Save images to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(IMAGE_STORAGE_KEY, JSON.stringify(images));
+    } catch (error) {
+      console.error("Failed to save images:", error);
+    }
+  }, [images]);
+
+  const processImagePath = (image: ImageData): ImageData => {
+    if (!image.src) return image;
+    
+    // Ensure paths are correctly formatted
+    let src = image.src;
+    if (src.startsWith('public/')) {
+      src = src.replace('public/', '/');
+    }
+    
+    return { ...image, src };
+  };
 
   const getImagesForSection = (sectionId: string) => {
-    return images[sectionId] || [];
+    const sectionImages = images[sectionId] || [];
+    return sectionImages.map(processImagePath);
   };
 
   const updateImagesForSection = (sectionId: string, newImages: ImageData[]) => {
     setImages(prev => ({
       ...prev,
-      [sectionId]: newImages
+      [sectionId]: newImages.map(processImagePath)
     }));
   };
 
   const addImage = (sectionId: string, image: ImageData) => {
     setImages(prev => ({
       ...prev,
-      [sectionId]: [...(prev[sectionId] || []), image]
+      [sectionId]: [...(prev[sectionId] || []), processImagePath(image)]
     }));
   };
 
@@ -71,7 +111,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (!prev[sectionId]) return prev;
       
       const newImages = [...prev[sectionId]];
-      newImages[index] = image;
+      newImages[index] = processImagePath(image);
       
       return {
         ...prev,
