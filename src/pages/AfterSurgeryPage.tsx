@@ -4,14 +4,14 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useImageData } from '@/contexts/ImageDataContext';
 
 const AfterSurgeryPage: React.FC = () => {
-  const { t, language } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
   const { getImagesForSection } = useImageData();
 
   return (
     <div className="container mx-auto px-4 py-6 md:py-12">
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-center">{t('after.title')}</h1>
       <p className="text-base sm:text-lg text-neutral-dark max-w-3xl mx-auto mb-6 md:mb-10 text-center">
-        {language === 'si' ? 'ශල්‍යකර්මයෙන් පසු ඔබට සිදුවන්නේ කුමක්ද?' : t('after.intro')}
+        {currentLanguage === 'si' ? 'ශල්‍යකර්මයෙන් පසු ඔබට සිදුවන්නේ කුමක්ද?' : t('after.intro')}
       </p>
 
       <div className="max-w-3xl mx-auto">
@@ -20,7 +20,7 @@ const AfterSurgeryPage: React.FC = () => {
           defaultOpen={true}
           images={getImagesForSection('after.qa1')}
         >
-          {language === 'si' ? (
+          {currentLanguage === 'si' ? (
             <>
               <p className="text-sm sm:text-base">
                 ඔබේ ශල්‍යකර්මයෙන් පසු, ඔබව ප්‍රකෘතිමත් වීමේ කාමරය ලෙසද හැඳින්වෙන පසු-නිර්වේදන සත්කාර ඒකකයට (PACU) මාරු කරනු ලැබේ. මෙය ඔබ නිර්වින්දනයෙන් ඉවත් වන විට සමීපව අධීක්ෂණය කරනු ලබන විශේෂිත ප්‍රදේශයකි.
@@ -36,7 +36,7 @@ const AfterSurgeryPage: React.FC = () => {
                     <strong>එක් අයෙකු සඳහා එක් හෙද සත්කාරය</strong> ඔබ සම්පූර්ණයෙන් අවදි වන තුරු සහ ස්ථාවර වන තුරු
                   </li>
                   <li>
-                    <strong>නිතිපතා ඇගයීම්</strong> ඔබේ වේදනා මට්ටම් ස��� අවශ්‍ය පරිදි වේදනා ඖෂධ පරිපාලනය
+                    <strong>නිතිපතා ඇගයීම්</strong> ඔබේ වේදනා මට්ටම් සහ අවශ්‍ය පරිදි වේදනා ඖෂධ පරිපාලනය
                   </li>
                   <li>
                     <strong>ඔක්සිජන් චිකිත්සාව</strong> අවශ්‍ය නම් මුහුණු ආවරණයක් හෝ නාසාග්‍ර හරහා
@@ -119,7 +119,7 @@ const AfterSurgeryPage: React.FC = () => {
           question={t('after.qa2.question')}
           images={getImagesForSection('after.qa2')}
         >
-          {language === 'si' ? (
+          {currentLanguage === 'si' ? (
             <>
               <div>
                 <h4 className="font-semibold text-sm sm:text-base">සාමාන්‍ය අතුරු ආබාධ:</h4>

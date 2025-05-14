@@ -5,14 +5,14 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useImageData } from '@/contexts/ImageDataContext';
 
 const BeforeSurgeryPage: React.FC = () => {
-  const { t, language } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
   const { getImagesForSection } = useImageData();
   
   return (
     <div className="container mx-auto px-4 py-6 md:py-12">
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-center">{t('before.title')}</h1>
       <p className="text-base sm:text-lg text-neutral-dark max-w-3xl mx-auto mb-6 md:mb-10 text-center">
-        {language === 'si' ? 'නිර්වේදනය යනු ඔබට වේදනාවෙන් තොරව සහ ආරක්ෂිතව ශල්‍යකර්මයකට භාජනය වීමට ඉඩ සලසන ක්‍රමයකි. නිර්වින්දන වෛද්‍යවරයෙකු විසින් ඔබව පරික්ශා කිරීමෙන් පසුව ආරක්ශාකාරී සහ සුවපහසු ලෙස ශල්යකර්මය සිදු කිරීමට පහසුකම් සලස දෙයි.' : t('before.intro')}
+        {currentLanguage === 'si' ? 'නිර්වේදනය යනු ඔබට වේදනාවෙන් තොරව සහ ආරක්ෂිතව ශල්‍යකර්මයකට භාජනය වීමට ඉඩ සලසන ක්‍රමයකි. නිර්වින්දන වෛද්‍යවරයෙකු විසින් ඔබව පරික්ශා කිරීමෙන් පසුව ආරක්ශාකාරී සහ සුවපහසු ලෙස ශල්යකර්මය සිදු කිරීමට පහසුකම් සලස දෙයි.' : t('before.intro')}
       </p>
 
       <div className="max-w-3xl mx-auto">
@@ -21,7 +21,7 @@ const BeforeSurgeryPage: React.FC = () => {
           defaultOpen={true}
           images={getImagesForSection('before.qa1')}
         >
-          {language === 'si' ? (
+          {currentLanguage === 'si' ? (
             <>
               <p className="text-sm sm:text-base">
                 නිර්වින්දනයට පෙර අවදානම් හඳුනා ගැනීම සහ ඔබේ සෞඛ්‍යය වැඩිදියුණු කිරීම සඳහා ඔබේ වෛද්‍ය ඉතිහාසය, ශාරීරික පරීක්ෂණය, රුධිර පරීක්ෂණ, ECG සහ වෙනත් පරීක්ෂණ පිළිබඳ සවිස්තරාත්මක සමාලෝචනයකි.
@@ -60,7 +60,7 @@ const BeforeSurgeryPage: React.FC = () => {
           question={t('before.qa2.question')}
           images={getImagesForSection('before.qa2')}
         >
-          {language === 'si' ? (
+          {currentLanguage === 'si' ? (
             <>
               <p className="text-sm sm:text-base">
                 ශල්‍යකර්මයට පෙර නිරාහාරව සිටීමට අවශ්‍ය වන්නේ ඇයි?
@@ -126,7 +126,7 @@ const BeforeSurgeryPage: React.FC = () => {
           question={t('before.qa3.question')}
           images={getImagesForSection('before.qa3')}
         >
-          {language === 'si' ? (
+          {currentLanguage === 'si' ? (
             <>
               <p>
                 සමහර ඖෂධ නිර්දවින්දනයට බාධා කළ හැකි හෝ ශල්‍යකර්ම ලේ ගැලීමේ අවදානම වැඩි කළ හැකිය. ඔබ ගන්නා සියලුම ඖෂධ, සහ අතිරේක ඇතුළුව, ගැන සැම විටම ඔබේ නිර්වින්දන වෛද්‍යවරයාට දැනුම් දෙන්න.
@@ -167,7 +167,7 @@ const BeforeSurgeryPage: React.FC = () => {
           question={t('before.qa4.question')}
           images={getImagesForSection('before.qa4')}
         >
-          {language === 'si' ? (
+          {currentLanguage === 'si' ? (
             <>
               <div>
                 <h4 className="font-semibold">ශාරීරික සූදානම:</h4>

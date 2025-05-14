@@ -4,14 +4,14 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useImageData } from '@/contexts/ImageDataContext';
 
 const DuringSurgeryPage: React.FC = () => {
-  const { t, language } = useLanguage();
+  const { t, currentLanguage } = useLanguage();
   const { getImagesForSection } = useImageData();
   
   return (
     <div className="container mx-auto px-4 py-12">
       <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">{t('during.title')}</h1>
       <p className="text-lg text-neutral-dark max-w-3xl mx-auto mb-10 text-center">
-        {language === 'si' ? 'නිර්වින්දනය යනු කුමක්ද?' : t('during.intro')}
+        {currentLanguage === 'si' ? 'නිර්වින්දනය යනු කුමක්ද?' : t('during.intro')}
       </p>
 
       <div className="max-w-3xl mx-auto">
@@ -21,7 +21,7 @@ const DuringSurgeryPage: React.FC = () => {
           images={getImagesForSection('during.qa1')}
           imageLayout="carousel"
         >
-          {language === 'si' ? (
+          {currentLanguage === 'si' ? (
             <>
               <div>
                 <h4 className="font-semibold">සම්පුර්න නිර්වින්දනය/ සිහිනැති කිරීම ම (General Anaesthesia):</h4>
@@ -81,7 +81,7 @@ const DuringSurgeryPage: React.FC = () => {
           images={getImagesForSection('during.qa2')}
           imageLayout="single"
         >
-          {language === 'si' ? (
+          {currentLanguage === 'si' ? (
             <>
               <div>
                 <h4 className="font-semibold">සම්පුර්න නිර්වින්දනය:</h4>
