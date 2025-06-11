@@ -50,7 +50,7 @@ class ImageCleanupService {
       
       const imageData = JSON.parse(savedImages);
       let totalRemoved = 0;
-      let sectionscleaned = 0;
+      let sectionsChanged = 0;
       
       Object.keys(imageData).forEach(sectionId => {
         const images = imageData[sectionId];
