@@ -1,7 +1,8 @@
-
 /**
- * Image Storage Service - Handles file storage using data URLs for browser compatibility
+ * Image Storage Service - Handles file storage directly to public directory
  */
+
+import { fileSystemHandler } from './fileSystemHandler';
 
 export interface StoredImageInfo {
   id: string;
@@ -35,7 +36,7 @@ class ImageStorageService {
   }
   
   /**
-   * Store image file - convert to data URL for browser storage
+   * Store image file directly to public directory
    */
   public async storeImage(file: File): Promise<StoredImageInfo> {
     console.log('ImageStorageService: Starting storeImage for:', file.name);
@@ -44,21 +45,21 @@ class ImageStorageService {
       const filename = this.generateFilename(file);
       const id = `img-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
       
-      // Convert file to data URL for reliable browser storage
-      const dataUrl = await this.fileToDataUrl(file);
+      // Save file using file system handler
+      const url = await fileSystemHandler.saveToUploads(file, filename);
       
-      console.log('ImageStorageService: File converted to data URL successfully');
+      console.log('ImageStorageService: File saved successfully');
       
       const imageInfo: StoredImageInfo = {
         id,
         filename,
         originalName: file.name,
-        url: dataUrl,
+        url,
         uploadDate: new Date().toISOString()
       };
       
-      // Store in manifest
-      console.log('ImageStorageService: Updating manifest...');
+      // Store only metadata in manifest (not the actual image data)
+      console.log('ImageStorageService: Updating manifest with metadata only...');
       this.updateManifest(imageInfo);
       
       console.log('ImageStorageService: Image stored successfully');
@@ -71,32 +72,16 @@ class ImageStorageService {
   }
   
   /**
-   * Convert file to data URL
-   */
-  private fileToDataUrl(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          resolve(reader.result);
-        } else {
-          reject(new Error('Failed to read file as data URL'));
-        }
-      };
-      reader.onerror = () => reject(new Error('File read error'));
-      reader.readAsDataURL(file);
-    });
-  }
-  
-  /**
-   * Get the display URL (return the stored URL directly)
+   * Get the display URL with fallback to temp URL if needed
    */
   public getDisplayUrl(url: string): string {
-    return url;
+    // Try to get temp URL first for immediate display
+    const tempUrl = fileSystemHandler.getTempUrl(url);
+    return tempUrl || url;
   }
   
   /**
-   * Update the image manifest
+   * Update the image manifest (metadata only, no image data)
    */
   private updateManifest(imageInfo: StoredImageInfo): void {
     try {
@@ -122,7 +107,7 @@ class ImageStorageService {
   }
   
   /**
-   * Clean up old entries
+   * Clean up old entries and check storage usage
    */
   public cleanupInvalidImages(): void {
     try {
@@ -130,7 +115,7 @@ class ImageStorageService {
       const validManifest: Record<string, StoredImageInfo> = {};
       
       Object.entries(manifest).forEach(([key, imageInfo]) => {
-        if (imageInfo.url && (imageInfo.url.startsWith('data:') || imageInfo.url.startsWith('blob:'))) {
+        if (imageInfo.url && imageInfo.url.startsWith('/lovable-uploads/')) {
           validManifest[key] = imageInfo;
         }
       });
@@ -143,11 +128,50 @@ class ImageStorageService {
   }
   
   /**
+   * Check storage quota before upload
+   */
+  public checkStorageQuota(): { available: boolean; used: number; quota: number } {
+    try {
+      // Estimate current localStorage usage
+      let totalSize = 0;
+      for (let key in localStorage) {
+        if (localStorage.hasOwnProperty(key)) {
+          totalSize += localStorage[key].length;
+        }
+      }
+      
+      // Most browsers have ~5-10MB localStorage limit
+      const estimatedQuota = 10 * 1024 * 1024; // 10MB
+      const usedPercentage = (totalSize / estimatedQuota) * 100;
+      
+      console.log(`Storage usage: ${totalSize} bytes (${usedPercentage.toFixed(1)}%)`);
+      
+      return {
+        available: usedPercentage < 90, // Consider 90% as the safe limit
+        used: totalSize,
+        quota: estimatedQuota
+      };
+    } catch (error) {
+      console.error('Failed to check storage quota:', error);
+      return { available: false, used: 0, quota: 0 };
+    }
+  }
+  
+  /**
    * Validate if an image URL is valid and accessible
    */
   public async validateImageUrl(url: string): Promise<boolean> {
     return new Promise((resolve) => {
-      if (url.startsWith('data:') || url.startsWith('blob:')) {
+      if (url.startsWith('/lovable-uploads/')) {
+        // For local uploads, try to load the image
+        const img = new Image();
+        img.onload = () => resolve(true);
+        img.onerror = () => resolve(false);
+        img.src = url;
+        
+        // Set a timeout
+        setTimeout(() => resolve(false), 5000);
+      } else if (url.startsWith('data:') || url.startsWith('blob:')) {
         resolve(true);
       } else {
         const img = new Image();
@@ -155,7 +179,6 @@ class ImageStorageService {
         img.onerror = () => resolve(false);
         img.src = url;
         
-        // Set a timeout
         setTimeout(() => resolve(false), 5000);
       }
     });

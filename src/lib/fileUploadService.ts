@@ -1,6 +1,6 @@
 
 /**
- * File Upload Service - Handles saving files using data URLs
+ * File Upload Service - Handles saving files to public directory
  */
 
 import { imageStorageService } from './imageStorage';
@@ -18,12 +18,18 @@ class FileUploadService {
   }
   
   /**
-   * Save file using data URL storage
+   * Save file to public directory
    */
   public async saveFile(file: File): Promise<{ url: string; id: string }> {
     console.log('FileUploadService: Starting saveFile for:', file.name, file.size, file.type);
     
     try {
+      // Check storage quota before proceeding
+      const storageInfo = imageStorageService.checkStorageQuota();
+      if (!storageInfo.available) {
+        throw new Error('Storage quota exceeded. Please clear some space and try again.');
+      }
+      
       console.log('FileUploadService: Calling imageStorageService.storeImage...');
       const imageInfo = await imageStorageService.storeImage(file);
       
@@ -45,7 +51,7 @@ class FileUploadService {
   public validateFile(file: File): { valid: boolean; error?: string } {
     console.log('FileUploadService: Validating file:', file.name, file.size, file.type);
     
-    // Check file size (max 5MB)
+    // Check file size (max 5MB for individual files)
     const maxSizeInBytes = 5 * 1024 * 1024;
     if (file.size > maxSizeInBytes) {
       console.error('FileUploadService: File too large:', file.size, 'bytes');
@@ -59,8 +65,22 @@ class FileUploadService {
       return { valid: false, error: 'File type not supported. Please upload a JPG, PNG, GIF, or WebP image.' };
     }
     
+    // Check storage quota
+    const storageInfo = imageStorageService.checkStorageQuota();
+    if (!storageInfo.available) {
+      console.error('FileUploadService: Storage quota exceeded');
+      return { valid: false, error: 'Storage quota exceeded. Please clear some space and try again.' };
+    }
+    
     console.log('FileUploadService: File validation passed');
     return { valid: true };
+  }
+  
+  /**
+   * Get storage usage information
+   */
+  public getStorageInfo(): { available: boolean; used: number; quota: number } {
+    return imageStorageService.checkStorageQuota();
   }
 }
 
