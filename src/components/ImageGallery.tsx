@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -193,5 +194,3 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 };
 
 export default ImageGallery;
-
-</edits_to_apply>
