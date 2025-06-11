@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { imageStorageService } from '@/lib/imageStorage';
 
 export interface ImageData {
   src: string;
@@ -22,40 +23,58 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   className
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
 
   if (!images || images.length === 0) return null;
 
-  // Process image paths to make sure they work correctly
-  const processedImages = images.map(image => ({
-    ...image,
-    src: image.src.startsWith('blob:') 
-      ? image.src 
-      : image.src.startsWith('public/') 
-        ? image.src.replace('public/', '/') 
-        : image.src
-  }));
+  // Process image paths with improved URL handling
+  const processedImages = images.map(image => {
+    let src = image.src;
+    
+    // Use our storage service to get the proper display URL
+    if (src.startsWith('/lovable-uploads/')) {
+      src = imageStorageService.getDisplayUrl(src);
+    }
+    
+    return { ...image, src };
+  });
 
-  console.log("Rendering images:", processedImages.map(img => img.src));
+  console.log("ImageGallery rendering:", processedImages.length, "images");
+
+  const handleImageError = (imageSrc: string) => {
+    console.error("Image failed to load:", imageSrc);
+    setImageErrors(prev => new Set([...prev, imageSrc]));
+  };
+
+  const renderImage = (image: ImageData, index: number) => (
+    <img 
+      key={`${image.src}-${index}`}
+      src={image.src} 
+      alt={image.alt || "Image"} 
+      className="w-full h-full object-cover" 
+      onError={() => handleImageError(image.src)}
+      loading="lazy"
+    />
+  );
 
   // For a single image display
   if (layout === 'single' || images.length === 1) {
+    const image = processedImages[0];
     return (
       <div className={cn("w-full mt-4", className)}>
         <div className="relative rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={16/9} className="bg-neutral-100">
-            <img 
-              src={processedImages[0].src} 
-              alt={processedImages[0].alt || "Image"} 
-              className="w-full h-full object-cover" 
-              onError={(e) => {
-                console.error("Image failed to load:", processedImages[0].src);
-                (e.target as HTMLImageElement).src = "/placeholder.svg";
-              }}
-            />
+            {imageErrors.has(image.src) ? (
+              <div className="w-full h-full flex items-center justify-center text-neutral-400 text-sm">
+                Failed to load image
+              </div>
+            ) : (
+              renderImage(image, 0)
+            )}
           </AspectRatio>
-          {processedImages[0].caption && (
+          {image.caption && (
             <div className="p-2 text-sm text-center text-neutral-600 bg-neutral-50">
-              {processedImages[0].caption}
+              {image.caption}
             </div>
           )}
         </div>
@@ -65,19 +84,18 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
   // For a carousel layout
   if (layout === 'carousel') {
+    const activeImage = processedImages[activeIndex];
     return (
       <div className={cn("w-full mt-4", className)}>
         <div className="relative rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={16/9} className="bg-neutral-100">
-            <img 
-              src={processedImages[activeIndex].src} 
-              alt={processedImages[activeIndex].alt || "Image"} 
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                console.error("Image failed to load:", processedImages[activeIndex].src);
-                (e.target as HTMLImageElement).src = "/placeholder.svg";
-              }}
-            />
+            {imageErrors.has(activeImage.src) ? (
+              <div className="w-full h-full flex items-center justify-center text-neutral-400 text-sm">
+                Failed to load image
+              </div>
+            ) : (
+              renderImage(activeImage, activeIndex)
+            )}
             
             {/* Navigation buttons */}
             {images.length > 1 && (
@@ -101,9 +119,9 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           </AspectRatio>
           
           {/* Caption */}
-          {processedImages[activeIndex].caption && (
+          {activeImage.caption && (
             <div className="p-2 text-sm text-center text-neutral-600 bg-neutral-50">
-              {processedImages[activeIndex].caption}
+              {activeImage.caption}
             </div>
           )}
           
@@ -133,17 +151,15 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
       className
     )}>
       {processedImages.map((image, index) => (
-        <div key={index} className="rounded-lg overflow-hidden shadow-md">
+        <div key={`${image.src}-${index}`} className="rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={1} className="bg-neutral-100">
-            <img 
-              src={image.src} 
-              alt={image.alt || "Image"} 
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                console.error("Image failed to load:", image.src);
-                (e.target as HTMLImageElement).src = "/placeholder.svg";
-              }}
-            />
+            {imageErrors.has(image.src) ? (
+              <div className="w-full h-full flex items-center justify-center text-neutral-400 text-xs">
+                Failed to load
+              </div>
+            ) : (
+              renderImage(image, index)
+            )}
           </AspectRatio>
           {image.caption && (
             <div className="p-2 text-xs text-center text-neutral-600 bg-neutral-50 truncate">

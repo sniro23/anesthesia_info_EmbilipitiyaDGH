@@ -8,7 +8,7 @@ type ApiResponse<T> = {
   error?: string;
 };
 
-// Mock API for file uploads
+// Mock API for file uploads with improved storage
 export const uploadFile = async (file: File): Promise<ApiResponse<{ url: string; id: string }>> => {
   try {
     if (!file) {
@@ -27,7 +27,7 @@ export const uploadFile = async (file: File): Promise<ApiResponse<{ url: string;
       throw new Error('File type not supported. Please upload a JPG, PNG, or GIF image.');
     }
     
-    // Upload the file using our mock service
+    // Upload the file using our improved mock service
     const result = await mockUploadService.uploadFile(file);
     
     return {
@@ -35,6 +35,7 @@ export const uploadFile = async (file: File): Promise<ApiResponse<{ url: string;
       data: result
     };
   } catch (error) {
+    console.error('Upload API error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error occurred'

@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ImageData } from '@/components/ImageGallery';
+import { imageStorageService } from '@/lib/imageStorage';
 
 // Sample initial data
 const initialImages: Record<string, ImageData[]> = {
@@ -53,14 +54,16 @@ const IMAGE_STORAGE_KEY = 'anesthesia-site-images';
 const ImageDataContext = createContext<ImageContextProps | undefined>(undefined);
 
 export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Try to load saved images from localStorage
+  // Load saved images with fallback to initial data
   const loadSavedImages = (): Record<string, ImageData[]> => {
     if (typeof window === 'undefined') return initialImages;
     
     try {
       const savedImages = localStorage.getItem(IMAGE_STORAGE_KEY);
       if (savedImages) {
-        return JSON.parse(savedImages);
+        const parsed = JSON.parse(savedImages);
+        // Merge with initial images to ensure we don't lose default content
+        return { ...initialImages, ...parsed };
       }
     } catch (error) {
       console.error("Failed to load saved images:", error);
@@ -75,13 +78,13 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     try {
       localStorage.setItem(IMAGE_STORAGE_KEY, JSON.stringify(images));
-      console.log("Images saved to localStorage:", Object.keys(images).length);
+      console.log("Images saved to localStorage successfully");
     } catch (error) {
       console.error("Failed to save images:", error);
     }
   }, [images]);
 
-  // Force refresh from localStorage on page load and when localStorage changes
+  // Handle storage changes from other tabs
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === IMAGE_STORAGE_KEY) {
@@ -90,7 +93,6 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
     };
 
-    // Add event listener for storage changes
     window.addEventListener('storage', handleStorageChange);
     
     return () => {
@@ -98,42 +100,44 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
   }, []);
 
+  // Process image paths to ensure they work with our storage system
   const processImagePath = (image: ImageData): ImageData => {
     if (!image.src) return image;
     
-    // Ensure paths are correctly formatted
     let src = image.src;
-    if (src.startsWith('public/')) {
+    
+    // Ensure paths start with /lovable-uploads/ for consistency
+    if (src.startsWith('public/lovable-uploads/')) {
       src = src.replace('public/', '/');
+    } else if (src.startsWith('/public/lovable-uploads/')) {
+      src = src.replace('/public/', '/');
+    }
+    
+    // Get the display URL from our storage service
+    if (src.startsWith('/lovable-uploads/')) {
+      src = imageStorageService.getDisplayUrl(src);
     }
     
     return { ...image, src };
   };
 
   const getImagesForSection = (sectionId: string) => {
-    // Always get the freshest data from state
     const sectionImages = images[sectionId] || [];
     return sectionImages.map(processImagePath);
   };
 
   const updateImagesForSection = (sectionId: string, newImages: ImageData[]) => {
-    setImages(prev => {
-      const updated = {
-        ...prev,
-        [sectionId]: newImages.map(processImagePath)
-      };
-      return updated;
-    });
+    setImages(prev => ({
+      ...prev,
+      [sectionId]: newImages.map(processImagePath)
+    }));
   };
 
   const addImage = (sectionId: string, image: ImageData) => {
-    setImages(prev => {
-      const updated = {
-        ...prev,
-        [sectionId]: [...(prev[sectionId] || []), processImagePath(image)]
-      };
-      return updated;
-    });
+    setImages(prev => ({
+      ...prev,
+      [sectionId]: [...(prev[sectionId] || []), processImagePath(image)]
+    }));
   };
 
   const removeImage = (sectionId: string, index: number) => {

@@ -1,19 +1,12 @@
 
-/**
- * Mock file upload service - simulates a file upload API 
- * by storing files in the browser's memory
- */
+import { imageStorageService } from './imageStorage';
 
-// Store for uploaded files
-type UploadedFile = {
-  id: string;
-  file: File;
-  url: string;
-};
+/**
+ * Mock file upload service - now integrated with proper image storage
+ */
 
 class MockFileUploadService {
   private static instance: MockFileUploadService;
-  private uploadedFiles: UploadedFile[] = [];
   
   private constructor() {}
   
@@ -26,20 +19,17 @@ class MockFileUploadService {
   
   public async uploadFile(file: File): Promise<{ url: string; id: string }> {
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 800));
     
-    // Create blob URL
-    const url = URL.createObjectURL(file);
-    const id = `file-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    // Use our new image storage service
+    const imageInfo = await imageStorageService.storeImage(file);
     
-    // Store the file
-    this.uploadedFiles.push({ id, file, url });
+    console.log('File uploaded successfully:', imageInfo);
     
-    return { url, id };
-  }
-  
-  public getFile(id: string): UploadedFile | undefined {
-    return this.uploadedFiles.find(f => f.id === id);
+    return {
+      url: imageInfo.url,
+      id: imageInfo.id
+    };
   }
 }
 
