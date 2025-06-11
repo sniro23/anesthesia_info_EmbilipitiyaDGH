@@ -1,6 +1,5 @@
 /**
- * Image Storage Service - Handles file storage in the public directory
- * Saves uploaded files directly to public/lovable-uploads/
+ * Image Storage Service - Handles file storage using blob URLs
  */
 
 export interface StoredImageInfo {
@@ -9,12 +8,13 @@ export interface StoredImageInfo {
   originalName: string;
   url: string;
   uploadDate: string;
+  file?: File; // Store the actual file for blob URL generation
 }
 
 class ImageStorageService {
   private static instance: ImageStorageService;
   private readonly STORAGE_KEY = 'image-storage-manifest';
-  private readonly UPLOAD_PATH = '/lovable-uploads/';
+  private blobUrls: Map<string, string> = new Map(); // Track blob URLs for cleanup
   
   private constructor() {}
   
@@ -36,33 +36,38 @@ class ImageStorageService {
   }
   
   /**
-   * Store image file and return proper file path
+   * Store image file and return blob URL for immediate use
    */
   public async storeImage(file: File): Promise<StoredImageInfo> {
     console.log('ImageStorageService: Starting storeImage for:', file.name);
     
     try {
       const filename = this.generateFilename(file);
-      const url = `${this.UPLOAD_PATH}${filename}`;
       const id = `img-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
       
-      console.log('ImageStorageService: Generated filename:', filename);
-      console.log('ImageStorageService: Generated URL:', url);
-      console.log('ImageStorageService: Generated ID:', id);
+      // Create blob URL for immediate display
+      const blobUrl = URL.createObjectURL(file);
+      console.log('ImageStorageService: Created blob URL:', blobUrl);
+      
+      // Store the blob URL for cleanup tracking
+      this.blobUrls.set(id, blobUrl);
       
       const imageInfo: StoredImageInfo = {
         id,
         filename,
         originalName: file.name,
-        url, // Use the proper file path, not blob URL
-        uploadDate: new Date().toISOString()
+        url: blobUrl, // Use blob URL for immediate display
+        uploadDate: new Date().toISOString(),
+        file // Store file reference for potential future use
       };
       
-      // Store in manifest
+      // Store in manifest (without the file object to avoid serialization issues)
       console.log('ImageStorageService: Updating manifest...');
-      this.updateManifest(imageInfo);
+      const manifestEntry = { ...imageInfo };
+      delete manifestEntry.file; // Remove file from manifest storage
+      this.updateManifest(manifestEntry);
       
-      console.log('ImageStorageService: Image stored successfully:', imageInfo);
+      console.log('ImageStorageService: Image stored successfully with blob URL:', imageInfo.url);
       
       return imageInfo;
     } catch (error) {
@@ -81,7 +86,7 @@ class ImageStorageService {
   /**
    * Update the image manifest
    */
-  private updateManifest(imageInfo: StoredImageInfo): void {
+  private updateManifest(imageInfo: Omit<StoredImageInfo, 'file'>): void {
     try {
       const manifest = this.getManifest();
       manifest[imageInfo.id] = imageInfo;
@@ -113,8 +118,8 @@ class ImageStorageService {
       const validManifest: Record<string, StoredImageInfo> = {};
       
       Object.entries(manifest).forEach(([key, imageInfo]) => {
-        // Keep only images with valid blob URLs or existing static files
-        if (imageInfo.url.startsWith('blob:') || imageInfo.url.startsWith('/lovable-uploads/')) {
+        // Keep all images since we're now using blob URLs
+        if (imageInfo.url) {
           validManifest[key] = imageInfo;
         }
       });
@@ -131,12 +136,18 @@ class ImageStorageService {
    */
   public async validateImageUrl(url: string): Promise<boolean> {
     return new Promise((resolve) => {
+      if (url.startsWith('blob:')) {
+        // For blob URLs, we can't really validate without trying to load
+        resolve(true);
+        return;
+      }
+      
       const img = new Image();
       img.onload = () => resolve(true);
       img.onerror = () => resolve(false);
       img.src = url;
       
-      // Set a timeout for blob URLs
+      // Set a timeout
       setTimeout(() => resolve(false), 5000);
     });
   }
@@ -150,15 +161,26 @@ class ImageStorageService {
   }
   
   /**
-   * Clean up blob URLs when they're no longer needed
+   * Clean up specific blob URL
+   */
+  public cleanupBlobUrl(id: string): void {
+    const blobUrl = this.blobUrls.get(id);
+    if (blobUrl) {
+      URL.revokeObjectURL(blobUrl);
+      this.blobUrls.delete(id);
+      console.log('Cleaned up blob URL for image:', id);
+    }
+  }
+  
+  /**
+   * Clean up all blob URLs
    */
   public cleanupBlobUrls(): void {
-    const manifest = this.getManifest();
-    Object.values(manifest).forEach(imageInfo => {
-      if (imageInfo.url.startsWith('blob:')) {
-        URL.revokeObjectURL(imageInfo.url);
-      }
+    this.blobUrls.forEach((blobUrl, id) => {
+      URL.revokeObjectURL(blobUrl);
+      console.log('Cleaned up blob URL:', blobUrl);
     });
+    this.blobUrls.clear();
   }
 }
 

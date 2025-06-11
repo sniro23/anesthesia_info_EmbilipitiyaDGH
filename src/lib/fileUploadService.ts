@@ -1,6 +1,6 @@
 
 /**
- * File Upload Service - Handles saving files to the public directory
+ * File Upload Service - Handles saving files using blob URLs
  */
 
 import { imageStorageService } from './imageStorage';
@@ -18,7 +18,7 @@ class FileUploadService {
   }
   
   /**
-   * Save file to the public directory and return the file info
+   * Save file using blob URL for immediate display
    */
   public async saveFile(file: File): Promise<{ url: string; id: string }> {
     console.log('FileUploadService: Starting saveFile for:', file.name, file.size, file.type);
@@ -27,29 +27,13 @@ class FileUploadService {
       // Simulate network delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Generate filename and path
-      const timestamp = Date.now();
-      const randomId = Math.random().toString(36).substring(2, 9);
-      const extension = file.name.split('.').pop() || 'png';
-      const filename = `${timestamp}-${randomId}.${extension}`;
-      const url = `/lovable-uploads/${filename}`;
-      
-      console.log('FileUploadService: Generated filename:', filename);
-      console.log('FileUploadService: Generated URL:', url);
-      
-      // Store the image info with proper file path
       console.log('FileUploadService: Calling imageStorageService.storeImage...');
       const imageInfo = await imageStorageService.storeImage(file);
       
-      console.log('FileUploadService: Image stored successfully:', imageInfo);
-      
-      // Use the URL from imageInfo but ensure it's properly formatted
-      const finalUrl = imageInfo.url || url;
-      
-      console.log('FileUploadService: Final URL:', finalUrl);
+      console.log('FileUploadService: Image stored successfully with blob URL:', imageInfo.url);
       
       return {
-        url: finalUrl,
+        url: imageInfo.url,
         id: imageInfo.id
       };
     } catch (error) {
