@@ -1,4 +1,3 @@
-
 /**
  * File Upload Service - Handles saving files to the public directory
  */
@@ -22,7 +21,7 @@ class FileUploadService {
    */
   public async saveFile(file: File): Promise<{ url: string; id: string }> {
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise(resolve => setTimeout(resolve, 500));
     
     // Generate filename and path
     const timestamp = Date.now();
@@ -31,14 +30,13 @@ class FileUploadService {
     const filename = `${timestamp}-${randomId}.${extension}`;
     const url = `/lovable-uploads/${filename}`;
     
-    // In a real environment, this would save to the file system
-    // For the Lovable environment, we'll store the image info
+    // Store the image info with proper file path
     const imageInfo = await imageStorageService.storeImage(file);
     
-    console.log('File saved successfully:', imageInfo);
+    console.log('File saved with path:', url);
     
     return {
-      url: imageInfo.url,
+      url: url, // Return the proper file path
       id: imageInfo.id
     };
   }

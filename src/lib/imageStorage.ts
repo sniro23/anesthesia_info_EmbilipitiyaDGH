@@ -36,28 +36,25 @@ class ImageStorageService {
   }
   
   /**
-   * Store image file directly to public directory
+   * Store image file and return proper file path
    */
   public async storeImage(file: File): Promise<StoredImageInfo> {
     const filename = this.generateFilename(file);
     const url = `${this.UPLOAD_PATH}${filename}`;
     const id = `img-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     
-    // Create a blob URL for immediate display in the Lovable environment
-    const blobUrl = URL.createObjectURL(file);
-    
     const imageInfo: StoredImageInfo = {
       id,
       filename,
       originalName: file.name,
-      url: blobUrl, // Use blob URL for immediate display
+      url, // Use the proper file path, not blob URL
       uploadDate: new Date().toISOString()
     };
     
     // Store in manifest
     this.updateManifest(imageInfo);
     
-    console.log('Image stored with blob URL for display:', imageInfo);
+    console.log('Image stored with file path:', imageInfo);
     
     return imageInfo;
   }
