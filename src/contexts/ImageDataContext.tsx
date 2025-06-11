@@ -1,6 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ImageData } from '@/components/ImageGallery';
+import { imageStorageService } from '@/lib/imageStorage';
 
 // Sample initial data
 const initialImages: Record<string, ImageData[]> = {
@@ -73,6 +74,11 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const [images, setImages] = useState<Record<string, ImageData[]>>(loadSavedImages);
   
+  // Clean up invalid images on startup
+  useEffect(() => {
+    imageStorageService.cleanupInvalidImages();
+  }, []);
+  
   // Save images to localStorage whenever they change
   useEffect(() => {
     try {
@@ -99,17 +105,24 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
   }, []);
 
-  // Process image paths to ensure they work with direct file storage
+  // Process image paths to ensure they work properly
   const processImagePath = (image: ImageData): ImageData => {
     if (!image.src) return image;
     
     let src = image.src;
     
-    // Ensure paths start with /lovable-uploads/ for consistency
+    // Handle different path formats
     if (src.startsWith('public/lovable-uploads/')) {
       src = src.replace('public/', '/');
     } else if (src.startsWith('/public/lovable-uploads/')) {
       src = src.replace('/public/', '/');
+    }
+    
+    // Validate the image and provide fallback
+    if (!src.startsWith('blob:') && !src.startsWith('/lovable-uploads/') && !src.startsWith('http')) {
+      console.warn('Invalid image path detected:', src);
+      // Use a placeholder or default image
+      src = '/placeholder.svg';
     }
     
     return { ...image, src };
@@ -117,7 +130,9 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const getImagesForSection = (sectionId: string) => {
     const sectionImages = images[sectionId] || [];
-    return sectionImages.map(processImagePath);
+    const processedImages = sectionImages.map(processImagePath);
+    console.log(`Getting images for section ${sectionId}:`, processedImages);
+    return processedImages;
   };
 
   const updateImagesForSection = (sectionId: string, newImages: ImageData[]) => {
@@ -128,9 +143,11 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const addImage = (sectionId: string, image: ImageData) => {
+    const processedImage = processImagePath(image);
+    console.log(`Adding image to section ${sectionId}:`, processedImage);
     setImages(prev => ({
       ...prev,
-      [sectionId]: [...(prev[sectionId] || []), processImagePath(image)]
+      [sectionId]: [...(prev[sectionId] || []), processedImage]
     }));
   };
 
@@ -139,6 +156,13 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (!prev[sectionId]) return prev;
       
       const newImages = [...prev[sectionId]];
+      const removedImage = newImages[index];
+      
+      // Clean up blob URL if it exists
+      if (removedImage?.src.startsWith('blob:')) {
+        URL.revokeObjectURL(removedImage.src);
+      }
+      
       newImages.splice(index, 1);
       
       return {
@@ -153,6 +177,13 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       if (!prev[sectionId]) return prev;
       
       const newImages = [...prev[sectionId]];
+      
+      // Clean up old blob URL if it exists
+      const oldImage = newImages[index];
+      if (oldImage?.src.startsWith('blob:')) {
+        URL.revokeObjectURL(oldImage.src);
+      }
+      
       newImages[index] = processImagePath(image);
       
       return {

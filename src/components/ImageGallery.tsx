@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -25,52 +26,49 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
   if (!images || images.length === 0) return null;
 
-  // Process image paths for direct file storage
-  const processedImages = images.map(image => {
-    let src = image.src;
-    
-    // Ensure proper path format for direct file access
-    if (src.startsWith('public/lovable-uploads/')) {
-      src = src.replace('public/', '/');
-    } else if (src.startsWith('/public/lovable-uploads/')) {
-      src = src.replace('/public/', '/');
-    }
-    
-    return { ...image, src };
-  });
-
-  console.log("ImageGallery rendering:", processedImages.length, "images");
+  console.log("ImageGallery rendering:", images.length, "images", images);
 
   const handleImageError = (imageSrc: string) => {
     console.error("Image failed to load:", imageSrc);
     setImageErrors(prev => new Set([...prev, imageSrc]));
   };
 
-  const renderImage = (image: ImageData, index: number) => (
-    <img 
-      key={`${image.src}-${index}`}
-      src={image.src} 
-      alt={image.alt || "Image"} 
-      className="w-full h-full object-cover" 
-      onError={() => handleImageError(image.src)}
-      loading="lazy"
-    />
-  );
+  const renderImage = (image: ImageData, index: number) => {
+    // Use placeholder if image failed to load or has invalid src
+    const shouldShowPlaceholder = imageErrors.has(image.src) || !image.src;
+    
+    if (shouldShowPlaceholder) {
+      return (
+        <div 
+          key={`placeholder-${index}`}
+          className="w-full h-full flex items-center justify-center bg-neutral-100 text-neutral-400 text-sm"
+        >
+          Image not available
+        </div>
+      );
+    }
+
+    return (
+      <img 
+        key={`${image.src}-${index}`}
+        src={image.src} 
+        alt={image.alt || "Image"} 
+        className="w-full h-full object-cover" 
+        onError={() => handleImageError(image.src)}
+        loading="lazy"
+        onLoad={() => console.log('Image loaded successfully:', image.src)}
+      />
+    );
+  };
 
   // For a single image display
   if (layout === 'single' || images.length === 1) {
-    const image = processedImages[0];
+    const image = images[0];
     return (
       <div className={cn("w-full mt-4", className)}>
         <div className="relative rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={16/9} className="bg-neutral-100">
-            {imageErrors.has(image.src) ? (
-              <div className="w-full h-full flex items-center justify-center text-neutral-400 text-sm">
-                Failed to load image
-              </div>
-            ) : (
-              renderImage(image, 0)
-            )}
+            {renderImage(image, 0)}
           </AspectRatio>
           {image.caption && (
             <div className="p-2 text-sm text-center text-neutral-600 bg-neutral-50">
@@ -84,18 +82,12 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
   // For a carousel layout
   if (layout === 'carousel') {
-    const activeImage = processedImages[activeIndex];
+    const activeImage = images[activeIndex];
     return (
       <div className={cn("w-full mt-4", className)}>
         <div className="relative rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={16/9} className="bg-neutral-100">
-            {imageErrors.has(activeImage.src) ? (
-              <div className="w-full h-full flex items-center justify-center text-neutral-400 text-sm">
-                Failed to load image
-              </div>
-            ) : (
-              renderImage(activeImage, activeIndex)
-            )}
+            {renderImage(activeImage, activeIndex)}
             
             {/* Navigation buttons */}
             {images.length > 1 && (
@@ -150,16 +142,10 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
       images.length >= 3 ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3" : "",
       className
     )}>
-      {processedImages.map((image, index) => (
+      {images.map((image, index) => (
         <div key={`${image.src}-${index}`} className="rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={1} className="bg-neutral-100">
-            {imageErrors.has(image.src) ? (
-              <div className="w-full h-full flex items-center justify-center text-neutral-400 text-xs">
-                Failed to load
-              </div>
-            ) : (
-              renderImage(image, index)
-            )}
+            {renderImage(image, index)}
           </AspectRatio>
           {image.caption && (
             <div className="p-2 text-xs text-center text-neutral-600 bg-neutral-50 truncate">

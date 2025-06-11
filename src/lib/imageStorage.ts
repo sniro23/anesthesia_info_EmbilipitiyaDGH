@@ -1,4 +1,3 @@
-
 /**
  * Image Storage Service - Handles file storage in the public directory
  * Saves uploaded files directly to public/lovable-uploads/
@@ -44,25 +43,30 @@ class ImageStorageService {
     const url = `${this.UPLOAD_PATH}${filename}`;
     const id = `img-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
     
+    // Create a blob URL for immediate display in the Lovable environment
+    const blobUrl = URL.createObjectURL(file);
+    
     const imageInfo: StoredImageInfo = {
       id,
       filename,
       originalName: file.name,
-      url,
+      url: blobUrl, // Use blob URL for immediate display
       uploadDate: new Date().toISOString()
     };
     
     // Store in manifest
     this.updateManifest(imageInfo);
     
+    console.log('Image stored with blob URL for display:', imageInfo);
+    
     return imageInfo;
   }
   
   /**
-   * Get the display URL (always return the permanent URL now)
+   * Get the display URL (return the stored URL directly)
    */
-  public getDisplayUrl(permanentUrl: string): string {
-    return permanentUrl;
+  public getDisplayUrl(url: string): string {
+    return url;
   }
   
   /**
@@ -90,6 +94,28 @@ class ImageStorageService {
   }
   
   /**
+   * Clean up old blob URLs and invalid entries
+   */
+  public cleanupInvalidImages(): void {
+    try {
+      const manifest = this.getManifest();
+      const validManifest: Record<string, StoredImageInfo> = {};
+      
+      Object.entries(manifest).forEach(([key, imageInfo]) => {
+        // Keep only images with valid blob URLs or existing static files
+        if (imageInfo.url.startsWith('blob:') || imageInfo.url.startsWith('/lovable-uploads/')) {
+          validManifest[key] = imageInfo;
+        }
+      });
+      
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(validManifest));
+      console.log('Cleaned up invalid image entries');
+    } catch (error) {
+      console.error('Failed to cleanup invalid images:', error);
+    }
+  }
+  
+  /**
    * Validate if an image URL is valid and accessible
    */
   public async validateImageUrl(url: string): Promise<boolean> {
@@ -98,6 +124,9 @@ class ImageStorageService {
       img.onload = () => resolve(true);
       img.onerror = () => resolve(false);
       img.src = url;
+      
+      // Set a timeout for blob URLs
+      setTimeout(() => resolve(false), 5000);
     });
   }
   
@@ -110,11 +139,15 @@ class ImageStorageService {
   }
   
   /**
-   * Clean up - no longer needed as we don't use blob URLs
+   * Clean up blob URLs when they're no longer needed
    */
   public cleanupBlobUrls(): void {
-    // No-op now that we use real files
-    console.log('Cleanup not needed - using real file storage');
+    const manifest = this.getManifest();
+    Object.values(manifest).forEach(imageInfo => {
+      if (imageInfo.url.startsWith('blob:')) {
+        URL.revokeObjectURL(imageInfo.url);
+      }
+    });
   }
 }
 
