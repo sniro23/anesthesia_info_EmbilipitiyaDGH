@@ -9,6 +9,11 @@ const initialImages: Record<string, ImageData[]> = {
       src: "/lovable-uploads/0ea6d54e-390a-4ee9-ba5c-109568840422.png", 
       alt: "Patient during surgery with monitoring equipment",
       caption: "Anesthesia monitoring during surgery"
+    },
+    { 
+      src: "/lovable-uploads/130acc06-67a9-466f-a6ad-f05f720e7df9.png", 
+      alt: "Surgical team performing operation in operating room",
+      caption: "Medical team during surgery with modern equipment"
     }
   ],
   'during.qa2': [
