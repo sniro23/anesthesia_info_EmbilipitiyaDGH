@@ -49,7 +49,10 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
     if (src.startsWith('http://') || src.startsWith('https://')) return true;
     if (src === '/placeholder.svg') return true;
     
-    // All other formats are invalid (including lovable-uploads paths)
+    // Allow lovable-uploads paths - these are valid static assets
+    if (src.startsWith('/lovable-uploads/')) return true;
+    
+    // All other formats are invalid
     console.warn('Invalid image URL format:', src);
     return false;
   };
@@ -190,3 +193,5 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 };
 
 export default ImageGallery;
+
+</edits_to_apply>
