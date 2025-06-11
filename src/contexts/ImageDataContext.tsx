@@ -4,6 +4,13 @@ import { ImageData } from '@/components/ImageGallery';
 
 // Sample initial data
 const initialImages: Record<string, ImageData[]> = {
+  'before.qa1': [
+    { 
+      src: "/lovable-uploads/608af697-e9b5-487a-befd-b3732af98807.png", 
+      alt: "Doctor and patient consultation in medical office",
+      caption: "Pre-anesthesia consultation and assessment"
+    }
+  ],
   'during.qa1': [
     { 
       src: "/lovable-uploads/0ea6d54e-390a-4ee9-ba5c-109568840422.png", 
