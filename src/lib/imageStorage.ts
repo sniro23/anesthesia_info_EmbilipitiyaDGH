@@ -39,24 +39,36 @@ class ImageStorageService {
    * Store image file and return proper file path
    */
   public async storeImage(file: File): Promise<StoredImageInfo> {
-    const filename = this.generateFilename(file);
-    const url = `${this.UPLOAD_PATH}${filename}`;
-    const id = `img-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    console.log('ImageStorageService: Starting storeImage for:', file.name);
     
-    const imageInfo: StoredImageInfo = {
-      id,
-      filename,
-      originalName: file.name,
-      url, // Use the proper file path, not blob URL
-      uploadDate: new Date().toISOString()
-    };
-    
-    // Store in manifest
-    this.updateManifest(imageInfo);
-    
-    console.log('Image stored with file path:', imageInfo);
-    
-    return imageInfo;
+    try {
+      const filename = this.generateFilename(file);
+      const url = `${this.UPLOAD_PATH}${filename}`;
+      const id = `img-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+      
+      console.log('ImageStorageService: Generated filename:', filename);
+      console.log('ImageStorageService: Generated URL:', url);
+      console.log('ImageStorageService: Generated ID:', id);
+      
+      const imageInfo: StoredImageInfo = {
+        id,
+        filename,
+        originalName: file.name,
+        url, // Use the proper file path, not blob URL
+        uploadDate: new Date().toISOString()
+      };
+      
+      // Store in manifest
+      console.log('ImageStorageService: Updating manifest...');
+      this.updateManifest(imageInfo);
+      
+      console.log('ImageStorageService: Image stored successfully:', imageInfo);
+      
+      return imageInfo;
+    } catch (error) {
+      console.error('ImageStorageService: Error in storeImage:', error);
+      throw error;
+    }
   }
   
   /**
@@ -74,8 +86,10 @@ class ImageStorageService {
       const manifest = this.getManifest();
       manifest[imageInfo.id] = imageInfo;
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(manifest));
+      console.log('ImageStorageService: Manifest updated successfully');
     } catch (error) {
-      console.error('Failed to update image manifest:', error);
+      console.error('ImageStorageService: Failed to update image manifest:', error);
+      throw error;
     }
   }
   
