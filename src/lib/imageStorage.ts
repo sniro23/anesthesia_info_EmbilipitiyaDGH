@@ -1,6 +1,6 @@
 
 /**
- * Image Storage Service - Handles file storage to public/lovable-uploads directory
+ * Image Storage Service - Handles file storage using data URLs for browser compatibility
  */
 
 export interface StoredImageInfo {
@@ -14,7 +14,6 @@ export interface StoredImageInfo {
 class ImageStorageService {
   private static instance: ImageStorageService;
   private readonly STORAGE_KEY = 'image-storage-manifest';
-  private readonly UPLOAD_DIR = '/lovable-uploads/';
   
   private constructor() {}
   
@@ -36,7 +35,7 @@ class ImageStorageService {
   }
   
   /**
-   * Store image file to the uploads directory
+   * Store image file - convert to data URL for browser storage
    */
   public async storeImage(file: File): Promise<StoredImageInfo> {
     console.log('ImageStorageService: Starting storeImage for:', file.name);
@@ -45,17 +44,16 @@ class ImageStorageService {
       const filename = this.generateFilename(file);
       const id = `img-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
       
-      // Save file to the uploads directory
-      const uploadPath = `${this.UPLOAD_DIR}${filename}`;
-      await this.saveFileToUploads(file, filename);
+      // Convert file to data URL for reliable browser storage
+      const dataUrl = await this.fileToDataUrl(file);
       
-      console.log('ImageStorageService: File saved to:', uploadPath);
+      console.log('ImageStorageService: File converted to data URL successfully');
       
       const imageInfo: StoredImageInfo = {
         id,
         filename,
         originalName: file.name,
-        url: uploadPath,
+        url: dataUrl,
         uploadDate: new Date().toISOString()
       };
       
@@ -63,7 +61,7 @@ class ImageStorageService {
       console.log('ImageStorageService: Updating manifest...');
       this.updateManifest(imageInfo);
       
-      console.log('ImageStorageService: Image stored successfully at:', imageInfo.url);
+      console.log('ImageStorageService: Image stored successfully');
       
       return imageInfo;
     } catch (error) {
@@ -73,28 +71,21 @@ class ImageStorageService {
   }
   
   /**
-   * Save file to the public/lovable-uploads directory
+   * Convert file to data URL
    */
-  private async saveFileToUploads(file: File, filename: string): Promise<void> {
-    try {
-      // In a real implementation, this would use fetch to save to the server
-      // For now, we'll simulate the file save and assume it works
-      console.log('ImageStorageService: Simulating file save to uploads directory:', filename);
-      
-      // Create a FormData object to simulate the upload
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('filename', filename);
-      
-      // In a browser environment, we can't actually write to the file system
-      // This would normally be handled by a backend API
-      // For demo purposes, we'll just log this
-      console.log('ImageStorageService: File would be saved as:', filename);
-      
-    } catch (error) {
-      console.error('ImageStorageService: Failed to save file:', error);
-      throw error;
-    }
+  private fileToDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          resolve(reader.result);
+        } else {
+          reject(new Error('Failed to read file as data URL'));
+        }
+      };
+      reader.onerror = () => reject(new Error('File read error'));
+      reader.readAsDataURL(file);
+    });
   }
   
   /**
@@ -139,7 +130,7 @@ class ImageStorageService {
       const validManifest: Record<string, StoredImageInfo> = {};
       
       Object.entries(manifest).forEach(([key, imageInfo]) => {
-        if (imageInfo.url && imageInfo.url.startsWith('/lovable-uploads/')) {
+        if (imageInfo.url && (imageInfo.url.startsWith('data:') || imageInfo.url.startsWith('blob:'))) {
           validManifest[key] = imageInfo;
         }
       });
@@ -156,7 +147,9 @@ class ImageStorageService {
    */
   public async validateImageUrl(url: string): Promise<boolean> {
     return new Promise((resolve) => {
-      if (url.startsWith('/lovable-uploads/')) {
+      if (url.startsWith('data:') || url.startsWith('blob:')) {
+        resolve(true);
+      } else {
         const img = new Image();
         img.onload = () => resolve(true);
         img.onerror = () => resolve(false);
@@ -164,14 +157,12 @@ class ImageStorageService {
         
         // Set a timeout
         setTimeout(() => resolve(false), 5000);
-      } else {
-        resolve(false);
       }
     });
   }
   
   /**
-   * List all files in the uploads directory
+   * List all files in storage
    */
   public listUploadedFiles(): StoredImageInfo[] {
     const manifest = this.getManifest();
