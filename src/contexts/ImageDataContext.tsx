@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ImageData } from '@/components/ImageGallery';
 import { imageStorageService } from '@/lib/imageStorage';
@@ -84,6 +85,22 @@ const IMAGE_STORAGE_KEY = 'anesthesia-site-images';
 const ImageDataContext = createContext<ImageContextProps | undefined>(undefined);
 
 export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  // Test image availability on load
+  const testImageAvailability = async (src: string): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => {
+        console.log(`✓ Image available: ${src}`);
+        resolve(true);
+      };
+      img.onerror = () => {
+        console.error(`✗ Image failed to load: ${src}`);
+        resolve(false);
+      };
+      img.src = src;
+    });
+  };
+
   // Load saved images with fallback to initial data
   const loadSavedImages = (): Record<string, ImageData[]> => {
     if (typeof window === 'undefined') return initialImages;
@@ -105,6 +122,33 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const [images, setImages] = useState<Record<string, ImageData[]>>(loadSavedImages);
+  
+  // Test image availability on startup
+  useEffect(() => {
+    const testAllImages = async () => {
+      console.log('Testing image availability...');
+      for (const [sectionId, sectionImages] of Object.entries(initialImages)) {
+        for (const image of sectionImages) {
+          await testImageAvailability(image.src);
+        }
+      }
+      
+      // Also test if the directory structure is correct
+      fetch('/lovable-uploads/')
+        .then(response => {
+          if (response.ok) {
+            console.log('✓ /lovable-uploads/ directory is accessible');
+          } else {
+            console.error('✗ /lovable-uploads/ directory is not accessible:', response.status);
+          }
+        })
+        .catch(error => {
+          console.error('✗ Error accessing /lovable-uploads/ directory:', error);
+        });
+    };
+    
+    testAllImages();
+  }, []);
   
   // Clean up invalid images on startup
   useEffect(() => {
@@ -179,6 +223,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     
     // lovable-uploads paths are valid - these exist in the GitHub repo
     if (src.startsWith('/lovable-uploads/')) {
+      console.log(`Using lovable-uploads image: ${src}`);
       return { ...image, src };
     }
     

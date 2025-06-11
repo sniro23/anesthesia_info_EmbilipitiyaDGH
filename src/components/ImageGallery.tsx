@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -32,8 +31,22 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
   console.log("ImageGallery rendering:", images.length, "images", images);
 
-  const handleImageError = (imageSrc: string) => {
-    console.error("Image failed to load:", imageSrc);
+  const handleImageError = (imageSrc: string, error?: any) => {
+    console.error("Image failed to load:", imageSrc, error);
+    
+    // Log additional debugging information
+    fetch(imageSrc, { method: 'HEAD' })
+      .then(response => {
+        console.log(`Image fetch test for ${imageSrc}:`, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: Object.fromEntries(response.headers.entries())
+        });
+      })
+      .catch(fetchError => {
+        console.error(`Image fetch test failed for ${imageSrc}:`, fetchError);
+      });
+    
     setImageErrors(prev => new Set([...prev, imageSrc]));
   };
 
@@ -50,8 +63,11 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
     if (src.startsWith('http://') || src.startsWith('https://')) return true;
     if (src === '/placeholder.svg') return true;
     
-    // Allow lovable-uploads paths - these are valid static assets
-    if (src.startsWith('/lovable-uploads/')) return true;
+    // Allow lovable-uploads paths - these should be valid static assets
+    if (src.startsWith('/lovable-uploads/')) {
+      console.log('Validating lovable-uploads path:', src);
+      return true;
+    }
     
     // All other formats are invalid
     console.warn('Invalid image URL format:', src);
@@ -67,12 +83,26 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
     const shouldShowPlaceholder = hasError || !isValidUrl || !image.src;
     
     if (shouldShowPlaceholder) {
+      console.log(`Showing placeholder for image ${index}:`, {
+        src: image.src,
+        hasError,
+        isValidUrl,
+        reason: !image.src ? 'No src' : !isValidUrl ? 'Invalid URL' : 'Load error'
+      });
+      
       return (
         <div 
           key={`placeholder-${index}`}
           className="w-full h-full flex items-center justify-center bg-neutral-100 text-neutral-400 text-sm"
         >
-          {!image.src ? 'No image' : 'Image not available'}
+          <div className="text-center">
+            <div>{!image.src ? 'No image' : 'Image not available'}</div>
+            {image.src && (
+              <div className="text-xs mt-1 opacity-70">
+                {image.src.length > 30 ? `...${image.src.slice(-30)}` : image.src}
+              </div>
+            )}
+          </div>
         </div>
       );
     }
@@ -83,7 +113,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           src={image.src} 
           alt={image.alt || "Image"} 
           className="w-full h-full object-cover" 
-          onError={() => handleImageError(image.src)}
+          onError={(e) => handleImageError(image.src, e)}
           onLoad={() => handleImageLoad(image.src)}
           loading="lazy"
         />
