@@ -7,26 +7,28 @@ import { imageCleanupService } from '@/lib/imageCleanup';
 const initialImages: Record<string, ImageData[]> = {
   'before.qa1': [
     { 
-      src: "/lovable-uploads/0ea6d54e-390a-4ee9-ba5c-109568840422.png", 
+      src: "/lovable-uploads/608af697-e9b5-487a-befd-b3732af98807.png", 
       alt: "Doctor and patient consultation in medical office",
       caption: "Pre-anesthesia consultation and assessment"
     }
   ],
+  'before.qa4': [
+    { 
+      src: "/lovable-uploads/36dbc04b-890e-45d2-9347-ca375dc5525a.png", 
+      alt: "Different types of anesthesia administration",
+      caption: "Regional anesthesia being administered"
+    }
+  ],
   'during.qa1': [
     { 
-      src: "/lovable-uploads/15c9e1f1-0006-410c-93d8-a9c5953cb7b0.png", 
+      src: "/lovable-uploads/0ea6d54e-390a-4ee9-ba5c-109568840422.png", 
       alt: "Patient during surgery with monitoring equipment",
       caption: "Anesthesia monitoring during surgery"
-    },
-    { 
-      src: "/lovable-uploads/1972c871-c38b-4929-9994-210f4458b895.png", 
-      alt: "Surgical team performing operation in operating room",
-      caption: "Medical team during surgery with modern equipment"
     }
   ],
   'during.qa2': [
     { 
-      src: "/lovable-uploads/36dbc04b-890e-45d2-9347-ca375dc5525a.png", 
+      src: "/lovable-uploads/f49d3076-062b-4065-847a-37b4fc4916a3.png", 
       alt: "Different types of anesthesia administration",
       caption: "Regional anesthesia being administered"
     }
@@ -38,9 +40,16 @@ const initialImages: Record<string, ImageData[]> = {
       caption: "Patient being monitored while the surgeon performs the surgery"
     }
   ],
+  'during.qa4': [
+    { 
+      src: "/lovable-uploads/1972c871-c38b-4929-9994-210f4458b895.png", 
+      alt: "Surgical team performing operation in operating room",
+      caption: "Medical team during surgery with modern equipment"
+    }
+  ],
   'after.qa1': [
     { 
-      src: "/lovable-uploads/608af697-e9b5-487a-befd-b3732af98807.png", 
+      src: "/lovable-uploads/dbda5c25-5667-4d04-bff6-865cf577d567.png", 
       alt: "Patient in recovery room after surgery",
       caption: "Post-operative recovery and monitoring"
     }
@@ -271,3 +280,5 @@ export const useImageData = () => {
 };
 
 export default ImageDataProvider;
+
+}
