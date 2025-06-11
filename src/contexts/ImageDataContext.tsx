@@ -22,6 +22,13 @@ const initialImages: Record<string, ImageData[]> = {
       alt: "Different types of anesthesia administration",
       caption: "Regional anesthesia being administered"
     }
+  ],
+  'during.qa3': [
+    { 
+      src: "/lovable-uploads/5e8755f9-3478-4ccc-b5fc-50041e16be04.png", 
+      alt: "Surgical team in operating room with patient monitoring",
+      caption: "Patient being monitored while the surgeon performs the surgery"
+    }
   ]
 };
 
