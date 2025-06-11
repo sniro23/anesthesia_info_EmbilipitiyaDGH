@@ -1,13 +1,13 @@
 
 import { uploadFile } from './api';
 
-// Create a global fetch interceptor for direct file storage
+// Create a global fetch interceptor with improved image handling
 const originalFetch = window.fetch;
 
 window.fetch = async function(input, init) {
-  // Check if this is a call to our upload API
+  // Check if this is a call to our mock upload API
   if (input === '/api/upload' && init?.method === 'POST') {
-    console.log('Intercepting upload request for direct file storage');
+    console.log('Intercepting upload request');
     
     // Handle file upload
     const formData = init.body as FormData;
@@ -20,10 +20,10 @@ window.fetch = async function(input, init) {
       });
     }
     
-    // Process the upload using our direct file storage service
+    // Process the upload using our improved service
     const response = await uploadFile(file);
     
-    console.log('Direct file storage response:', response);
+    console.log('Upload response:', response);
     
     // Create a mock Response object
     return new Response(JSON.stringify(response.data), {
@@ -38,4 +38,4 @@ window.fetch = async function(input, init) {
   return originalFetch.apply(window, [input, init]);
 };
 
-console.log('Fetch interceptor initialized with direct file storage');
+console.log('Fetch interceptor initialized with improved image handling');

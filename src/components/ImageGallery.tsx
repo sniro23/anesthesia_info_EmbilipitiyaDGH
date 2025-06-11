@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { imageStorageService } from '@/lib/imageStorage';
 
 export interface ImageData {
   src: string;
@@ -22,118 +24,53 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
-  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
 
-  if (!images || images.length === 0) {
-    console.log("ImageGallery: No images provided");
-    return null;
-  }
+  if (!images || images.length === 0) return null;
 
-  console.log("ImageGallery rendering:", images.length, "images", images);
-
-  const handleImageError = (imageSrc: string, error?: any) => {
-    console.error("Image failed to load:", imageSrc, error);
+  // Process image paths with improved URL handling
+  const processedImages = images.map(image => {
+    let src = image.src;
     
-    // Log additional debugging information
-    fetch(imageSrc, { method: 'HEAD' })
-      .then(response => {
-        console.log(`Image fetch test for ${imageSrc}:`, {
-          status: response.status,
-          statusText: response.statusText,
-          headers: Object.fromEntries(response.headers.entries())
-        });
-      })
-      .catch(fetchError => {
-        console.error(`Image fetch test failed for ${imageSrc}:`, fetchError);
-      });
+    // Use our storage service to get the proper display URL
+    if (src.startsWith('/lovable-uploads/')) {
+      src = imageStorageService.getDisplayUrl(src);
+    }
     
+    return { ...image, src };
+  });
+
+  console.log("ImageGallery rendering:", processedImages.length, "images");
+
+  const handleImageError = (imageSrc: string) => {
+    console.error("Image failed to load:", imageSrc);
     setImageErrors(prev => new Set([...prev, imageSrc]));
   };
 
-  const handleImageLoad = (imageSrc: string) => {
-    console.log('Image loaded successfully:', imageSrc);
-    setLoadedImages(prev => new Set([...prev, imageSrc]));
-  };
-
-  const isValidImageUrl = (src: string): boolean => {
-    if (!src) return false;
-    
-    // Allow data URLs, blob URLs, HTTP URLs, and placeholder
-    if (src.startsWith('data:') || src.startsWith('blob:')) return true;
-    if (src.startsWith('http://') || src.startsWith('https://')) return true;
-    if (src === '/placeholder.svg') return true;
-    
-    // Allow lovable-uploads paths - these should be valid static assets
-    if (src.startsWith('/lovable-uploads/')) {
-      console.log('Validating lovable-uploads path:', src);
-      return true;
-    }
-    
-    // All other formats are invalid
-    console.warn('Invalid image URL format:', src);
-    return false;
-  };
-
-  const renderImage = (image: ImageData, index: number) => {
-    const hasError = imageErrors.has(image.src);
-    const isLoaded = loadedImages.has(image.src);
-    const isValidUrl = isValidImageUrl(image.src);
-    
-    // Show placeholder if image failed to load, has invalid src, or no src
-    const shouldShowPlaceholder = hasError || !isValidUrl || !image.src;
-    
-    if (shouldShowPlaceholder) {
-      console.log(`Showing placeholder for image ${index}:`, {
-        src: image.src,
-        hasError,
-        isValidUrl,
-        reason: !image.src ? 'No src' : !isValidUrl ? 'Invalid URL' : 'Load error'
-      });
-      
-      return (
-        <div 
-          key={`placeholder-${index}`}
-          className="w-full h-full flex items-center justify-center bg-neutral-100 text-neutral-400 text-sm"
-        >
-          <div className="text-center">
-            <div>{!image.src ? 'No image' : 'Image not available'}</div>
-            {image.src && (
-              <div className="text-xs mt-1 opacity-70">
-                {image.src.length > 30 ? `...${image.src.slice(-30)}` : image.src}
-              </div>
-            )}
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div key={`image-container-${index}`} className="relative w-full h-full">
-        <img 
-          src={image.src} 
-          alt={image.alt || "Image"} 
-          className="w-full h-full object-cover" 
-          onError={(e) => handleImageError(image.src, e)}
-          onLoad={() => handleImageLoad(image.src)}
-          loading="lazy"
-        />
-        {!isLoaded && !hasError && (
-          <div className="absolute inset-0 bg-neutral-100 flex items-center justify-center">
-            <div className="text-sm text-neutral-500">Loading...</div>
-          </div>
-        )}
-      </div>
-    );
-  };
+  const renderImage = (image: ImageData, index: number) => (
+    <img 
+      key={`${image.src}-${index}`}
+      src={image.src} 
+      alt={image.alt || "Image"} 
+      className="w-full h-full object-cover" 
+      onError={() => handleImageError(image.src)}
+      loading="lazy"
+    />
+  );
 
   // For a single image display
   if (layout === 'single' || images.length === 1) {
-    const image = images[0];
+    const image = processedImages[0];
     return (
       <div className={cn("w-full mt-4", className)}>
         <div className="relative rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={16/9} className="bg-neutral-100">
-            {renderImage(image, 0)}
+            {imageErrors.has(image.src) ? (
+              <div className="w-full h-full flex items-center justify-center text-neutral-400 text-sm">
+                Failed to load image
+              </div>
+            ) : (
+              renderImage(image, 0)
+            )}
           </AspectRatio>
           {image.caption && (
             <div className="p-2 text-sm text-center text-neutral-600 bg-neutral-50">
@@ -147,12 +84,18 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
   // For a carousel layout
   if (layout === 'carousel') {
-    const activeImage = images[activeIndex];
+    const activeImage = processedImages[activeIndex];
     return (
       <div className={cn("w-full mt-4", className)}>
         <div className="relative rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={16/9} className="bg-neutral-100">
-            {renderImage(activeImage, activeIndex)}
+            {imageErrors.has(activeImage.src) ? (
+              <div className="w-full h-full flex items-center justify-center text-neutral-400 text-sm">
+                Failed to load image
+              </div>
+            ) : (
+              renderImage(activeImage, activeIndex)
+            )}
             
             {/* Navigation buttons */}
             {images.length > 1 && (
@@ -207,10 +150,16 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
       images.length >= 3 ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3" : "",
       className
     )}>
-      {images.map((image, index) => (
+      {processedImages.map((image, index) => (
         <div key={`${image.src}-${index}`} className="rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={1} className="bg-neutral-100">
-            {renderImage(image, index)}
+            {imageErrors.has(image.src) ? (
+              <div className="w-full h-full flex items-center justify-center text-neutral-400 text-xs">
+                Failed to load
+              </div>
+            ) : (
+              renderImage(image, index)
+            )}
           </AspectRatio>
           {image.caption && (
             <div className="p-2 text-xs text-center text-neutral-600 bg-neutral-50 truncate">

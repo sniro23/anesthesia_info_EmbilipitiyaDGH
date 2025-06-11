@@ -1,8 +1,8 @@
 
-import { fileUploadService } from './fileUploadService';
+import { imageStorageService } from './imageStorage';
 
 /**
- * Mock file upload service - now saves files directly to public directory
+ * Mock file upload service - now integrated with proper image storage
  */
 
 class MockFileUploadService {
@@ -18,29 +18,18 @@ class MockFileUploadService {
   }
   
   public async uploadFile(file: File): Promise<{ url: string; id: string }> {
-    console.log('MockFileUploadService: Starting upload for file:', file.name);
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 800));
     
-    try {
-      // Validate the file first
-      console.log('MockFileUploadService: Validating file...');
-      const validation = fileUploadService.validateFile(file);
-      if (!validation.valid) {
-        console.error('MockFileUploadService: File validation failed:', validation.error);
-        throw new Error(validation.error);
-      }
-      console.log('MockFileUploadService: File validation passed');
-      
-      // Save the file using our file upload service
-      console.log('MockFileUploadService: Calling fileUploadService.saveFile...');
-      const result = await fileUploadService.saveFile(file);
-      
-      console.log('MockFileUploadService: File uploaded successfully:', result);
-      
-      return result;
-    } catch (error) {
-      console.error('MockFileUploadService: Upload failed with error:', error);
-      throw error;
-    }
+    // Use our new image storage service
+    const imageInfo = await imageStorageService.storeImage(file);
+    
+    console.log('File uploaded successfully:', imageInfo);
+    
+    return {
+      url: imageInfo.url,
+      id: imageInfo.id
+    };
   }
 }
 
