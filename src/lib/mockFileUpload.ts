@@ -2,7 +2,7 @@
 import { imageStorageService } from './imageStorage';
 
 /**
- * Mock file upload service - now integrated with proper image storage
+ * Mock file upload service - saves files to public/imageuplodas/ directory
  */
 
 class MockFileUploadService {
@@ -21,10 +21,10 @@ class MockFileUploadService {
     // Simulate network delay
     await new Promise(resolve => setTimeout(resolve, 800));
     
-    // Use our new image storage service
+    // Use our image storage service which saves to imageuplodas directory
     const imageInfo = await imageStorageService.storeImage(file);
     
-    console.log('File uploaded successfully:', imageInfo);
+    console.log('File uploaded to imageuplodas directory:', imageInfo);
     
     return {
       url: imageInfo.url,

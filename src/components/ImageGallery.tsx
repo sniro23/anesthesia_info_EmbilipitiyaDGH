@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -27,22 +26,22 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
   if (!images || images.length === 0) return null;
 
-  // Process image paths with improved URL handling
+  // Process image paths to ensure they use imageuplodas directory
   const processedImages = images.map(image => {
     let src = image.src;
     
     // Use our storage service to get the proper display URL
-    if (src.startsWith('/lovable-uploads/')) {
+    if (src.startsWith('/imageuplodas/')) {
       src = imageStorageService.getDisplayUrl(src);
     }
     
     return { ...image, src };
   });
 
-  console.log("ImageGallery rendering:", processedImages.length, "images");
+  console.log("ImageGallery rendering:", processedImages.length, "images from imageuplodas directory");
 
   const handleImageError = (imageSrc: string) => {
-    console.error("Image failed to load:", imageSrc);
+    console.error("Image failed to load from imageuplodas:", imageSrc);
     setImageErrors(prev => new Set([...prev, imageSrc]));
   };
 

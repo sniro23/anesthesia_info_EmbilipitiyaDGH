@@ -1,39 +1,38 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ImageData } from '@/components/ImageGallery';
 import { imageStorageService } from '@/lib/imageStorage';
 
-// Sample initial data
+// Initial data with images from public/imageuplodas/ directory
 const initialImages: Record<string, ImageData[]> = {
   'before.qa1': [
     { 
-      src: "/lovable-uploads/608af697-e9b5-487a-befd-b3732af98807.png", 
+      src: "/imageuplodas/608af697-e9b5-487a-befd-b3732af98807.png", 
       alt: "Doctor and patient consultation in medical office",
       caption: "Pre-anesthesia consultation and assessment"
     }
   ],
   'during.qa1': [
     { 
-      src: "/lovable-uploads/0ea6d54e-390a-4ee9-ba5c-109568840422.png", 
+      src: "/imageuplodas/0ea6d54e-390a-4ee9-ba5c-109568840422.png", 
       alt: "Patient during surgery with monitoring equipment",
       caption: "Anesthesia monitoring during surgery"
     },
     { 
-      src: "/lovable-uploads/130acc06-67a9-466f-a6ad-f05f720e7df9.png", 
+      src: "/imageuplodas/130acc06-67a9-466f-a6ad-f05f720e7df9.png", 
       alt: "Surgical team performing operation in operating room",
       caption: "Medical team during surgery with modern equipment"
     }
   ],
   'during.qa2': [
     { 
-      src: "/lovable-uploads/f49d3076-062b-4065-847a-37b4fc4916a3.png", 
+      src: "/imageuplodas/f49d3076-062b-4065-847a-37b4fc4916a3.png", 
       alt: "Different types of anesthesia administration",
       caption: "Regional anesthesia being administered"
     }
   ],
   'during.qa3': [
     { 
-      src: "/lovable-uploads/5e8755f9-3478-4ccc-b5fc-50041e16be04.png", 
+      src: "/imageuplodas/5e8755f9-3478-4ccc-b5fc-50041e16be04.png", 
       alt: "Surgical team in operating room with patient monitoring",
       caption: "Patient being monitored while the surgeon performs the surgery"
     }
@@ -62,6 +61,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const savedImages = localStorage.getItem(IMAGE_STORAGE_KEY);
       if (savedImages) {
         const parsed = JSON.parse(savedImages);
+        console.log('Loaded images from localStorage:', parsed);
         // Merge with initial images to ensure we don't lose default content
         return { ...initialImages, ...parsed };
       }
@@ -69,6 +69,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       console.error("Failed to load saved images:", error);
     }
     
+    console.log('Using initial images from imageuplodas directory:', initialImages);
     return initialImages;
   };
 
@@ -88,7 +89,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === IMAGE_STORAGE_KEY) {
-        console.log("Storage changed, reloading images");
+        console.log("Storage changed from another tab, reloading images");
         setImages(loadSavedImages());
       }
     };
@@ -100,21 +101,21 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
   }, []);
 
-  // Process image paths to ensure they work with our storage system
+  // Process image paths to use imageuplodas directory
   const processImagePath = (image: ImageData): ImageData => {
     if (!image.src) return image;
     
     let src = image.src;
     
-    // Ensure paths start with /lovable-uploads/ for consistency
-    if (src.startsWith('public/lovable-uploads/')) {
-      src = src.replace('public/', '/');
-    } else if (src.startsWith('/public/lovable-uploads/')) {
-      src = src.replace('/public/', '/');
+    // Convert old lovable-uploads paths to imageuplodas paths
+    if (src.startsWith('/lovable-uploads/')) {
+      const filename = src.split('/').pop();
+      src = `/imageuplodas/${filename}`;
+      console.log(`Converted path from lovable-uploads to imageuplodas: ${src}`);
     }
     
-    // Get the display URL from our storage service
-    if (src.startsWith('/lovable-uploads/')) {
+    // Ensure paths start with /imageuplodas/ for new uploads
+    if (src.startsWith('/imageuplodas/')) {
       src = imageStorageService.getDisplayUrl(src);
     }
     
@@ -189,3 +190,5 @@ export const useImageData = () => {
   }
   return context;
 };
+
+export default ImageDataProvider;

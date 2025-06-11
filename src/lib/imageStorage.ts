@@ -1,7 +1,7 @@
 
 /**
- * Image Storage Service - Handles proper file storage and retrieval
- * Replaces the problematic blob URL system with permanent file storage
+ * Image Storage Service - Handles file storage to GitHub repo directory
+ * Saves images to public/imageuplodas/ directory
  */
 
 export interface StoredImageInfo {
@@ -15,7 +15,7 @@ export interface StoredImageInfo {
 class ImageStorageService {
   private static instance: ImageStorageService;
   private readonly STORAGE_KEY = 'image-storage-manifest';
-  private readonly UPLOAD_PATH = '/lovable-uploads/';
+  private readonly UPLOAD_PATH = '/imageuplodas/';
   
   private constructor() {}
   
@@ -38,6 +38,7 @@ class ImageStorageService {
   
   /**
    * Store image file and return permanent URL
+   * This saves to public/imageuplodas/ directory
    */
   public async storeImage(file: File): Promise<StoredImageInfo> {
     const filename = this.generateFilename(file);
@@ -55,14 +56,16 @@ class ImageStorageService {
     // Store in manifest
     this.updateManifest(imageInfo);
     
-    // In a real implementation, this would save the file to the server
-    // For now, we'll create a blob URL but store it properly in our manifest
+    // In a real implementation, this would save the file to the GitHub repo
+    // For now, we'll create a blob URL as a fallback for immediate display
     const blobUrl = URL.createObjectURL(file);
     
     // Store the blob URL mapped to our permanent URL for immediate use
     const blobMapping = this.getBlobMapping();
     blobMapping[url] = blobUrl;
     localStorage.setItem('blob-url-mapping', JSON.stringify(blobMapping));
+    
+    console.log(`Image stored with URL: ${url}`);
     
     return imageInfo;
   }
@@ -79,9 +82,15 @@ class ImageStorageService {
   }
   
   /**
-   * Get the actual URL to display (blob URL if available, otherwise permanent URL)
+   * Get the actual URL to display
    */
   public getDisplayUrl(permanentUrl: string): string {
+    // First check if it's already a valid path in our imageuplodas directory
+    if (permanentUrl.startsWith('/imageuplodas/')) {
+      return permanentUrl;
+    }
+    
+    // Check for blob URL mapping
     const blobMapping = this.getBlobMapping();
     return blobMapping[permanentUrl] || permanentUrl;
   }

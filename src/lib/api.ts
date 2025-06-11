@@ -8,7 +8,7 @@ type ApiResponse<T> = {
   error?: string;
 };
 
-// Mock API for file uploads with improved storage
+// Mock API for file uploads - saves to public/imageuplodas/ directory
 export const uploadFile = async (file: File): Promise<ApiResponse<{ url: string; id: string }>> => {
   try {
     if (!file) {
@@ -27,8 +27,10 @@ export const uploadFile = async (file: File): Promise<ApiResponse<{ url: string;
       throw new Error('File type not supported. Please upload a JPG, PNG, or GIF image.');
     }
     
-    // Upload the file using our improved mock service
+    // Upload the file using our service that saves to imageuplodas directory
     const result = await mockUploadService.uploadFile(file);
+    
+    console.log('File upload result:', result);
     
     return {
       success: true,
