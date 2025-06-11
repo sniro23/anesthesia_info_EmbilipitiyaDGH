@@ -1,7 +1,7 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ImageData } from '@/components/ImageGallery';
 import { imageStorageService } from '@/lib/imageStorage';
+import { imageCleanupService } from '@/lib/imageCleanup';
 
 // Sample initial data
 const initialImages: Record<string, ImageData[]> = {
@@ -62,6 +62,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const savedImages = localStorage.getItem(IMAGE_STORAGE_KEY);
       if (savedImages) {
         const parsed = JSON.parse(savedImages);
+        console.log('Loaded images from localStorage:', parsed);
         // Merge with initial images to ensure we don't lose default content
         return { ...initialImages, ...parsed };
       }
@@ -69,6 +70,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       console.error("Failed to load saved images:", error);
     }
     
+    console.log('Using initial images:', initialImages);
     return initialImages;
   };
 
@@ -76,6 +78,17 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   
   // Clean up invalid images on startup
   useEffect(() => {
+    console.log('Running image cleanup on startup...');
+    const stats = imageCleanupService.getImageStats();
+    console.log('Image stats before cleanup:', stats);
+    
+    const cleanup = imageCleanupService.cleanupInvalidImages();
+    if (cleanup.removed > 0) {
+      console.log(`Cleaned up ${cleanup.removed} invalid images`);
+      // Reload images after cleanup
+      setImages(loadSavedImages());
+    }
+    
     imageStorageService.cleanupInvalidImages();
   }, []);
   
@@ -93,7 +106,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === IMAGE_STORAGE_KEY) {
-        console.log("Storage changed, reloading images");
+        console.log("Storage changed from another tab, reloading images");
         setImages(loadSavedImages());
       }
     };
@@ -105,23 +118,34 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
   }, []);
 
-  // Process image paths to ensure they work properly
+  // Validate and process image paths
   const processImagePath = (image: ImageData): ImageData => {
-    if (!image.src) return image;
+    if (!image.src) {
+      console.warn('Image has no src:', image);
+      return image;
+    }
     
     let src = image.src;
     
-    // Handle different path formats
+    // Handle different path formats and clean them up
     if (src.startsWith('public/lovable-uploads/')) {
       src = src.replace('public/', '/');
+      console.log('Fixed public path:', src);
     } else if (src.startsWith('/public/lovable-uploads/')) {
       src = src.replace('/public/', '/');
+      console.log('Fixed /public path:', src);
     }
     
-    // Validate the image and provide fallback
-    if (!src.startsWith('blob:') && !src.startsWith('/lovable-uploads/') && !src.startsWith('http')) {
-      console.warn('Invalid image path detected:', src);
-      // Use a placeholder or default image
+    // Validate the image URL format
+    const isValid = src.startsWith('blob:') || 
+                   src.startsWith('data:') || 
+                   src.startsWith('/lovable-uploads/') || 
+                   src.startsWith('http://') || 
+                   src.startsWith('https://') ||
+                   src === '/placeholder.svg';
+    
+    if (!isValid) {
+      console.warn('Invalid image path detected, using placeholder:', src);
       src = '/placeholder.svg';
     }
     
@@ -131,11 +155,12 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const getImagesForSection = (sectionId: string) => {
     const sectionImages = images[sectionId] || [];
     const processedImages = sectionImages.map(processImagePath);
-    console.log(`Getting images for section ${sectionId}:`, processedImages);
+    console.log(`Getting ${processedImages.length} images for section ${sectionId}:`, processedImages);
     return processedImages;
   };
 
   const updateImagesForSection = (sectionId: string, newImages: ImageData[]) => {
+    console.log(`Updating images for section ${sectionId} with ${newImages.length} images`);
     setImages(prev => ({
       ...prev,
       [sectionId]: newImages.map(processImagePath)
@@ -152,6 +177,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const removeImage = (sectionId: string, index: number) => {
+    console.log(`Removing image at index ${index} from section ${sectionId}`);
     setImages(prev => {
       if (!prev[sectionId]) return prev;
       
@@ -161,6 +187,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       // Clean up blob URL if it exists
       if (removedImage?.src.startsWith('blob:')) {
         URL.revokeObjectURL(removedImage.src);
+        console.log('Revoked blob URL:', removedImage.src);
       }
       
       newImages.splice(index, 1);
@@ -173,6 +200,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const updateImage = (sectionId: string, index: number, image: ImageData) => {
+    console.log(`Updating image at index ${index} in section ${sectionId}:`, image);
     setImages(prev => {
       if (!prev[sectionId]) return prev;
       
@@ -182,6 +210,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const oldImage = newImages[index];
       if (oldImage?.src.startsWith('blob:')) {
         URL.revokeObjectURL(oldImage.src);
+        console.log('Revoked old blob URL:', oldImage.src);
       }
       
       newImages[index] = processImagePath(image);
@@ -214,3 +243,5 @@ export const useImageData = () => {
   }
   return context;
 };
+
+export default ImageDataProvider;

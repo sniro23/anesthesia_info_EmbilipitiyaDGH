@@ -23,8 +23,12 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
+  const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
 
-  if (!images || images.length === 0) return null;
+  if (!images || images.length === 0) {
+    console.log("ImageGallery: No images provided");
+    return null;
+  }
 
   console.log("ImageGallery rendering:", images.length, "images", images);
 
@@ -33,9 +37,31 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
     setImageErrors(prev => new Set([...prev, imageSrc]));
   };
 
+  const handleImageLoad = (imageSrc: string) => {
+    console.log('Image loaded successfully:', imageSrc);
+    setLoadedImages(prev => new Set([...prev, imageSrc]));
+  };
+
+  const isValidImageUrl = (src: string): boolean => {
+    if (!src) return false;
+    
+    // Allow blob URLs, data URLs, and proper file paths
+    if (src.startsWith('blob:') || src.startsWith('data:')) return true;
+    if (src.startsWith('/lovable-uploads/')) return true;
+    if (src.startsWith('http://') || src.startsWith('https://')) return true;
+    if (src === '/placeholder.svg') return true;
+    
+    console.warn('Invalid image URL format:', src);
+    return false;
+  };
+
   const renderImage = (image: ImageData, index: number) => {
-    // Use placeholder if image failed to load or has invalid src
-    const shouldShowPlaceholder = imageErrors.has(image.src) || !image.src;
+    const hasError = imageErrors.has(image.src);
+    const isLoaded = loadedImages.has(image.src);
+    const isValidUrl = isValidImageUrl(image.src);
+    
+    // Show placeholder if image failed to load, has invalid src, or no src
+    const shouldShowPlaceholder = hasError || !isValidUrl || !image.src;
     
     if (shouldShowPlaceholder) {
       return (
@@ -43,21 +69,27 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           key={`placeholder-${index}`}
           className="w-full h-full flex items-center justify-center bg-neutral-100 text-neutral-400 text-sm"
         >
-          Image not available
+          {!image.src ? 'No image' : 'Image not available'}
         </div>
       );
     }
 
     return (
-      <img 
-        key={`${image.src}-${index}`}
-        src={image.src} 
-        alt={image.alt || "Image"} 
-        className="w-full h-full object-cover" 
-        onError={() => handleImageError(image.src)}
-        loading="lazy"
-        onLoad={() => console.log('Image loaded successfully:', image.src)}
-      />
+      <div key={`image-container-${index}`} className="relative w-full h-full">
+        <img 
+          src={image.src} 
+          alt={image.alt || "Image"} 
+          className="w-full h-full object-cover" 
+          onError={() => handleImageError(image.src)}
+          onLoad={() => handleImageLoad(image.src)}
+          loading="lazy"
+        />
+        {!isLoaded && !hasError && (
+          <div className="absolute inset-0 bg-neutral-100 flex items-center justify-center">
+            <div className="text-sm text-neutral-500">Loading...</div>
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -115,7 +147,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
             <div className="p-2 text-sm text-center text-neutral-600 bg-neutral-50">
               {activeImage.caption}
             </div>
-            )}
+          )}
           
           {/* Dots indicator */}
           {images.length > 1 && (

@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback, useEffect } from 'react';
 import { useImageData } from '@/contexts/ImageDataContext';
 import { ImageData } from '@/components/ImageGallery';
@@ -6,6 +5,7 @@ import { Plus, X, Upload, Edit, Image, RefreshCcw } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
+import { mockUploadService } from '@/lib/mockFileUpload';
 
 interface ImageFormProps {
   image: ImageData;
@@ -20,44 +20,45 @@ const ImageForm: React.FC<ImageFormProps> = ({ image, onChange }) => {
     const file = e.target.files?.[0];
     if (!file) return;
     
-    // Before upload, show a local preview
+    console.log('File selected for upload:', file.name, file.size, file.type);
+    
+    // Create preview immediately
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === 'string') {
         setPreviewUrl(reader.result);
+        console.log('Preview created for file');
       }
     };
     reader.readAsDataURL(file);
     
-    // Start upload process
     setIsUploading(true);
     
-    // We're using a simple FormData to upload the file
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
+      console.log('Starting file upload process...');
       
-      if (!response.ok) {
-        throw new Error('Upload failed');
-      }
+      // Use our existing upload service instead of the broken API call
+      const result = await mockUploadService.uploadFile(file);
       
-      const data = await response.json();
+      console.log('Upload successful:', result);
       
-      // Store the URL without the 'public/' prefix since it's served from the root
-      const imagePath = data.url;
-      onChange({ ...image, src: imagePath });
+      // Update the image with the new URL
+      onChange({ ...image, src: result.url });
       toast.success('Image uploaded successfully');
+      setPreviewUrl(null); // Clear preview since we have the real image now
+      
     } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('Failed to upload image. Please try again.');
+      console.error('Upload failed:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to upload image');
+      setPreviewUrl(null);
     } finally {
       setIsUploading(false);
     }
+  }, [image, onChange]);
+
+  const handleUrlChange = useCallback((url: string) => {
+    console.log('Manual URL entered:', url);
+    onChange({ ...image, src: url });
   }, [image, onChange]);
 
   return (
@@ -69,13 +70,13 @@ const ImageForm: React.FC<ImageFormProps> = ({ image, onChange }) => {
             <Input
               type="text"
               value={image.src}
-              onChange={(e) => onChange({ ...image, src: e.target.value })}
+              onChange={(e) => handleUrlChange(e.target.value)}
               className="flex-1"
               placeholder="Enter image URL or upload a file"
             />
             <label className="cursor-pointer flex items-center justify-center px-4 py-2 border rounded bg-neutral-100 hover:bg-neutral-200">
               <Upload size={16} className="mr-2" />
-              <span>Upload</span>
+              <span>{isUploading ? 'Uploading...' : 'Upload'}</span>
               <input
                 type="file"
                 className="hidden"
@@ -86,7 +87,7 @@ const ImageForm: React.FC<ImageFormProps> = ({ image, onChange }) => {
             </label>
           </div>
           {isUploading && (
-            <div className="mt-2 text-sm text-neutral-500">Uploading image, please wait...</div>
+            <div className="mt-2 text-sm text-blue-600">Uploading image, please wait...</div>
           )}
         </div>
         
@@ -113,17 +114,26 @@ const ImageForm: React.FC<ImageFormProps> = ({ image, onChange }) => {
       
       {(image.src || previewUrl) && (
         <div className="mt-2 p-2 border rounded">
-          <img
-            src={previewUrl || image.src}
-            alt={image.alt || "Preview"}
-            className="max-h-40 mx-auto object-contain"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = "/placeholder.svg";
-            }}
-          />
-          {previewUrl && !image.src && (
+          <div className="relative">
+            <img
+              src={previewUrl || image.src}
+              alt={image.alt || "Preview"}
+              className="max-h-40 mx-auto object-contain"
+              onLoad={() => console.log('Preview image loaded successfully:', previewUrl || image.src)}
+              onError={(e) => {
+                console.error('Preview image failed to load:', previewUrl || image.src);
+                (e.target as HTMLImageElement).src = "/placeholder.svg";
+              }}
+            />
+            {previewUrl && (
+              <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                <div className="bg-white px-2 py-1 rounded text-xs">Preview</div>
+              </div>
+            )}
+          </div>
+          {previewUrl && (
             <div className="text-center text-sm text-neutral-500 mt-2">
-              Preview (upload in progress)
+              Preview - upload in progress
             </div>
           )}
         </div>
@@ -145,26 +155,48 @@ const SectionImages: React.FC<SectionImagesProps> = ({ sectionId }) => {
   const images = getImagesForSection(sectionId);
 
   const handleAddImage = () => {
+    console.log('Adding new image to section:', sectionId);
     setCurrentImage({ src: '', alt: '' });
     setEditingIndex(null);
     setIsDialogOpen(true);
   };
 
   const handleEditImage = (index: number) => {
+    console.log('Editing image at index:', index, 'in section:', sectionId);
     setCurrentImage(images[index]);
     setEditingIndex(index);
     setIsDialogOpen(true);
   };
 
   const handleSaveImage = () => {
+    console.log('Saving image:', currentImage);
+    
+    if (!currentImage.src.trim()) {
+      toast.error('Please provide an image URL or upload a file');
+      return;
+    }
+    
+    if (!currentImage.alt.trim()) {
+      toast.error('Please provide alt text for accessibility');
+      return;
+    }
+    
     if (editingIndex !== null) {
       updateImage(sectionId, editingIndex, currentImage);
       toast.success('Image updated successfully');
+      console.log('Image updated at index:', editingIndex);
     } else {
       addImage(sectionId, currentImage);
       toast.success('Image added successfully');
+      console.log('New image added to section:', sectionId);
     }
     setIsDialogOpen(false);
+  };
+
+  const handleRemoveImage = (index: number) => {
+    console.log('Removing image at index:', index, 'from section:', sectionId);
+    removeImage(sectionId, index);
+    toast.success('Image removed');
   };
 
   return (
@@ -192,6 +224,7 @@ const SectionImages: React.FC<SectionImagesProps> = ({ sectionId }) => {
                     src={image.src}
                     alt={image.alt}
                     className="w-full h-full object-cover"
+                    onLoad={() => console.log('Admin thumbnail loaded:', image.src)}
                     onError={(e) => {
                       console.error("Admin image failed to load:", image.src);
                       (e.target as HTMLImageElement).src = "/placeholder.svg";
@@ -218,7 +251,7 @@ const SectionImages: React.FC<SectionImagesProps> = ({ sectionId }) => {
                     Edit
                   </button>
                   <button
-                    onClick={() => removeImage(sectionId, index)}
+                    onClick={() => handleRemoveImage(index)}
                     className="flex items-center gap-1 text-xs px-2 py-1 bg-red-100 hover:bg-red-200 rounded text-red-600"
                   >
                     <X size={12} />
@@ -270,13 +303,17 @@ interface ImageAdminProps {
 }
 
 const ImageAdmin: React.FC<ImageAdminProps> = ({ sections }) => {
-  // Force refresh to ensure localStorage changes are reflected
   const [refreshKey, setRefreshKey] = useState(0);
   
   const handleRefresh = () => {
+    console.log('Refreshing image admin data');
     setRefreshKey(prev => prev + 1);
     toast.success("Image data refreshed");
   };
+
+  useEffect(() => {
+    console.log('ImageAdmin mounted with sections:', sections);
+  }, [sections]);
 
   return (
     <div className="p-6 max-w-4xl mx-auto" key={refreshKey}>
