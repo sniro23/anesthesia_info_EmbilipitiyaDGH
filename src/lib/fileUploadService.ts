@@ -1,6 +1,6 @@
 
 /**
- * File Upload Service - Handles saving files to public directory
+ * File Upload Service - Handles saving files as data URLs
  */
 
 import { imageStorageService } from './imageStorage';
@@ -18,7 +18,7 @@ class FileUploadService {
   }
   
   /**
-   * Save file to public directory
+   * Save file as data URL
    */
   public async saveFile(file: File): Promise<{ url: string; id: string }> {
     console.log('FileUploadService: Starting saveFile for:', file.name, file.size, file.type);
@@ -51,11 +51,11 @@ class FileUploadService {
   public validateFile(file: File): { valid: boolean; error?: string } {
     console.log('FileUploadService: Validating file:', file.name, file.size, file.type);
     
-    // Check file size (max 5MB for individual files)
-    const maxSizeInBytes = 5 * 1024 * 1024;
+    // Check file size (max 2MB for data URL storage)
+    const maxSizeInBytes = 2 * 1024 * 1024;
     if (file.size > maxSizeInBytes) {
       console.error('FileUploadService: File too large:', file.size, 'bytes');
-      return { valid: false, error: 'File size exceeds 5MB limit' };
+      return { valid: false, error: 'File size exceeds 2MB limit. Please compress your image.' };
     }
     
     // Check file type

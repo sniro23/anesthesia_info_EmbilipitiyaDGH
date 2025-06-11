@@ -1,14 +1,12 @@
 /**
- * Image Storage Service - Handles file storage directly to public directory
+ * Image Storage Service - Handles image storage using data URLs
  */
-
-import { fileSystemHandler } from './fileSystemHandler';
 
 export interface StoredImageInfo {
   id: string;
   filename: string;
   originalName: string;
-  url: string;
+  url: string; // This will be a data URL
   uploadDate: string;
 }
 
@@ -26,6 +24,24 @@ class ImageStorageService {
   }
   
   /**
+   * Convert file to data URL for reliable storage
+   */
+  private async fileToDataUrl(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          resolve(reader.result);
+        } else {
+          reject(new Error('Failed to convert file to data URL'));
+        }
+      };
+      reader.onerror = () => reject(new Error('FileReader error'));
+      reader.readAsDataURL(file);
+    });
+  }
+  
+  /**
    * Generate a unique filename for uploaded images
    */
   private generateFilename(originalFile: File): string {
@@ -36,30 +52,30 @@ class ImageStorageService {
   }
   
   /**
-   * Store image file directly to public directory
+   * Store image as data URL in localStorage
    */
   public async storeImage(file: File): Promise<StoredImageInfo> {
     console.log('ImageStorageService: Starting storeImage for:', file.name);
     
     try {
+      // Convert file to data URL
+      const dataUrl = await this.fileToDataUrl(file);
+      
       const filename = this.generateFilename(file);
       const id = `img-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
       
-      // Save file using file system handler
-      const url = await fileSystemHandler.saveToUploads(file, filename);
-      
-      console.log('ImageStorageService: File saved successfully');
+      console.log('ImageStorageService: File converted to data URL successfully');
       
       const imageInfo: StoredImageInfo = {
         id,
         filename,
         originalName: file.name,
-        url,
+        url: dataUrl,
         uploadDate: new Date().toISOString()
       };
       
-      // Store only metadata in manifest (not the actual image data)
-      console.log('ImageStorageService: Updating manifest with metadata only...');
+      // Store in manifest
+      console.log('ImageStorageService: Updating manifest...');
       this.updateManifest(imageInfo);
       
       console.log('ImageStorageService: Image stored successfully');
@@ -72,16 +88,14 @@ class ImageStorageService {
   }
   
   /**
-   * Get the display URL with fallback to temp URL if needed
+   * Get the display URL (data URL is already ready for display)
    */
   public getDisplayUrl(url: string): string {
-    // Try to get temp URL first for immediate display
-    const tempUrl = fileSystemHandler.getTempUrl(url);
-    return tempUrl || url;
+    return url; // Data URLs are already ready for display
   }
   
   /**
-   * Update the image manifest (metadata only, no image data)
+   * Update the image manifest
    */
   private updateManifest(imageInfo: StoredImageInfo): void {
     try {
@@ -91,6 +105,9 @@ class ImageStorageService {
       console.log('ImageStorageService: Manifest updated successfully');
     } catch (error) {
       console.error('ImageStorageService: Failed to update image manifest:', error);
+      if (error instanceof DOMException && error.name === 'QuotaExceededError') {
+        throw new Error('Storage quota exceeded. Please remove some images and try again.');
+      }
       throw error;
     }
   }
@@ -107,7 +124,7 @@ class ImageStorageService {
   }
   
   /**
-   * Clean up old entries and check storage usage
+   * Clean up old entries
    */
   public cleanupInvalidImages(): void {
     try {
@@ -115,7 +132,8 @@ class ImageStorageService {
       const validManifest: Record<string, StoredImageInfo> = {};
       
       Object.entries(manifest).forEach(([key, imageInfo]) => {
-        if (imageInfo.url && imageInfo.url.startsWith('/lovable-uploads/')) {
+        // Keep all data URLs and valid image URLs
+        if (imageInfo.url && (imageInfo.url.startsWith('data:') || imageInfo.url.startsWith('http'))) {
           validManifest[key] = imageInfo;
         }
       });
@@ -147,7 +165,7 @@ class ImageStorageService {
       console.log(`Storage usage: ${totalSize} bytes (${usedPercentage.toFixed(1)}%)`);
       
       return {
-        available: usedPercentage < 90, // Consider 90% as the safe limit
+        available: usedPercentage < 85, // Consider 85% as the safe limit
         used: totalSize,
         quota: estimatedQuota
       };
@@ -162,24 +180,20 @@ class ImageStorageService {
    */
   public async validateImageUrl(url: string): Promise<boolean> {
     return new Promise((resolve) => {
-      if (url.startsWith('/lovable-uploads/')) {
-        // For local uploads, try to load the image
-        const img = new Image();
-        img.onload = () => resolve(true);
-        img.onerror = () => resolve(false);
-        img.src = url;
-        
-        // Set a timeout
-        setTimeout(() => resolve(false), 5000);
-      } else if (url.startsWith('data:') || url.startsWith('blob:')) {
+      if (url.startsWith('data:')) {
+        // Data URLs are always valid if they start with data:
         resolve(true);
-      } else {
+      } else if (url.startsWith('blob:')) {
+        resolve(true);
+      } else if (url.startsWith('http://') || url.startsWith('https://')) {
         const img = new Image();
         img.onload = () => resolve(true);
         img.onerror = () => resolve(false);
         img.src = url;
         
         setTimeout(() => resolve(false), 5000);
+      } else {
+        resolve(false);
       }
     });
   }

@@ -127,7 +127,12 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     
     let src = image.src;
     
-    // Handle different path formats and clean them up
+    // Data URLs are already ready to use
+    if (src.startsWith('data:')) {
+      return { ...image, src };
+    }
+    
+    // Handle legacy path formats (but these won't work when published)
     if (src.startsWith('public/lovable-uploads/')) {
       src = src.replace('public/', '/');
       console.log('Fixed public path:', src);
@@ -137,8 +142,8 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
     
     // Validate the image URL format
-    const isValid = src.startsWith('blob:') || 
-                   src.startsWith('data:') || 
+    const isValid = src.startsWith('data:') || 
+                   src.startsWith('blob:') || 
                    src.startsWith('/lovable-uploads/') || 
                    src.startsWith('http://') || 
                    src.startsWith('https://') ||

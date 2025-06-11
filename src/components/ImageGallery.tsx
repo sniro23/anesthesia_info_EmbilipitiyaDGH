@@ -1,9 +1,7 @@
-
 import React, { useState } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { fileSystemHandler } from '@/lib/fileSystemHandler';
 
 export interface ImageData {
   src: string;
@@ -43,23 +41,16 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
     setLoadedImages(prev => new Set([...prev, imageSrc]));
   };
 
-  const getImageSrc = (src: string): string => {
-    // For lovable-uploads paths, try to get temp URL first
-    if (src.startsWith('/lovable-uploads/')) {
-      const tempUrl = fileSystemHandler.getTempUrl(src);
-      return tempUrl || src;
-    }
-    return src;
-  };
-
   const isValidImageUrl = (src: string): boolean => {
     if (!src) return false;
     
-    // Allow blob URLs, data URLs, and proper file paths
-    if (src.startsWith('blob:') || src.startsWith('data:')) return true;
-    if (src.startsWith('/lovable-uploads/')) return true;
+    // Allow data URLs, blob URLs, and HTTP URLs
+    if (src.startsWith('data:') || src.startsWith('blob:')) return true;
     if (src.startsWith('http://') || src.startsWith('https://')) return true;
     if (src === '/placeholder.svg') return true;
+    
+    // Legacy support for lovable-uploads paths (though they won't work when published)
+    if (src.startsWith('/lovable-uploads/')) return true;
     
     console.warn('Invalid image URL format:', src);
     return false;
@@ -84,12 +75,10 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
       );
     }
 
-    const imageSrc = getImageSrc(image.src);
-
     return (
       <div key={`image-container-${index}`} className="relative w-full h-full">
         <img 
-          src={imageSrc} 
+          src={image.src} 
           alt={image.alt || "Image"} 
           className="w-full h-full object-cover" 
           onError={() => handleImageError(image.src)}
