@@ -3,39 +3,60 @@ import { ImageData } from '@/components/ImageGallery';
 import { imageStorageService } from '@/lib/imageStorage';
 import { imageCleanupService } from '@/lib/imageCleanup';
 
-// Sample initial data - using placeholder.svg for all images since /lovable-uploads/ paths don't work when published
+// Initial data with actual image paths from GitHub repo
 const initialImages: Record<string, ImageData[]> = {
   'before.qa1': [
     { 
-      src: "/placeholder.svg", 
+      src: "/lovable-uploads/0ea6d54e-390a-4ee9-ba5c-109568840422.png", 
       alt: "Doctor and patient consultation in medical office",
       caption: "Pre-anesthesia consultation and assessment"
     }
   ],
   'during.qa1': [
     { 
-      src: "/placeholder.svg", 
+      src: "/lovable-uploads/15c9e1f1-0006-410c-93d8-a9c5953cb7b0.png", 
       alt: "Patient during surgery with monitoring equipment",
       caption: "Anesthesia monitoring during surgery"
     },
     { 
-      src: "/placeholder.svg", 
+      src: "/lovable-uploads/1972c871-c38b-4929-9994-210f4458b895.png", 
       alt: "Surgical team performing operation in operating room",
       caption: "Medical team during surgery with modern equipment"
     }
   ],
   'during.qa2': [
     { 
-      src: "/placeholder.svg", 
+      src: "/lovable-uploads/36dbc04b-890e-45d2-9347-ca375dc5525a.png", 
       alt: "Different types of anesthesia administration",
       caption: "Regional anesthesia being administered"
     }
   ],
   'during.qa3': [
     { 
-      src: "/placeholder.svg", 
+      src: "/lovable-uploads/5e8755f9-3478-4ccc-b5fc-50041e16be04.png", 
       alt: "Surgical team in operating room with patient monitoring",
       caption: "Patient being monitored while the surgeon performs the surgery"
+    }
+  ],
+  'after.qa1': [
+    { 
+      src: "/lovable-uploads/608af697-e9b5-487a-befd-b3732af98807.png", 
+      alt: "Patient in recovery room after surgery",
+      caption: "Post-operative recovery and monitoring"
+    }
+  ],
+  'after.qa2': [
+    { 
+      src: "/lovable-uploads/7c19deaa-b716-4c3d-a389-bc93e760d53c.png", 
+      alt: "Patient care after surgery",
+      caption: "Nursing care during recovery period"
+    }
+  ],
+  'after.qa3': [
+    { 
+      src: "/lovable-uploads/82af36d2-1142-4e33-9981-42de8cdebb4e.png", 
+      alt: "Patient discharge planning",
+      caption: "Discharge instructions and follow-up care"
     }
   ]
 };
@@ -118,7 +139,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
   }, []);
 
-  // Validate and process image paths - only allow valid URLs for published apps
+  // Validate and process image paths - allow valid URLs including lovable-uploads
   const processImagePath = (image: ImageData): ImageData => {
     if (!image.src) {
       console.warn('Image has no src:', image);
@@ -147,10 +168,9 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return { ...image, src };
     }
     
-    // Any /lovable-uploads/ paths are invalid when published - replace with placeholder
-    if (src.startsWith('/lovable-uploads/') || src.includes('lovable-uploads')) {
-      console.warn('Invalid lovable-uploads path detected, using placeholder:', src);
-      return { ...image, src: '/placeholder.svg' };
+    // lovable-uploads paths are valid - these exist in the GitHub repo
+    if (src.startsWith('/lovable-uploads/')) {
+      return { ...image, src };
     }
     
     // Any other path format is invalid - use placeholder
