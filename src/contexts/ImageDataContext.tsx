@@ -3,37 +3,37 @@ import { ImageData } from '@/components/ImageGallery';
 import { imageStorageService } from '@/lib/imageStorage';
 import { imageCleanupService } from '@/lib/imageCleanup';
 
-// Sample initial data
+// Sample initial data - using placeholder.svg for all images since /lovable-uploads/ paths don't work when published
 const initialImages: Record<string, ImageData[]> = {
   'before.qa1': [
     { 
-      src: "/lovable-uploads/608af697-e9b5-487a-befd-b3732af98807.png", 
+      src: "/placeholder.svg", 
       alt: "Doctor and patient consultation in medical office",
       caption: "Pre-anesthesia consultation and assessment"
     }
   ],
   'during.qa1': [
     { 
-      src: "/lovable-uploads/0ea6d54e-390a-4ee9-ba5c-109568840422.png", 
+      src: "/placeholder.svg", 
       alt: "Patient during surgery with monitoring equipment",
       caption: "Anesthesia monitoring during surgery"
     },
     { 
-      src: "/lovable-uploads/130acc06-67a9-466f-a6ad-f05f720e7df9.png", 
+      src: "/placeholder.svg", 
       alt: "Surgical team performing operation in operating room",
       caption: "Medical team during surgery with modern equipment"
     }
   ],
   'during.qa2': [
     { 
-      src: "/lovable-uploads/f49d3076-062b-4065-847a-37b4fc4916a3.png", 
+      src: "/placeholder.svg", 
       alt: "Different types of anesthesia administration",
       caption: "Regional anesthesia being administered"
     }
   ],
   'during.qa3': [
     { 
-      src: "/lovable-uploads/5e8755f9-3478-4ccc-b5fc-50041e16be04.png", 
+      src: "/placeholder.svg", 
       alt: "Surgical team in operating room with patient monitoring",
       caption: "Patient being monitored while the surgeon performs the surgery"
     }
@@ -118,11 +118,11 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
   }, []);
 
-  // Validate and process image paths
+  // Validate and process image paths - only allow valid URLs for published apps
   const processImagePath = (image: ImageData): ImageData => {
     if (!image.src) {
       console.warn('Image has no src:', image);
-      return image;
+      return { ...image, src: '/placeholder.svg' };
     }
     
     let src = image.src;
@@ -132,29 +132,30 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return { ...image, src };
     }
     
-    // Handle legacy path formats (but these won't work when published)
-    if (src.startsWith('public/lovable-uploads/')) {
-      src = src.replace('public/', '/');
-      console.log('Fixed public path:', src);
-    } else if (src.startsWith('/public/lovable-uploads/')) {
-      src = src.replace('/public/', '/');
-      console.log('Fixed /public path:', src);
+    // Blob URLs are valid
+    if (src.startsWith('blob:')) {
+      return { ...image, src };
     }
     
-    // Validate the image URL format
-    const isValid = src.startsWith('data:') || 
-                   src.startsWith('blob:') || 
-                   src.startsWith('/lovable-uploads/') || 
-                   src.startsWith('http://') || 
-                   src.startsWith('https://') ||
-                   src === '/placeholder.svg';
-    
-    if (!isValid) {
-      console.warn('Invalid image path detected, using placeholder:', src);
-      src = '/placeholder.svg';
+    // External URLs are valid
+    if (src.startsWith('http://') || src.startsWith('https://')) {
+      return { ...image, src };
     }
     
-    return { ...image, src };
+    // Placeholder is valid
+    if (src === '/placeholder.svg') {
+      return { ...image, src };
+    }
+    
+    // Any /lovable-uploads/ paths are invalid when published - replace with placeholder
+    if (src.startsWith('/lovable-uploads/') || src.includes('lovable-uploads')) {
+      console.warn('Invalid lovable-uploads path detected, using placeholder:', src);
+      return { ...image, src: '/placeholder.svg' };
+    }
+    
+    // Any other path format is invalid - use placeholder
+    console.warn('Invalid image path detected, using placeholder:', src);
+    return { ...image, src: '/placeholder.svg' };
   };
 
   const getImagesForSection = (sectionId: string) => {
@@ -250,3 +251,5 @@ export const useImageData = () => {
 };
 
 export default ImageDataProvider;
+
+}

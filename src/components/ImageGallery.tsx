@@ -44,14 +44,12 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   const isValidImageUrl = (src: string): boolean => {
     if (!src) return false;
     
-    // Allow data URLs, blob URLs, and HTTP URLs
+    // Allow data URLs, blob URLs, HTTP URLs, and placeholder
     if (src.startsWith('data:') || src.startsWith('blob:')) return true;
     if (src.startsWith('http://') || src.startsWith('https://')) return true;
     if (src === '/placeholder.svg') return true;
     
-    // Legacy support for lovable-uploads paths (though they won't work when published)
-    if (src.startsWith('/lovable-uploads/')) return true;
-    
+    // All other formats are invalid (including lovable-uploads paths)
     console.warn('Invalid image URL format:', src);
     return false;
   };
