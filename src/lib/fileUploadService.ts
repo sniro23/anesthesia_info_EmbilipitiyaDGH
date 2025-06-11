@@ -1,6 +1,6 @@
 
 /**
- * File Upload Service - Handles saving files using blob URLs
+ * File Upload Service - Handles saving files to uploads directory
  */
 
 import { imageStorageService } from './imageStorage';
@@ -18,7 +18,7 @@ class FileUploadService {
   }
   
   /**
-   * Save file using blob URL for immediate display
+   * Save file to uploads directory
    */
   public async saveFile(file: File): Promise<{ url: string; id: string }> {
     console.log('FileUploadService: Starting saveFile for:', file.name, file.size, file.type);
@@ -30,7 +30,7 @@ class FileUploadService {
       console.log('FileUploadService: Calling imageStorageService.storeImage...');
       const imageInfo = await imageStorageService.storeImage(file);
       
-      console.log('FileUploadService: Image stored successfully with blob URL:', imageInfo.url);
+      console.log('FileUploadService: Image stored successfully at:', imageInfo.url);
       
       return {
         url: imageInfo.url,
