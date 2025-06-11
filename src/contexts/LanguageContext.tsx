@@ -4,635 +4,104 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 type Language = 'en' | 'si' | 'ta';
 
 interface LanguageContextType {
-  currentLanguage: Language;
+  language: Language;
   setLanguage: (lang: Language) => void;
   t: (key: string) => string;
 }
-
-const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 const translations = {
   en: {
     // Navigation
     'nav.home': 'Home',
-    'nav.before': 'Before Surgery',
-    'nav.during': 'During Surgery', 
-    'nav.after': 'After Surgery',
+    'nav.beforeSurgery': 'Before Surgery',
+    'nav.duringSurgery': 'During Surgery',
+    'nav.afterSurgery': 'After Surgery',
     'nav.resources': 'Resources',
+    'nav.admin': 'Admin',
 
     // Hero Section
     'hero.title': 'Understanding Anaesthesia: What to expect before, during, and after your surgery',
     'hero.subtitle': 'Your guide to a safe, comfortable surgical experience',
-    'hero.intro': 'Anaesthesia is a medical specialty that allows you to have surgery safely and pain-free. Modern anaesthetic techniques are carefully monitored by your anaesthetist, who is dedicated to your comfort and wellbeing throughout your surgical journey.',
+    'hero.intro': 'Anaesthesia is a medical specialty that helps you undergo surgery without pain and safely. Today\'s modern anaesthetic techniques are carefully monitored by anaesthetists who are dedicated to your comfort and well-being.',
 
     // CTA Buttons
     'cta.before': 'Before Surgery',
-    'cta.during': 'During Surgery', 
+    'cta.during': 'During Surgery',
     'cta.after': 'After Surgery',
 
     // About Section
     'about.title': 'About This Resource',
     'about.whoTitle': 'Who We Are',
-    'about.who': 'A collaborative effort by Sri Lanka\'s Anaesthesia and Critical Care teams, dedicated to providing patients with reliable information.',
+    'about.who': 'This is a collaborative effort by Sri Lanka\'s Anaesthesia and Critical Care teams. Our goal is to share reliable information with patients.',
     'about.whyTitle': 'Why This Resource Exists',
-    'about.why': 'Created to answer common patient questions, reduce anxiety, and promote informed understanding about surgery and anaesthesia.',
+    'about.why': 'This was created to answer patients\' common questions, reduce their anxiety, and promote clear understanding about surgery.',
 
-    // What to Expect Cards
+    // What to Expect Section
     'whatToExpect.title': 'What to Expect',
     'whatToExpect.before.title': 'Before Surgery',
-    'whatToExpect.before.description': 'Learn about pre-operative assessments, fasting guidelines, and how to prepare mentally and physically for your procedure.',
-    'whatToExpect.during.title': 'During Surgery',
-    'whatToExpected.during.description': 'Understand the different types of anaesthesia, monitoring equipment, and what happens while you\'re under anaesthetic care.',
+    'whatToExpect.before.description': 'Pre-operative assessment, fasting guidelines, medication management, and preparation tips.',
+    'whatToExpected.during.title': 'During Surgery',
+    'whatToExpect.during.description': 'Types of anaesthesia, monitoring, safety measures, and what happens in the operating room.',
     'whatToExpect.after.title': 'After Surgery',
-    'whatToExpect.after.description': 'Know what to expect in recovery, pain management options, and discharge planning for a smooth transition home.',
+    'whatToExpect.after.description': 'Recovery process, pain management, side effects, and discharge planning.',
     'whatToExpect.learnMore': 'Learn More',
 
-    // Before Surgery Page
-    'before.title': 'Before Surgery',
-    'before.intro': 'Preparation is key to a successful surgical experience. Understanding what to expect and how to prepare can help reduce anxiety and ensure the best possible outcome.',
-
-    // Before Surgery Q&A
-    'before.qa1.question': 'What is pre-operative assessment?',
-    'before.qa1.answer1': 'This is a comprehensive review of your medical history, physical examination, blood tests, ECG and other investigations to identify any risks before anaesthesia and optimize your health.',
-    'before.qa1.answer2': 'During this assessment, your anaesthetist will:',
-    'before.qa1.list1': 'Review your medical history and previous surgeries',
-    'before.qa1.list2': 'Ask about allergies and current medications',
-    'before.qa1.list3': 'Perform a focused physical examination of your heart and lungs',
-    'before.qa1.list4': 'Evaluate test results including blood work and ECG',
-    'before.qa1.list5': 'Discuss the anaesthetic plan and answer your questions',
-
-    'before.qa2.question': 'Why is fasting required?',
-    'before.qa2.answer1': 'Fasting before surgery is essential to reduce the risk of stomach contents entering your lungs during anaesthesia, a serious complication called aspiration.',
-    'before.qa2.guidelines': 'Fasting Guidelines:',
-    'before.qa2.list1': 'Solid foods and milk: Stop 6 hours before surgery',
-    'before.qa2.list2': 'Clear fluids (water, tea without milk): Stop 2 hours before surgery',
-    'before.qa2.siptitle': 'Sip Till Send Program:',
-    'before.qa2.siptext1': 'Many hospitals now encourage patients to drink clear fluids up to 2 hours before surgery. This helps prevent dehydration and may improve your comfort.',
-    'before.qa2.siptext2': 'Ask your healthcare provider about the "Sip Till Send" approach.',
-
-    'before.qa3.question': 'Which medications should I avoid?',
-    'before.qa3.answer1': 'Some medications can interfere with anaesthesia or increase bleeding risk during surgery. Always inform your anaesthetist about all medications you take, including supplements.',
-    'before.qa3.subtitle': 'Medications that may need to be stopped or adjusted include:',
-    'before.qa3.list1': 'Blood thinners: Aspirin, clopidogrel, warfarin',
-    'before.qa3.list2': 'NSAIDs: Ibuprofen, diclofenac',
-    'before.qa3.list3': 'Herbal supplements: Ginkgo, garlic, fish oil',
-    'before.qa3.important': 'Important: Never stop medications without discussing with your doctor or anaesthetist first.',
-
-    'before.qa4.question': 'How should I prepare mentally and physically?',
-    'before.qa4.physical': 'Physical Preparation:',
-    'before.qa4.plist1': 'Get a good night\'s sleep before surgery',
-    'before.qa4.plist2': 'Follow specific instructions from your surgical team',
-    'before.qa4.plist3': 'Avoid alcohol for a week before surgery',
-    'before.qa4.plist4': 'If you smoke, try to stop or reduce before surgery',
-    'before.qa4.plist5': 'Follow specific pre-surgical showering instructions',
-    'before.qa4.mental': 'Mental Preparation:',
-    'before.qa4.mlist1': 'Ask questions during your pre-operative assessment to address any concerns',
-    'before.qa4.mlist2': 'Practice relaxation techniques like deep breathing or meditation',
-    'before.qa4.mlist3': 'Bring comfort items allowed by hospital guidelines',
-    'before.qa4.mlist4': 'Arrange support from family or friends for post-discharge',
-    'before.qa4.practical': 'Practical Preparation:',
-    'before.qa4.prlist1': 'Arrange transportation to and from the hospital',
-    'before.qa4.prlist2': 'Prepare your home for recovery (easy meals, comfortable rest area)',
-    'before.qa4.prlist3': 'Bring a list of your medications, allergies, and previous anaesthetic experiences',
-    'before.qa4.prlist4': 'Remove jewelry, makeup, and nail polish before surgery',
-    'before.qa4.prlist5': 'Follow specific pre-surgical showering instructions',
-
-    // During Surgery Page
-    'during.title': 'During Surgery',
-    'during.intro': 'Understanding what happens during your anaesthetic can help reduce anxiety and give you confidence in your care team.',
-
-    // During Surgery Q&A
-    'during.qa1.question': 'What types of anaesthesia are available?',
-    'during.qa1.general': 'General Anaesthesia (GA):',
-    'during.qa1.generalDesc': 'A drug-induced state of unconsciousness. You will be completely unaware and feel no pain during your surgery.',
-    'during.qa1.generalUse': 'Commonly used for: Major surgeries, body cavity operations, or when other types are not suitable.',
-    'during.qa1.spinal': 'Spinal/Epidural Anaesthesia:',
-    'during.qa1.spinalDesc': 'Injection of anaesthetic around the spinal cord to block nerve signals.',
-    'during.qa1.spinalUse': 'Commonly used for: Lower body surgeries, caesarean sections, hip/knee operations.',
-    'during.qa1.nerve': 'Peripheral Nerve Blocks:',
-    'during.qa1.nerveDesc': 'Injection of local anaesthetic near specific nerves to numb a particular area of the body.',
-    'during.qa1.nerveUse': 'Commonly used for: Arm, shoulder, or leg surgeries, providing targeted pain relief.',
-    'during.qa1.sedation': 'Sedation:',
-    'during.qa1.sedationDesc': 'Ranges from light relaxation to deep sedation, keeping you comfortable while still breathing on your own.',
-    'during.qa1.sedationUse': 'Used for: Diagnostic procedures, dental work, or minor procedures.',
-
-    'during.qa2.question': 'How does each type work?',
-    'during.qa2.general': 'General Anaesthesia:',
-    'during.qa2.generalDesc': 'Works through a combination of medications given through your IV line that:',
-    'during.qa2.generalList1': 'Induce unconsciousness',
-    'during.qa2.generalList2': 'Relax muscles',
-    'during.qa2.generalList3': 'Provide pain relief',
-    'during.qa2.generalList4': 'Maintain body functions',
-    'during.qa2.generalEnd': 'When surgery ends, your anaesthetist will stop the medications and you\'ll gradually wake up.',
-    'during.qa2.spinal': 'Spinal Anaesthesia:',
-    'during.qa2.spinalDesc': 'A local anaesthetic is injected into the spinal fluid:',
-    'during.qa2.spinalList1': 'Blocks nerve impulses from traveling up the spinal cord to the brain',
-    'during.qa2.spinalList2': 'Provides numbness and muscle relaxation in the lower body',
-    'during.qa2.spinalEnd': 'The effects typically wear off within 2-4 hours after surgery.',
-    'during.qa2.nerve': 'Peripheral Nerve Blocks:',
-    'during.qa2.nerveDesc': 'Using ultrasound guidance, local anaesthetic is injected around specific nerves. You remain conscious throughout.',
-    'during.qa2.sedation': 'Sedation:',
-    'during.qa2.sedationDesc': 'When sedation is used:',
-    'during.qa2.sedationList1': 'Medications are given through an IV for relaxation and comfort',
-    'during.qa2.sedationList2': 'Local anaesthetic may also be used to reduce pain',
-    'during.qa2.sedationList3': 'You may respond to verbal commands but not be fully aware',
-    'during.qa2.sedationList4': 'Memory of the procedure may be reduced',
-
-    'during.qa3.question': 'What are the risks and complications?',
-    'during.qa3.minor': 'Common Minor Side Effects:',
-    'during.qa3.minorList1': 'Shivering (20% of patients)',
-    'during.qa3.minorList2': 'Post-operative nausea and vomiting (25%)',
-    'during.qa3.minorList3': 'Sore throat from breathing tube (15%)',
-    'during.qa3.minorList4': 'Temporary confusion, especially in elderly (10%)',
-    'during.qa3.regional': 'Regional Anaesthesia Risks:',
-    'during.qa3.regionalList1': 'Headache from spinal puncture (1-2%)',
-    'during.qa3.regionalList2': 'Temporary neurological symptoms (0.5%)',
-    'during.qa3.regionalList3': 'Treatment includes hydration, caffeine, or epidural blood patch if needed',
-    'during.qa3.serious': 'Serious but Rare Complications:',
-    'during.qa3.seriousList1': 'Severe allergic reaction (1 in 10,000)',
-    'during.qa3.seriousList2': 'Malignant hyperthermia (less than 1 in 50,000)',
-    'during.qa3.seriousList3': 'Nerve injury (less than 1 in 100,000)',
-    'during.qa3.seriousList4': 'Prevention through careful history-taking and emergency preparedness',
-    'during.qa3.airway': 'Airway Complications:',
-    'during.qa3.airwayList1': 'Difficult intubation (1-3%)',
-    'during.qa3.airwayList2': 'Aspiration (less than 1%)',
-    'during.qa3.airwayList3': 'Managed with video laryngoscopy and rapid-sequence induction protocols',
-    'during.qa3.remember': 'Remember: Your anaesthetist is specially trained to prevent, recognize, and treat these complications. Modern anaesthesia is very safe.',
-
-    'during.qa4.question': 'How are you monitored during surgery?',
-    'during.qa4.standard': 'Standard Monitoring (ASA Guidelines):',
-    'during.qa4.standardList1': 'ECG (heart rhythm)',
-    'during.qa4.standardList2': 'Blood pressure (NIBP)',
-    'during.qa4.standardList3': 'Oxygen levels (SpO₂)',
-    'during.qa4.standardList4': 'Carbon dioxide levels (ETCO₂)',
-    'during.qa4.standardList5': 'Body temperature',
-    'during.qa4.advanced': 'Advanced Monitoring When Needed:',
-    'during.qa4.advancedList1': 'Arterial line for continuous blood pressure',
-    'during.qa4.advancedList2': 'Central venous pressure monitoring',
-    'during.qa4.advancedList3': 'Neuromuscular blockade monitoring',
-    'during.qa4.advancedList4': 'Depth of anaesthesia monitoring (BIS)',
-    'during.qa4.targets': 'Normal Target Ranges:',
-    'during.qa4.targetsList1': 'SpO₂ > 95%',
-    'during.qa4.targetsList2': 'ETCO₂ 35-45 mmHg',
-    'during.qa4.targetsList3': 'Mean arterial pressure 65-90 mmHg',
-    'during.qa4.targetsList4': 'Core temperature 36-37°C',
-    'during.qa4.safety': 'Safety Protocols:',
-    'during.qa4.safetyList1': 'Audible alarms with preset limits',
-    'during.qa4.safetyList2': 'Immediate response protocols',
-    'during.qa4.safetyList3': 'Regular equipment calibration',
-    'during.qa4.safetyList4': 'Backup systems available',
-    'during.qa4.safetyList5': 'Trained personnel always present',
-    'during.qa4.modern': 'Modern monitoring makes anaesthesia much safer than ever before.',
-
-    'during.qa5.question': 'What is the role of the anaesthetist during surgery?',
-    'during.qa5.intro': 'Your anaesthetist is your dedicated guardian throughout surgery, focused entirely on your safety and comfort.',
-    'during.qa5.responsibilities': 'Key Responsibilities:',
-    'during.qa5.respList1': 'Continuously assess vital signs, depth of anaesthesia, and fluid status',
-    'during.qa5.respList2': 'Respond to emergencies like bleeding or blood pressure changes',
-    'during.qa5.respList3': 'Adjust medication dosages based on surgical needs',
-    'during.qa5.respList4': 'Coordinate with surgeons and nurses for optimal patient care',
-    'during.qa5.respList5': 'Ensure patient comfort, privacy, and dignity at all times',
-    'during.qa5.respList6': 'Plan for post-operative pain management and recovery',
-    'during.qa5.team': 'Team Collaboration:',
-    'during.qa5.teamDesc': 'Your anaesthetist works closely with:',
-    'during.qa5.teamList1': 'Surgeons to coordinate timing and positioning',
-    'during.qa5.teamList2': 'Operating room nurses for equipment and medication management',
-    'during.qa5.teamList3': 'Recovery room staff to ensure smooth transition',
-    'during.qa5.think': 'Think of your anaesthetist as your personal advocate and protector during surgery.',
-
-    // After Surgery Page
-    'after.title': 'After Surgery',
-    'after.intro': 'Understanding what happens after your surgery can help you know what to expect and when to seek help if needed.',
-
-    // After Surgery Q&A
-    'after.qa1.question': 'What happens in the recovery room?',
-    'after.qa1.intro': 'After your surgery, you\'ll be transferred to the post-anaesthesia care unit (PACU), also called the recovery room. This is a specialized area where you\'ll be closely monitored as you wake up from anaesthesia.',
-    'after.qa1.expect': 'In the PACU, you can expect:',
-    'after.qa1.monitoring': 'Continuous monitoring',
-    'after.qa1.monitoringDesc': 'of your vital signs (blood pressure, heart rate, oxygen levels)',
-    'after.qa1.nursing': 'One-on-one nursing care',
-    'after.qa1.nursingDesc': 'until you\'re fully awake and stable',
-    'after.qa1.assessments': 'Regular assessments',
-    'after.qa1.assessmentsDesc': 'of your pain levels and administration of pain medication as needed',
-    'after.qa1.oxygen': 'Oxygen therapy',
-    'after.qa1.oxygenDesc': 'if needed via face mask or nasal prongs',
-    'after.qa1.warming': 'Warming measures',
-    'after.qa1.warmingDesc': 'if you feel cold',
-    'after.qa1.iv': 'IV fluids',
-    'after.qa1.ivDesc': 'to maintain hydration',
-    'after.qa1.howLong': 'How long will I stay in the recovery room?',
-    'after.qa1.timeFrame': 'Most patients stay in the PACU for 30 minutes to 2 hours, depending on:',
-    'after.qa1.timeList1': 'The type of surgery and anaesthesia you received',
-    'after.qa1.timeList2': 'How quickly you wake up and become stable',
-    'after.qa1.timeList3': 'How well your pain and any nausea are controlled',
-    'after.qa1.timeList4': 'Whether there were any complications during surgery',
-    'after.qa1.transfer': 'You\'ll be transferred to a ward or discharged home once the recovery team is satisfied with your condition.',
-
-    'after.qa2.question': 'What are common side effects and how is pain managed?',
-    'after.qa2.sideEffects': 'Common Side Effects:',
-    'after.qa2.throat': 'Sore throat',
-    'after.qa2.throatDesc': '- from the breathing tube; usually resolves within 24-48 hours',
-    'after.qa2.nausea': 'Nausea and vomiting',
-    'after.qa2.nauseaDesc': '- can be treated with medication',
-    'after.qa2.dizziness': 'Dizziness',
-    'after.qa2.dizzinessDesc': '- often improves with gentle movement and hydration',
-    'after.qa2.drowsiness': 'Drowsiness',
-    'after.qa2.drowsinessDesc': '- gradually resolves as anaesthesia wears off',
-    'after.qa2.shivering': 'Shivering',
-    'after.qa2.shiveringDesc': '- usually temporary; treated with warming blankets',
-    'after.qa2.confusion': 'Confusion',
-    'after.qa2.confusionDesc': '- more common in elderly patients; usually temporary',
-    'after.qa2.painManagement': 'Pain Management:',
-    'after.qa2.ivPain': 'IV pain medication',
-    'after.qa2.ivPainDesc': '- often morphine-based drugs for immediate relief',
-    'after.qa2.pca': 'Patient-controlled analgesia (PCA)',
-    'after.qa2.pcaDesc': '- allows you to self-administer small doses of pain medication by pressing a button',
-    'after.qa2.oral': 'Oral pain medication',
-    'after.qa2.oralDesc': '- tablets or liquid once you can drink',
-    'after.qa2.blocks': 'Regional/nerve blocks',
-    'after.qa2.blocksDesc': '- may provide pain relief for hours after surgery',
-    'after.qa2.local': 'Local anaesthetic injection',
-    'after.qa2.localDesc': '- injected around the surgical site',
-    'after.qa2.nonMed': 'Non-medication methods',
-    'after.qa2.nonMedDesc': '- such as ice packs, positioning',
-    'after.qa2.tips': 'Important Pain Management Tips:',
-    'after.qa2.tipsList1': 'Don\'t wait for pain to become severe before asking for relief',
-    'after.qa2.tipsList2': 'Rate your pain on a 0-10 scale when asked by healthcare staff',
-    'after.qa2.tipsList3': 'Tell your nurses if pain medication isn\'t working or wears off quickly',
-    'after.qa2.tipsList4': 'Report any unusual symptoms or side effects from pain medications',
-
-    'after.qa3.question': 'When can I eat and drink?',
-    'after.qa3.intro': 'The timing of when you can resume eating and drinking depends on your type of surgery and how you\'re feeling.',
-    'after.qa3.guidelines': 'General Guidelines:',
-    'after.qa3.fluids': 'Clear fluids',
-    'after.qa3.fluidsDesc': 'Usually allowed within 2 hours once you\'re fully awake',
-    'after.qa3.light': 'Light foods',
-    'after.qa3.lightDesc': 'Can often be started 4-6 hours after minor procedures',
-    'after.qa3.regular': 'Regular diet',
-    'after.qa3.regularDesc': 'Usually resumed the next day for most surgeries',
-    'after.qa3.considerations': 'Special Considerations:',
-    'after.qa3.abdominal': 'Abdominal surgery',
-    'after.qa3.abdominalDesc': 'May need to wait until bowel function returns',
-    'after.qa3.throat': 'Throat procedures',
-    'after.qa3.throatDesc': 'May require special diet instructions',
-    'after.qa3.nausea': 'Nausea and vomiting',
-    'after.qa3.nauseaDesc': 'May delay oral intake until resolved',
-    'after.qa3.medications': 'Certain medications',
-    'after.qa3.medicationsDesc': 'May need to be taken with food',
-    'after.qa3.always': 'Always follow your healthcare team\'s specific instructions for your situation.',
-
-    'after.qa4.question': 'What are the discharge instructions and follow-up care?',
-    'after.qa4.instructions': 'Typical Discharge Instructions Include:',
-    'after.qa4.activity': 'Activity restrictions',
-    'after.qa4.activityDesc': 'Guidelines on lifting, driving, returning to work',
-    'after.qa4.wound': 'Wound care',
-    'after.qa4.woundDesc': 'How to keep incisions clean and dry',
-    'after.qa4.medication': 'Medication instructions',
-    'after.qa4.medicationDesc': 'Pain relief, antibiotics, or other prescribed drugs',
-    'after.qa4.infection': 'Signs of infection to watch for',
-    'after.qa4.infectionDesc': 'Fever, increased pain, redness, swelling, discharge',
-    'after.qa4.diet': 'Dietary recommendations',
-    'after.qa4.dietDesc': 'Any special dietary needs or restrictions',
-    'after.qa4.showering': 'Bathing/showering guidelines',
-    'after.qa4.showeringDesc': 'When and how to keep surgical sites dry',
-    'after.qa4.contact': 'Emergency contact information',
-    'after.qa4.contactDesc': 'Who to call if problems arise',
-    'after.qa4.appointments': 'Follow-up Appointments:',
-    'after.qa4.appointmentsDesc': 'You may need to see:',
-    'after.qa4.appointmentsList1': 'Your surgeon for wound check and progress assessment',
-    'after.qa4.appointmentsList2': 'Your GP for ongoing care coordination',
-    'after.qa4.appointmentsList3': 'Specialist services if complications arise',
-    'after.qa4.keepAppts': 'Keep all scheduled appointments even if you feel well.',
-    'after.qa4.seekHelp': 'Seek Immediate Medical Help If You Experience:',
-    'after.qa4.seekList1': 'Severe or worsening pain not controlled by medication',
-    'after.qa4.seekList2': 'Signs of infection (fever, increased redness, swelling, discharge)',
-    'after.qa4.seekList3': 'Difficulty breathing or chest pain',
-    'after.qa4.seekList4': 'Persistent nausea and vomiting preventing fluid intake',
-    'after.qa4.seekList5': 'Unusual bleeding from surgical sites',
-    'after.qa4.seekList6': 'Severe dizziness or fainting',
-    'after.qa4.seekList7': 'Confusion or memory problems that worsen',
-    'after.qa4.seekList8': 'Any other concerning symptoms',
-    'after.qa4.pathway': 'Remember: Recovery is a process, and everyone heals at their own pace.',
-    'after.qa4.pathwayDesc': 'Your healthcare team is there to support you throughout your recovery journey.',
-    'after.qa4.keepInstructions': 'Keep your discharge instructions handy and don\'t hesitate to call with questions.'
+    // Footer
+    'footer.disclaimer': 'This information is for educational purposes only and should not replace professional medical advice.',
+    'footer.copyright': '© 2024 Sri Lankan Anaesthesia Education Initiative. All rights reserved.',
   },
-  
   si: {
     // Navigation
     'nav.home': 'මුල් පිටුව',
-    'nav.before': 'ශල්‍යකර්මයට පෙර',
-    'nav.during': 'ශල්‍යකර්මය අතරතුර',
-    'nav.after': 'ශල්‍යකර්මයෙන් පසු',
+    'nav.beforeSurgery': 'සැත්කම් කිරීමට පෙර',
+    'nav.duringSurgery': 'සැත්කම් කරන අතරතුර',
+    'nav.afterSurgery': 'සැත්කම් කිරීමෙන් පසු',
     'nav.resources': 'සම්පත්',
+    'nav.admin': 'පරිපාලක',
 
-    // Hero Section  
-    'hero.title': 'නිර්වේදනය පිළිබඳ අවබෝධය: ඔබේ ශල්‍යකර්මයට පෙර, අතරතුර සහ පසුව අපේක්ෂා කළ යුතු දේ',
-    'hero.subtitle': 'ආරක්ෂිත, සුවපහසු ශල්‍යකර්ම අත්දැකීමක් සඳහා ඔබේ මාර්ගෝපදේශය',
-    'hero.intro': 'නිර්වේදනය යනු ඔබට වේදනාවෙන් තොරව ආරක්ෂිතව ශල්‍යකර්මයකට ලක්වීමට ඉඩ සලසන වෛද්‍ය විශේෂත්වයකි. නවීන නිර්වේදන ක්‍රමවේද ඔබේ නිර්වේදන වෛද්‍යවරයා විසින් ප්‍රවේශමෙන් අධීක්ෂණය කරනු ලබන අතර, ඔබේ ශල්‍යකර්ම ගමන පුරාවට ඔබේ සුවපහසුව සහ යහපැවැත්ම සඳහා කැප වී සිටී.',
+    // Hero Section
+    'hero.title': 'නිර්වින්දනය තේරුම් ගැනීම: ඔබේ සැත්කමට පෙර, අතරතුර සහ පසුව අපේක්ෂා කළ හැකි දේ',
+    'hero.subtitle': 'ආරක්ෂිත, සුවපහසු සැත්කම් අත්දැකීමක් සඳහා ඔබේ මාර්ගෝපදේශය',
+    'hero.intro': 'නිර්වින්දනය යනු වේදනාවකින් තොරව සහ ආරක්ෂිතව සැත්කම් කිරීමට ඔබට උපකාර කරන වෛද්‍ය විශේෂත්වයකි. අද නවීන නිර්වින්දන ක්‍රම ඔබේ සුවපහසුව සහ යහපැවැත්මට කැපවී සිටින නිර්වින්දන වෛද්‍යවරුන් විසින් පරිස්සමින් නිරීක්ෂණය කරනු ලැබේ.',
 
     // CTA Buttons
-    'cta.before': 'ශල්‍යකර්මයට පෙර',
-    'cta.during': 'ශල්‍යකර්මය අතරතුර',
-    'cta.after': 'ශල්‍යකර්මයෙන් පසු',
+    'cta.before': 'සැත්කම් කිරීමට පෙර',
+    'cta.during': 'සැත්කම් කරන අතරතුර',
+    'cta.after': 'සැත්කම් කිරීමෙන් පසු',
 
     // About Section
     'about.title': 'මෙම සම්පත ගැන',
-    'about.whoTitle': 'අපි කවුද',
-    'about.who': 'රෝගීන්ට විශ්වසනීය තොරතුරු සැපයීම සඳහා කැප වූ ශ්‍රී ලංකාවේ නිර්වේදන සහ අතිතීව්‍ර සත්කාර කණ්ඩායම්වල සහයෝගිතා ප්‍රයත්නයකි.',
+    'about.whoTitle': 'අප කවුද',
+    'about.who': 'මෙය ශ්‍රී ලංකාවේ නිර්වින්දන සහ අධි තීව්‍ර සත්කාර කණ්ඩායම්වල සහයෝගී උත්සාහයකි. රෝගීන් සමඟ විශ්වසනීය තොරතුරු බෙදා ගැනීම අපගේ ඉලක්කයයි.',
     'about.whyTitle': 'මෙම සම්පත පවතින්නේ ඇයි',
-    'about.why': 'සාමාන්‍ය රෝගී ප්‍රශ්නවලට පිළිතුරු දීම, කාංසාව අඩු කිරීම සහ ශල්‍යකර්මය සහ නිර්වේදනය පිළිබඳ දැනුවත් අවබෝධයක් ප්‍රවර්ධනය කිරීම සඳහා නිර්මාණය කර ඇත.',
+    'about.why': 'රෝගීන්ගේ සාමාන්‍ය ප්‍රශ්නවලට පිළිතුරු දීමට, ඔවුන්ගේ කනස්සල්ල අඩු කිරීමට සහ සැත්කම් පිළිබඳ පැහැදිලි අවබෝධයක් ප්‍රවර්ධනය කිරීමට මෙය නිර්මාණය කරන ලදී.',
 
-    // What to Expect Cards
-    'whatToExpect.title': 'අපේක්ෂා කළ යුතු දේ',
-    'whatToExpect.before.title': 'ශල්‍යකර්මයට පෙර',
-    'whatToExpect.before.description': 'පූර්ව ශල්‍යකර්ම තක්සේරු, උපවාස මාර්ගෝපදේශ සහ ඔබේ ක්‍රියාපටිපාටිය සඳහා මානසිකව සහ ශාරීරිකව සූදානම් වන ආකාරය ගැන ඉගෙන ගන්න.',
-    'whatToExpect.during.title': 'ශල්‍යකර්මය අතරතුර',
-    'whatToExpect.during.description': 'විවිධ නිර්වේදන වර්ග, අධීක්ෂණ උපකරණ සහ ඔබ නිර්වේදන සත්කාරය යටතේ සිටින අතරතුර සිදුවන දේ තේරුම් ගන්න.',
-    'whatToExpect.after.title': 'ශල්‍යකර්මයෙන් පසු',
-    'whatToExpect.after.description': 'ප්‍රකෘතිමත් වීමේදී අපේක්ෂා කළ යුතු දේ, වේදනා කළමනාකරණ විකල්ප සහ නිවසට සුමුදු සංක්‍රමණයක් සඳහා නිකුත් කිරීමේ සැලසුම් දැන ගන්න.',
-    'whatToExpect.learnMore': 'තව දැන ගන්න',
+    // What to Expect Section
+    'whatToExpect.title': 'අපේක්ෂා කළ හැකි දේ',
+    'whatToExpect.before.title': 'සැත්කම් කිරීමට පෙර',
+    'whatToExpect.before.description': 'සැත්කම් කිරීමට පෙර තක්සේරුව, උපවාස මාර්ගෝපදේශ, ඖෂධ කළමනාකරණය සහ සූදානම් වීමේ උපදෙස්.',
+    'whatToExpect.during.title': 'සැත්කම් කරන අතරතුර',
+    'whatToExpect.during.description': 'නිර්වින්දන වර්ග, නිරීක්ෂණය, ආරක්ෂක පියවර සහ ශල්‍ය කාමරයේ සිදුවන දේ.',
+    'whatToExpect.after.title': 'සැත්කම් කිරීමෙන් පසු',
+    'whatToExpect.after.description': 'ප්‍රතිසාධන ක්‍රියාවලිය, වේදනා කළමනාකරණය, අතුරු ආබාධ සහ නිදහස් කිරීමේ සැලසුම්.',
+    'whatToExpect.learnMore': 'තව දැනගන්න',
 
-    // Before Surgery Page
-    'before.title': 'ශල්‍යකර්මයට පෙර',
-    'before.intro': 'සාර්ථක ශල්‍යකර්ම අත්දැකීමක් සඳහා සූදානම කිරීම ප්‍රධානය. අපේක්ෂා කළ යුතු දේ සහ සූදානම් වන ආකාරය තේරුම් ගැනීම කාංසාව අඩු කිරීමට සහ හැකි උපරිම ප්‍රතිඵලයක් සහතික කිරීමට උපකාරී වේ.',
-
-    // Before Surgery Q&A  
-    'before.qa1.question': 'ශල්‍යකර්මයට පෙර තක්සේරුව යනු කුමක්ද?',
-    'before.qa1.answer1': 'මෙය නිර්වේදනයට පෙර කිසියම් අවදානමක් හඳුනා ගැනීම සහ ඔබේ සෞඛ්‍යය ප්‍රශස්ත කිරීම සඳහා ඔබේ වෛද්‍ය ඉතිහාසය, ශාරීරික පරීක්ෂණය, රුධිර පරීක්ෂණ, ECG සහ අනෙකුත් පරීක්ෂණවල සවිස්තරාත්මක සමාලෝචනයකි.',
-    'before.qa1.answer2': 'මෙම තක්සේරුව අතරතුර, ඔබේ නිර්වේදන වෛද්‍යවරයා:',
-    'before.qa1.list1': 'ඔබේ වෛද්‍ය ඉතිහාසය සහ පෙර ශල්‍යකර්ම සමාලෝචනය කරනු ඇත',
-    'before.qa1.list2': 'ආසාත්මිකතා සහ වර්තමාන ඖෂධ ගැන විමසනු ඇත',
-    'before.qa1.list3': 'ඔබේ හෘදය සහ පෙනහළු කේන්ද්‍ර කරගත් ශාරීරික පරීක්ෂණයක් සිදු කරනු ඇත',
-    'before.qa1.list4': 'රුධිර පරීක්ෂණ සහ ECG ඇතුළු පරීක්ෂණ ප්‍රතිඵල ඇගයීම කරනු ඇත',
-    'before.qa1.list5': 'නිර්වේදන සැලැස්ම සාකච්ඡා කර ඔබේ ප්‍රශ්නවලට පිළිතුරු දෙනු ඇත',
-
-    'before.qa2.question': 'උපවාසය ඇයි අවශ්‍ය වන්නේ?',
-    'before.qa2.answer1': 'නිර්වේදනය අතරතුර ඔබේ ආමාශයේ අඩංගු දේ ඔබේ පෙනහළුවලට ඇතුළු වීමේ අවදානම අඩු කිරීම සඳහා ශල්‍යකර්මයට පෙර උපවාසය අත්‍යවශ්‍ය වේ, මෙය ශ්වාසාල්මය නම් බරපතල සංකූලතාවයකි.',
-    'before.qa2.guidelines': 'උපවාස මාර්ගෝපදේශ:',
-    'before.qa2.list1': 'ඝන ආහාර සහ කිරි: ශල්‍යකර්මයට පැය 6කට පෙර නවත්වන්න',
-    'before.qa2.list2': 'පැහැදිලි ද්‍රව (ජලය, කිරි නොමැති තේ): ශල්‍යකර්මයට පැය 2කට පෙර නවත්වන්න',
-    'before.qa2.siptitle': 'Sip Till Send වැඩසටහන:',
-    'before.qa2.siptext1': 'බොහෝ රෝහල් දැන් ශල්‍යකර්මයට පැය 2කට පෙර දක්වා පැහැදිලි ද්‍රව පානය කිරීමට රෝගීන් දිරිමත් කරයි. මෙය විජලනය වීම වැළැක්වීමට උපකාරී වන අතර ඔබේ සුවපහසුව වැඩි දියුණු කළ හැක.',
-    'before.qa2.siptext2': '"Sip Till Send" ප්‍රවේශය ගැන ඔබේ සෞඛ්‍ය සේවා සපයන්නාගෙන් විමසන්න.',
-
-    'before.qa3.question': 'මා කුමන ඖෂධ වළකින්නේ?',
-    'before.qa3.answer1': 'සමහර ඖෂධ නිර්වේදනයට බාධා කළ හැකි හෝ ශල්‍යකර්මය අතරතුර රුධිර වහනය අවදානම වැඩි කළ හැකිය. ඔබ ගන්නා සියලුම ඖෂධ, අතිරේක ඇතුළුව, ගැන සැම විටම ඔබේ නිර්වේදන වෛද්‍යවරයාට දන්වන්න.',
-    'before.qa3.subtitle': 'නවත්වීමට හෝ සකස් කිරීමට අවශ්‍ය විය හැකි ඖෂධ ඇතුළත්:',
-    'before.qa3.list1': 'රුධිර තනුකාරක: ඇස්පිරින්, ක්ලොපිඩොග්‍රෙල්, වෝෆරින්',
-    'before.qa3.list2': 'NSAIDs: අයිබූප්‍රොෆෙන්, ඩයික්ලොෆෙනැක්',
-    'before.qa3.list3': 'ශාකසාර අතිරේක: ගින්කෝ, සුදුළුණු, මාළු තෙල්',
-    'before.qa3.important': 'වැදගත්: පළමුව ඔබේ වෛද්‍යවරයා හෝ නිර්වේදන වෛද්‍යවරයා සමඟ සාකච්ඡා නොකර කිසි විටෙකත් ඖෂධ නවත්වන්න.',
-
-    'before.qa4.question': 'මම මානසිකව සහ ශාරීරිකව සූදානම් වන්නේ කෙසේද?',
-    'before.qa4.physical': 'ශාරීරික සූදානම:',
-    'before.qa4.plist1': 'ශල්‍යකර්මයට පෙර හොඳ රාත්‍රී නින්දක් ලබා ගන්න',
-    'before.qa4.plist2': 'ඔබේ ශල්‍ය කණ්ඩායමගෙන් විශේෂිත උපදෙස් අනුගමනය කරන්න',
-    'before.qa4.plist3': 'ශල්‍යකර්මයට සතියකට පෙර මධ්‍යසාර වළකින්න',
-    'before.qa4.plist4': 'ඔබ දුම්පානය කරන්නේ නම්, ශල්‍යකර්මයට පෙර එය නවත්වීමට හෝ අඩු කිරීමට උත්සාහ කරන්න',
-    'before.qa4.plist5': 'ශල්‍යකර්මයට පෙර නාන ගැන විශේෂිත උපදෙස් අනුගමනය කරන්න',
-    'before.qa4.mental': 'මානසික සූදානම:',
-    'before.qa4.mlist1': 'කිසියම් ගැටළුවක් විසඳීම සඳහා ඔබේ ශල්‍යකර්මයට පෙර තක්සේරුව අතරතුර ප්‍රශ්න අසන්න',
-    'before.qa4.mlist2': 'ගැඹුරු හුස්ම ගැනීම හෝ භාවනාව වැනි ලිහිල් කිරීමේ ක්‍රම පුහුණු කරන්න',
-    'before.qa4.mlist3': 'රෝහල් මාර්ගෝපදේශවලට අනුව අනුමත සුවපහසු අයිතම රැගෙන එන්න',
-    'before.qa4.mlist4': 'නිකුත් වීමෙන් පසු පවුලේ සාමාජිකයන් හෝ මිතුරන්ගේ සහාය සංවිධානය කරන්න',
-    'before.qa4.practical': 'ප්‍රායෝගික සූදානම:',
-    'before.qa4.prlist1': 'රෝහලට සහ රෝහලෙන් ප්‍රවාහනය සංවිධානය කරන්න',
-    'before.qa4.prlist2': 'ප්‍රකෘතිමත් වීම සඳහා ඔබේ නිවස සූදානම් කරන්න (පහසු ආහාර, සුවපහසු විශ්‍රාම ප්‍රදේශය)',
-    'before.qa4.prlist3': 'ඔබේ ඖෂධ, ආසාත්මිකතා සහ පෙර නිර්වේදන අත්දැකීම්වල ලැයිස්තුවක් රැගෙන එන්න',
-    'before.qa4.prlist4': 'ශල්‍යකර්මයට පෙර ආභරණ, වර්ණකරණය සහ නියපොතු වර්ණය ඉවත් කරන්න',
-    'before.qa4.prlist5': 'ශල්‍යකර්මයට පෙර නාන ගැන විශේෂිත උපදෙස් අනුගමනය කරන්න',
-
-    // During Surgery Page
-    'during.title': 'ශල්‍යකර්මය අතරතුර',
-    'during.intro': 'ඔබේ නිර්වේදනය අතරතුර සිදුවන දේ තේරුම් ගැනීමෙන් කාංසාව අඩු කිරීමට සහ ඔබේ සත්කාර කණ්ඩායම කෙරෙහි විශ්වාසය ලබා දීමට උපකාරී වේ.',
-
-    // During Surgery Q&A
-    'during.qa1.question': 'නිර්වේදනයේ කුමන වර්ග තිබේද?',
-    'during.qa1.general': 'සාමාන්‍ය නිර්වේදනය (GA):',
-    'during.qa1.generalDesc': 'ඖෂධ මගින් ප්‍රේරිත සිහිනැති තත්ත්වයකි. ඔබේ ශල්‍යකර්මය අතරතුර ඔබ සම්පූර්ණයෙන්ම නොදන්නා අතර වේදනාවක් අනුභව නොකරනු ඇත.',
-    'during.qa1.generalUse': 'සාමාන්‍යයෙන් භාවිතා කරනු ලබන්නේ: ප්‍රධාන ශල්‍යකර්ම, ශරීර කුහර ශල්‍යකර්ම, හෝ අනෙකුත් වර්ග සුදුසු නොවන විට.',
-    'during.qa1.spinal': 'කශේරුකා/එපිඩුරල් නිර්වේදනය:',
-    'during.qa1.spinalDesc': 'ස්නායු සංඥා අවහිර කිරීම සඳහා කශේරුකාව වටා නිර්වේදක ඉන්ජෙක්ෂන් කිරීම.',
-    'during.qa1.spinalUse': 'සාමාන්‍යයෙන් භාවිතා කරනු ලබන්නේ: පහළ ශරීර ශල්‍යකර්ම, සීසේරියන් කැපීම, ඉඟටිය/දණහිස ශල්‍යකර්ම.',
-    'during.qa1.nerve': 'පර්යන්ත ස්නායු අවහිරයන්:',
-    'during.qa1.nerveDesc': 'ශරීරයේ විශේෂිත ප්‍රදේශයක් හිරිවැටීම සඳහා නිශ්චිත ස්නායු අසල ප්‍රාදේශීය නිර්වේදක ඉන්ජෙක්ෂන් කිරීම.',
-    'during.qa1.nerveUse': 'සාමාන්‍යයෙන් භාවිතා කරනු ලබන්නේ: අත්, උරහිස් හෝ කකුල් ශල්‍යකර්ම, ඉලක්කගත වේදනා සහනය ලබා දීම.',
-    'during.qa1.sedation': 'සිහිමූර්ජනය:',
-    'during.qa1.sedationDesc': 'සැහැල්ලු ලිහිල් කිරීමේ සිට ගැඹුරු සිහිමූර්ජනය දක්වා පරාසයක්, ඔබ තවමත් ස්වයං හුස්ම ගනිමින් සුවපහසුව පවත්වා ගනී.',
-    'during.qa1.sedationUse': 'භාවිතා වන්නේ: රෝග විනිශ්චය ක්‍රියාපටිපාටි, දන්ත වැඩ හෝ සුළු ක්‍රියාපටිපාටි සඳහා.',
-
-    'during.qa2.question': 'එක් එක් ප්‍රකාරය ක්‍රියා කරන්නේ කෙසේද?',
-    'during.qa2.general': 'සාමාන්‍ය නිර්වේදනය:',
-    'during.qa2.generalDesc': 'ඔබේ IV රේඛාව හරහා ලබා දෙන ඖෂධ සංයෝගයක් හරහා ක්‍රියා කරයි:',
-    'during.qa2.generalList1': 'සිහිනැති බව ප්‍රේරණය කරයි',
-    'during.qa2.generalList2': 'මාංශ පේශි ලිහිල් කරයි',
-    'during.qa2.generalList3': 'වේදනා සහනය ලබා දෙයි',
-    'during.qa2.generalList4': 'ශරීර ක්‍රියාකාරිත්වය පවත්වා ගනී',
-    'during.qa2.generalEnd': 'ශල්‍යකර්මය අවසන් වන විට, ඔබේ නිර්වේදන වෛද්‍යවරයා ඖෂධ නවත්වන අතර ඔබ ක්‍රමයෙන් අවදි වනු ඇත.',
-    'during.qa2.spinal': 'කශේරුකා නිර්වේදනය:',
-    'during.qa2.spinalDesc': 'ප්‍රාදේශීය නිර්වේදකයක් කශේරුකා ද්‍රවයට ඉන්ජෙක්ට් කරනු ලැබේ:',
-    'during.qa2.spinalList1': 'ස්නායු ආවේග කශේරුකාව දිගේ මොළයට ගමන් කිරීම අවහිර කරයි',
-    'during.qa2.spinalList2': 'පහළ ශරීරයේ හිරිවැටීම සහ මාංශ පේශි ලිහිල් කිරීම සපයයි',
-    'during.qa2.spinalEnd': 'ප්‍රතිඵල සාමාන්‍යයෙන් ශල්‍යකර්මයෙන් පසු පැය 2-4 ක් ඇතුළත ඉවත් වේ.',
-    'during.qa2.nerve': 'පර්යන්ත ස්නායු අවහිරයන්:',
-    'during.qa2.nerveDesc': 'අල්ට්‍රාසවුන්ඩ් මාර්ගෝපදේශය භාවිතයෙන්, ප්‍රාදේශීය නිර්වේදක නිශ්චිත ස්නායු වටා ඉන්ජෙක්ට් කරනු ලැබේ. ඔබ පුරාවටම සිහිගිලෙන් සිටී.',
-    'during.qa2.sedation': 'සිහිමූර්ජනය:',
-    'during.qa2.sedationDesc': 'සිහිමූර්ජනය භාවිතා කරන විට:',
-    'during.qa2.sedationList1': 'ලිහිල් කිරීම සහ සුවපහසුව සඳහා IV හරහා ඖෂධ ලබා දෙනු ලැබේ',
-    'during.qa2.sedationList2': 'වේදනාව අඩු කිරීම සඳහා ප්‍රාදේශීය නිර්වේදකයද භාවිතා කළ හැකිය',
-    'during.qa2.sedationList3': 'ඔබ වාචික අණ වලට ප්‍රතිචාර දැක්විය හැකි නමුත් සම්පූර්ණයෙන්ම දැනුවත් නොවිය හැකිය',
-    'during.qa2.sedationList4': 'ක්‍රියාපටිපාටිය පිළිබඳ මතකය අඩු විය හැකිය',
-
-    'during.qa3.question': 'අවදානම් සහ සංකූලතා මොනවාද?',
-    'during.qa3.minor': 'සාමාන්‍ය සුළු අතුරු ආබාධ:',
-    'during.qa3.minorList1': 'වෙව්ලීම (රෝගීන්ගෙන් 20%)',
-    'during.qa3.minorList2': 'ශල්‍යකර්මයෙන් පසු ඔක්කාරය සහ වමනය (25%)',
-    'during.qa3.minorList3': 'හුස්ම ගැනීමේ නලයෙන් උගුරේ වේදනාව (15%)',
-    'during.qa3.minorList4': 'තාවකාලික ව්‍යාකූලත්වය, විශේෂයෙන් වැඩිහිටියන් (10%)',
-    'during.qa3.regional': 'ප්‍රාදේශීය නිර්වේදන අවදානම්:',
-    'during.qa3.regionalList1': 'කශේරුකා සිදුරු කිරීමෙන් හිසරදය (1-2%)',
-    'during.qa3.regionalList2': 'තාවකාලික ස්නායුක ලක්ෂණ (0.5%)',
-    'during.qa3.regionalList3': 'ප්‍රතිකාරයට ජලය, කැෆේන් හෝ අවශ්‍ය නම් එපිඩුරල් රුධිර පැච් ඇතුළත් වේ',
-    'during.qa3.serious': 'බරපතල නමුත් දුර්ලභ සංකූලතා:',
-    'during.qa3.seriousList1': 'උග්‍ර අසාත්මිකතා ප්‍රතික්‍රියාව (10,000 ට 1)',
-    'during.qa3.seriousList2': 'පිළිකුල් අධි තාපනය (50,000 ට 1 ට වඩා අඩු)',
-    'during.qa3.seriousList3': 'ස්නායු හානිය (100,000 ට 1 ට වඩා අඩු)',
-    'during.qa3.seriousList4': 'ප්‍රවේශමෙන් ඉතිහාසය ගැනීම සහ හදිසි සූදානම හරහා වැළැක්වීම',
-    'during.qa3.airway': 'ශ්වසන පථ සංකූලතා:',
-    'during.qa3.airwayList1': 'අපහසු ශ්වසන නල ඇතුළු කිරීම (1-3%)',
-    'during.qa3.airwayList2': 'ශ්වසනය (1% ට වඩා අඩු)',
-    'during.qa3.airwayList3': 'වීඩියෝ ලැරිංගෝස්කොපි සහ ඉක්මන් අනුක්‍රම ප්‍රේරණ ප්‍රොටෝකෝල සමඟ කළමනාකරණය',
-    'during.qa3.remember': 'මතක තබා ගන්න: ඔබේ නිර්වේදන වෛද්‍යවරයා මෙම සංකූලතා වැළැක්වීම, හඳුනා ගැනීම සහ ප්‍රතිකාර කිරීම සඳහා විශේෂ පුහුණුව ලබා ඇත. නවීන නිර්වේදනය ඉතා ආරක්ෂිතයි.',
-
-    'during.qa4.question': 'ශල්‍යකර්මය අතරතුර ඔබ අධීක්ෂණය කරන්නේ කෙසේද?',
-    'during.qa4.standard': 'සම්මත අධීක්ෂණය (ASA මාර්ගෝපදේශ):',
-    'during.qa4.standardList1': 'ECG (හෘද රිද්මය)',
-    'during.qa4.standardList2': 'රුධිර පීඩනය (NIBP)',
-    'during.qa4.standardList3': 'ඔක්සිජන් මට්ටම් (SpO₂)',
-    'during.qa4.standardList4': 'කාබන් ඩයොක්සයිඩ් මට්ටම් (ETCO₂)',
-    'during.qa4.standardList5': 'ශරීර උෂ්ණත්වය',
-    'during.qa4.advanced': 'අවශ්‍ය විට දියුණු අධීක්ෂණය:',
-    'during.qa4.advancedList1': 'අඛණ්ඩ රුධිර පීඩනය සඳහා ධමනි රේඛාව',
-    'during.qa4.advancedList2': 'මධ්‍යම ශිරා පීඩන අධීක්ෂණය',
-    'during.qa4.advancedList3': 'ස්නායු මාංශ අවහිර අධීක්ෂණය',
-    'during.qa4.advancedList4': 'නිර්වේදන ගැඹුර අධීක්ෂණය (BIS)',
-    'during.qa4.targets': 'සාමාන්‍ය ඉලක්ක පරාස:',
-    'during.qa4.targetsList1': 'SpO₂ > 95%',
-    'during.qa4.targetsList2': 'ETCO₂ 35-45 mmHg',
-    'during.qa4.targetsList3': 'සාමාන්‍ය ධමනි පීඩනය 65-90 mmHg',
-    'during.qa4.targetsList4': 'මූල උෂ්ණත්වය 36-37°C',
-    'during.qa4.safety': 'ආරක්ෂණ ප්‍රොටෝකෝල:',
-    'during.qa4.safetyList1': 'පූර්ව සැකසූ සීමා සමඟ ශ්‍රවණ අනතුරු ඇඟවීම්',
-    'during.qa4.safetyList2': 'ක්ෂණික ප්‍රතිචාර ප්‍රොටෝකෝල',
-    'during.qa4.safetyList3': 'නිතිපතා උපකරණ ක්‍රමාංකනය',
-    'during.qa4.safetyList4': 'සංචිත පද්ධති ලබා ගත හැකිය',
-    'during.qa4.safetyList5': 'පුහුණු වූ පුද්ගලයන් සැම විටම සිටී',
-    'during.qa4.modern': 'නවීන අධීක්ෂණය නිර්වේදනය පෙරට වඩා ආරක්ෂිත කරයි.',
-
-    'during.qa5.question': 'ශල්‍යකර්මය අතරතුර නිර්වේදන වෛද්‍යවරයාගේ භූමිකාව කුමක්ද?',
-    'during.qa5.intro': 'ඔබේ නිර්වේදන වෛද්‍යවරයා ශල්‍යකර්මය පුරාවට ඔබේ කැප වූ ආරක්ෂකයා වන අතර, සම්පූර්ණයෙන්ම ඔබේ ආරක්ෂාව සහ සුවපහසුව කෙරෙහි අවධානය යොමු කරයි.',
-    'during.qa5.responsibilities': 'ප්‍රධාන වගකීම්:',
-    'during.qa5.respList1': 'ජීවිත සංඥා, නිර්වේදන ගැඹුර සහ ද්‍රව තත්ත්වය අඛණ්ඩව තක්සේරු කිරීම',
-    'during.qa5.respList2': 'රුධිර වහනය හෝ රුධිර පීඩන වෙනස්වීම් වැනි හදිසි අවස්ථාවලට ප්‍රතිචාර දැක්වීම',
-    'during.qa5.respList3': 'ශල්‍යකර්ම අවශ්‍යතා මත පදනම්ව ඖෂධ මාත්‍රා සකස් කිරීම',
-    'during.qa5.respList4': 'ප්‍රශස්ත රෝගී සත්කාරය සඳහා ශල්‍යකරුවරුන් සහ හෙදියන් සමඟ සම්බන්ධීකරණය',
-    'during.qa5.respList5': 'සියලු වේලාවට රෝගියාගේ සුවපහසුව, පෞද්ගලිකත්වය සහ ගරුත්වය සහතික කිරීම',
-    'during.qa5.respList6': 'ශල්‍යකර්මයෙන් පසු වේදනා කළමනාකරණය සහ ප්‍රකෘතිමත් වීම සඳහා සැලසුම් කිරීම',
-    'during.qa5.team': 'කණ්ඩායම් සහයෝගිතාව:',
-    'during.qa5.teamDesc': 'ඔබේ නිර්වේදන වෛද්‍යවරයා සමීපව කටයුතු කරයි:',
-    'during.qa5.teamList1': 'වේලාව සහ ස්ථානගත කිරීම සම්බන්ධීකරණයට ශල්‍යකරුවරුන්',
-    'during.qa5.teamList2': 'උපකරණ සහ ඖෂධ කළමනාකරණය සඳහා ශල්‍යාගාර හෙදියන්',
-    'during.qa5.teamList3': 'සුමුදු සංක්‍රමණය සහතික කිරීම සඳහා ප්‍රකෘතිමත් වීමේ කාර්ය මණ්ඩලය',
-    'during.qa5.think': 'ශල්‍යකර්මය අතරතුර ඔබේ නිර්වේදන වෛද්‍යවරයා ඔබේ පුද්ගලික ආරක්ෂකයා සහ අනුගාමිකයා ලෙස සිතන්න.',
-
-    // After Surgery Page
-    'after.title': 'ශල්‍යකර්මයෙන් පසු',
-    'after.intro': 'ඔබේ ශල්‍යකර්මයෙන් පසු සිදුවන දේ තේරුම් ගැනීමෙන් ඔබට අපේක්ෂා කළ යුතු දේ දැන ගැනීමට සහ අවශ්‍ය විට උදව් ලබා ගන්නේ කවදාද යන්න දැන ගැනීමට උපකාරී වේ.',
-
-    // After Surgery Q&A
-    'after.qa1.question': 'ප්‍රකෘතිමත් වීමේ කාමරයේ සිදුවන්නේ කුමක්ද?',
-    'after.qa1.intro': 'ඔබේ ශල්‍යකර්මයෙන් පසු, ඔබව ප්‍රකෘතිමත් වීමේ කාමරය ලෙසද හැඳින්වෙන පසු-නිර්වේදන සත්කාර ඒකකයට (PACU) මාරු කරනු ලැබේ. මෙය ඔබ නිර්වේදනයෙන් අවදි වන විට සමීපව අධීක්ෂණය කරනු ලබන විශේෂිත ප්‍රදේශයකි.',
-    'after.qa1.expect': 'PACU හිදී, ඔබට අපේක්ෂා කළ හැක්කේ:',
-    'after.qa1.monitoring': 'අඛණ්ඩ අධීක්ෂණය',
-    'after.qa1.monitoringDesc': 'ඔබේ ප්‍රධාන සංඥා (රුධිර පීඩනය, හෘද වේගය, ඔක්සිජන් මට්ටම්)',
-    'after.qa1.nursing': 'එක් අයෙකු සඳහා එක් හෙද සත්කාරය',
-    'after.qa1.nursingDesc': 'ඔබ සම්පූර්ණයෙන්ම අවදි වන තුරු සහ ස්ථාවර වන තුරු',
-    'after.qa1.assessments': 'නිතිපතා ඇගයීම්',
-    'after.qa1.assessmentsDesc': 'ඔබේ වේදනා මට්ටම් සහ අවශ්‍ය පරිදි වේදනා ඖෂධ පරිපාලනය',
-    'after.qa1.oxygen': 'ඔක්සිජන් ප්‍රතිකාරය',
-    'after.qa1.oxygenDesc': 'අවශ්‍ය නම් මුහුණු ආවරණයක් හෝ නාසාග්‍ර හරහා',
-    'after.qa1.warming': 'උණුසුම් කිරීමේ ක්‍රම',
-    'after.qa1.warmingDesc': 'ඔබට සීතල නම්',
-    'after.qa1.iv': 'IV ද්‍රව',
-    'after.qa1.ivDesc': 'ජලනය පවත්වා ගැනීම සඳහා',
-    'after.qa1.howLong': 'මම ප්‍රකෘතිමත් වීමේ කාමරයේ කොපමණ කාලයක් රැඳී සිටින්නේද?',
-    'after.qa1.timeFrame': 'බොහෝ රෝගීන් PACU හි මිනිත්තු 30 සිට පැය 2 දක්වා රැඳී සිටිනු ඇත, පහත කරුණු මත රඳා පවතී:',
-    'after.qa1.timeList1': 'ඔබට ලැබුණු ශල්‍යකර්මයේ සහ නිර්වේදන වර්ගය',
-    'after.qa1.timeList2': 'ඔබ කෙතරම් ඉක්මනින් අවදි වන්නේද සහ ස්ථාවර වන්නේද',
-    'after.qa1.timeList3': 'ඔබේ වේදනාව සහ ඕනෑම ඔක්කාරයක් කොපමණ හොඳින් පාලනය කරන්නේද',
-    'after.qa1.timeList4': 'ශල්‍යකර්මය අතරතුර සංකූලතා තිබුණේද',
-    'after.qa1.transfer': 'ප්‍රකෘතිමත් වීමේ කණ්ඩායම ඔබේ තත්ත්වය ගැන සෑහීමකට පත් වූ පසු ඔබව වාට්ටුවකට මාරු කරනු ලබන්නේ හෝ නිවසට මුදා හරිනු ලබන්නේය.',
-
-    'after.qa2.question': 'සාමාන්‍ය අතුරු ආබාධ සහ වේදනා කළමනාකරණය කරන්නේ කෙසේද?',
-    'after.qa2.sideEffects': 'සාමාන්‍ය අතුරු ආබාධ:',
-    'after.qa2.throat': 'උගුරේ වේදනාව',
-    'after.qa2.throatDesc': '- හුස්ම ගැනීමේ නලයෙන්; සාමාන්‍යයෙන් පැය 24-48 තුළ සුව වේ',
-    'after.qa2.nausea': 'ඔක්කාරය සහ වමනය',
-    'after.qa2.nauseaDesc': '- ඖෂධ මගින් ප්‍රතිකාර කළ හැක',
-    'after.qa2.dizziness': 'හිස කැරකීම',
-    'after.qa2.dizzinessDesc': '- බොහෝ විට මෘදු චලනය සහ ජලනය සමඟ වැඩි දියුණු වේ',
-    'after.qa2.drowsiness': 'නිදිමත බව',
-    'after.qa2.drowsinessDesc': '- නිර්වේදනය ඉවත් වන විට ක්‍රමයෙන් විසඳේ',
-    'after.qa2.shivering': 'වෙව්ලීම',
-    'after.qa2.shiveringDesc': '- සාමාන්‍යයෙන් තාවකාලික; උණුසුම් පොරවන් මගින් ප්‍රතිකාර කරනු ලැබේ',
-    'after.qa2.confusion': 'ව්‍යාකූලත්වය',
-    'after.qa2.confusionDesc': '- වැඩිහිටි රෝගීන් තුළ වඩාත් සාමාන්‍ය; සාමාන්‍යයෙන් තාවකාලික',
-    'after.qa2.painManagement': 'වේදනා කළමනාකරණය:',
-    'after.qa2.ivPain': 'IV වේදනා ඖෂධ',
-    'after.qa2.ivPainDesc': '- ක්ෂණික සහනය සඳහා බොහෝ විට මෝෆින් පදනම් කරගත් ඖෂධ',
-    'after.qa2.pca': 'රෝගියා-පාලිත වේදනානාශක (PCA)',
-    'after.qa2.pcaDesc': '- බොත්තමක් ඔබීමෙන් ඔබට වේදනා ඖෂධවල කුඩා මාත්‍රා ස්වයං පරිපාලනය කිරීමට ඉඩ සලසයි',
-    'after.qa2.oral': 'මුඛ වේදනා ඖෂධ',
-    'after.qa2.oralDesc': '- ඔබට පානය කළ හැකි වූ පසු ගෙති හෝ ද්‍රව',
-    'after.qa2.blocks': 'ප්‍රාදේශීය/ස්නායු අවහිරයන්',
-    'after.qa2.blocksDesc': '- ශල්‍යකර්මයෙන් පසු පැය ගණනක් වේදනා සහනය ලබා දීමට ඉඩ ඇත',
-    'after.qa2.local': 'ප්‍රාදේශීය නිර්වේදක ඉන්ජෙක්ෂන්',
-    'after.qa2.localDesc': '- ශල්‍ය ස්ථානය වටා ඉන්ජෙක්ට් කරනු ලැබේ',
-    'after.qa2.nonMed': 'ඖෂධ නොවන ක්‍රම',
-    'after.qa2.nonMedDesc': '- අයිස් ඇසුරුම්, ස්ථානගත කිරීම වැනි',
-    'after.qa2.tips': 'වැදගත් වේදනා කළමනාකරණ ඉඟි:',
-    'after.qa2.tipsList1': 'සහනය ඉල්ලීමට පෙර වේදනාව දරුණු වන තෙක් රැඳී සිටින්න එපා',
-    'after.qa2.tipsList2': 'සෞඛ්‍ය කාර්ය මණ්ඩලය විසින් විමසන විට ඔබේ වේදනාව 0-10 පරිමාණයක අගයන්න',
-    'after.qa2.tipsList3': 'වේදනා ඖෂධ ක්‍රියා නොකරන්නේ නම් හෝ ඉක්මනින් ඉවත් වන්නේ නම් ඔබේ හෙදියන්ට පවසන්න',
-    'after.qa2.tipsList4': 'වේදනා ඖෂධවලින් අසාමාන්‍ය ලක්ෂණ හෝ අතුරු ආබාධ වාර්තා කරන්න',
-
-    'after.qa3.question': 'මට කවදා ආහාර ගැනීමට සහ පානය කිරීමට පුළුවන්ද?',
-    'after.qa3.intro': 'ඔබට ආහාර ගැනීම සහ පානය කිරීම නැවත ආරම්භ කළ හැකි වේලාව ඔබේ ශල්‍යකර්ම වර්ගය සහ ඔබට දැනෙන ආකාරය මත රඳා පවතී.',
-    'after.qa3.guidelines': 'සාමාන්‍ය මාර්ගෝපදේශ:',
-    'after.qa3.fluids': 'පැහැදිලි ද්‍රව',
-    'after.qa3.fluidsDesc': 'සාමාන්‍යයෙන් ඔබ සම්පූර්ණයෙන්ම අවදි වූ පසු පැය 2 ක් ඇතුළත අනුමැතිය ලැබේ',
-    'after.qa3.light': 'සැහැල්ලු ආහාර',
-    'after.qa3.lightDesc': 'බොහෝ විට සුළු ක්‍රියාපටිපාටිවලට පසු පැය 4-6 කට පසු ආරම්භ කළ හැකිය',
-    'after.qa3.regular': 'නිතිපතා ආහාර වේල',
-    'after.qa3.regularDesc': 'බොහෝ ශල්‍යකර්ම සඳහා සාමාන්‍යයෙන් පසු දින නැවත ආරම්භ කරනු ලැබේ',
-    'after.qa3.considerations': 'විශේෂ සලකා බැලීම්:',
-    'after.qa3.abdominal': 'උදර ශල්‍යකර්මය',
-    'after.qa3.abdominalDesc': 'බඩවැල් ක්‍රියාකාරිත්වය ආපසු පැමිණෙන තුරු රැඳී සිටීමට අවශ්‍ය විය හැකිය',
-    'after.qa3.throat': 'උගුරේ ක්‍රියාපටිපාටි',
-    'after.qa3.throatDesc': 'විශේෂ ආහාර උපදෙස් අවශ්‍ය විය හැකිය',
-    'after.qa3.nausea': 'ඔක්කාරය සහ වමනය',
-    'after.qa3.nauseaDesc': 'විසඳන තුරු මුඛ පරිභෝජනය ප්‍රමාද කළ හැකිය',
-    'after.qa3.medications': 'සමහර ඖෂධ',
-    'after.qa3.medicationsDesc': 'ආහාර සමඟ ගැනීමට අවශ්‍ය විය හැකිය',
-    'after.qa3.always': 'ඔබේ තත්ත්වය සඳහා ඔබේ සෞඛ්‍ය කණ්ඩායමේ නිශ්චිත උපදෙස් සැම විටම අනුගමනය කරන්න.',
-
-    'after.qa4.question': 'නිකුත් කිරීමේ උපදෙස් සහ පසු විපරම් සත්කාරය කුමක්ද?',
-    'after.qa4.instructions': 'සාමාන්‍ය නිකුත් කිරීමේ උපදෙස් ඇතුළත්:',
-    'after.qa4.activity': 'ක්‍රියාකාරකම් සීමාවන්',
-    'after.qa4.activityDesc': 'එසවීම, රිය පැදවීම, වැඩට යාම පිළිබඳ මාර්ගෝපදේශ',
-    'after.qa4.wound': 'තුවාල සත්කාරය',
-    'after.qa4.woundDesc': 'කැපුම් පිරිසිදුව සහ වියළීව තබා ගන්නේ කෙසේද',
-    'after.qa4.medication': 'ඖෂධ උපදෙස්',
-    'after.qa4.medicationDesc': 'වේදනා සහනය, ප්‍රතිජීවක හෝ අනෙකුත් නියම කළ ඖෂධ',
-    'after.qa4.infection': 'නිරීක්ෂණය කළ යුතු ආසාදන සලකුණු',
-    'after.qa4.infectionDesc': 'උණ, වැඩි වේදනාව, රතු වීම, ඉදිමීම, ස්‍රාවය',
-    'after.qa4.diet': 'ආහාර නිර්දේශ',
-    'after.qa4.dietDesc': 'කිසියම් විශේෂ ආහාර අවශ්‍යතා හෝ සීමාවන්',
-    'after.qa4.showering': 'ස්නානය/දිය ස්නානය මාර්ගෝපදේශ',
-    'after.qa4.showeringDesc': 'කවදා සහ කෙසේ ශල්‍ය ස්ථාන වියළීව තබා ගන්නේද',
-    'after.qa4.contact': 'හදිසි සම්බන්ධතා තොරතුරු',
-    'after.qa4.contactDesc': 'ගැටළු ඇති වුවහොත් කවුරුන් සමඟ සම්බන්ධ වන්නේද',
-    'after.qa4.appointments': 'පසු විපරම් හමුවීම්:',
-    'after.qa4.appointmentsDesc': 'ඔබට හමුවීමට අවශ්‍ය විය හැකිය:',
-    'after.qa4.appointmentsList1': 'තුවාල පරීක්ෂා කිරීම සහ ප්‍රගති ඇගයීම සඳහා ඔබේ ශල්‍යකරු',
-    'after.qa4.appointmentsList2': 'අඛණ්ඩ සත්කාර සම්බන්ධීකරණය සඳහා ඔබේ වෛද්‍යවරයා',
-    'after.qa4.appointmentsList3': 'සංකූලතා ඇති වුවහොත් විශේෂඥ සේවා',
-    'after.qa4.keepAppts': 'ඔබට සුවසේ දැනුණත් සියලුම කාලසටහන් බැඳුණු හමුවීම් තබා ගන්න.',
-    'after.qa4.seekHelp': 'ඔබට අත්විඳිනවා නම් ක්ෂණික වෛද්‍ය උදව් ලබා ගන්න:',
-    'after.qa4.seekList1': 'ඖෂධ මගින් පාලනය නොකරන දරුණු හෝ නරක අතට හැරෙන වේදනාව',
-    'after.qa4.seekList2': 'ආසාදන සලකුණු (උණ, වැඩි රතු වීම, ඉදිමීම, ස්‍රාවය)',
-    'after.qa4.seekList3': 'හුස්ම ගැනීමේ අපහසුව හෝ පපුවේ වේදනාව',
-    'after.qa4.seekList4': 'ද්‍රව ගැනීම වළක්වන නොනැසෙන ඔක්කාරය සහ වමනය',
-    'after.qa4.seekList5': 'ශල්‍ය ස්ථානවලින් අසාමාන්‍ය රුධිර වහනය',
-    'after.qa4.seekList6': 'දරුණු හිස කැරකීම හෝ සිහිසුන්ව වැටීම',
-    'after.qa4.seekList7': 'නරක අතට හැරෙන ව්‍යාකූලත්වය හෝ මතක ගැටළු',
-    'after.qa4.seekList8': 'අනෙකුත් කරදරකාරී ලක්ෂණ',
-    'after.qa4.pathway': 'මතක තබා ගන්න: ප්‍රකෘතිමත් වීම ක්‍රියාවලියක් වන අතර, සෑම කෙනෙකුම ඔවුන්ගේම වේගයෙන් සුව වේ.',
-    'after.qa4.pathwayDesc': 'ඔබේ සෞඛ්‍ය කණ්ඩායම ඔබේ ප්‍රකෘතිමත් වීමේ ගමන පුරාවට ඔබට සහාය වීමට එහි සිටී.',
-    'after.qa4.keepInstructions': 'ඔබේ නිකුත් කිරීමේ උපදෙස් අත්ගත ප්‍රදේශයක තබා ගන්න සහ ප්‍රශ්න සමඟ ඇමතීමට පසුබට නොවන්න.'
+    // Footer
+    'footer.disclaimer': 'මෙම තොරතුරු අධ්‍යාපනික අරමුණු සඳහා පමණක් වන අතර වෘත්තීය වෛද්‍ය උපදෙස් ප්‍රතිස්ථාපනය නොකළ යුතුය.',
+    'footer.copyright': '© 2024 ශ්‍රී ලංකා නිර්වින්දන අධ්‍යාපන මුලපිරීම. සියලුම හිමිකම් ඇවිරිණි.',
   },
-
   ta: {
     // Navigation
     'nav.home': 'முகப்பு',
-    'nav.before': 'அறுவை சிகிச்சைக்கு முன்',
-    'nav.during': 'அறுவை சிகிச்சையின் போது',
-    'nav.after': 'அறுவை சிகிச்சைக்குப் பின்',
+    'nav.beforeSurgery': 'அறுவை சிகிச்சைக்கு முன்',
+    'nav.duringSurgery': 'அறுவை சிகிச்சையின் போது',
+    'nav.afterSurgery': 'அறுவை சிகிச்சைக்குப் பின்',
     'nav.resources': 'வளங்கள்',
+    'nav.admin': 'நிர்வாகம்',
 
     // Hero Section
     'hero.title': 'மயக்க மருந்து பற்றிய முழுமையான புரிதல்: உங்கள் அறுவை சிகிச்சைக்கு முன், அதன் போது, மற்றும் பின் நீங்கள் அறிய வேண்டியவை',
-    'hero.subtitle': 'பாதுகாப்பான, சௌகர்யமான அறுவை சிகிச்சை அனுபவத்திற்கான உங்கள் வழிகாட்டி',
+    'hero.subtitle': 'பாதுகாப்பான, சௌகரியமான அறுவை சிகிச்சை அனுபவத்திற்கான உங்கள் வழிகாட்டி',
     'hero.intro': 'மயக்க மருந்தியல் (Anaesthesia) என்பது ஒரு மருத்துவத் துறையாகும். இது நீங்கள் வலியில்லாமல், பாதுகாப்பாக அறுவை சிகிச்சை செய்துகொள்ள உதவுகிறது. இன்றைய நவீன மயக்க மருந்து நுட்பங்கள், உங்கள் சௌகரியம் மற்றும் நலனில் அர்ப்பணிப்புடன் செயற்படும் மயக்க மருந்து நிபுணரால் (Anaesthetist) கவனமாகக் கண்காணிக்கப்படுகின்றன.',
 
     // CTA Buttons
@@ -641,215 +110,68 @@ const translations = {
     'cta.after': 'அறுவை சிகிச்சைக்குப் பின்',
 
     // About Section
-    'about.title': 'இந்த வளத்தைப் பற்றி',
+    'about.title': 'எம்மைப் பற்றி',
     'about.whoTitle': 'நாம் யார்',
     'about.who': 'இலங்கையின் மயக்க மருந்து மற்றும் அதிதீவிர சிகிச்சைப் பிரிவு (Anaesthesia and Critical Care) குழுக்களின் கூட்டு முயற்சி இதுவாகும். நோயாளிகளுக்கு நம்பகமான தகவல்களைப் பகிர்வதே எங்கள் நோக்கம்.',
     'about.whyTitle': 'இந்த வளம் ஏன் உருவாக்கப்பட்டது',
     'about.why': 'நோயாளிகளின் பொதுவான கேள்விகளுக்குப் பதிலளிக்கவும், அவர்களின் பதட்டத்தைக் குறைக்கவும், மற்றும் அறுவை சிகிச்சை குறித்த தெளிவான புரிதலை ஊக்குவிக்கவும் இது உருவாக்கப்பட்டுள்ளது.',
 
-    // What to Expect Cards
-    'whatToExpect.title': 'எதிர்பார்க்க வேண்டியது',
+    // What to Expect Section
+    'whatToExpect.title': 'என்ன எதிர்பார்க்கலாம்',
     'whatToExpect.before.title': 'அறுவை சிகிச்சைக்கு முன்',
-    'whatToExpect.before.description': 'அறுவை சிகிச்சைக்கு முந்தைய மருத்துவப் பரிசோதனைகள், உண்ணாவிரத வழிகாட்டுதல்கள், மற்றும் மனதளவிலும் உடலளவிலும் தயாராவது பற்றி அறியுங்கள்.',
+    'whatToExpect.before.description': 'அறுவை சிகிச்சைக்கு முந்தைய மருத்துவப் பரிசோதனை, உணவு அருந்தாமல் இருப்பது (விரதம்), மருந்து மேலாண்மை மற்றும் தயாரிப்பு குறிப்புகள்.',
     'whatToExpect.during.title': 'அறுவை சிகிச்சையின் போது',
-    'whatToExpect.during.description': 'பல்வேறு வகையான மயக்க மருந்துகள், கண்காணிப்பு उपकरण்கள், மற்றும் மயக்க மருந்து கவனிப்பின் கீழ் நீங்கள் இருக்கும்போது என்ன நடக்கிறது என்பதைப் புரிந்துகொள்ளுங்கள்.',
+    'whatToExpect.during.description': 'மயக்க மருந்துகளின் வகைகள், கண்காணிப்பு, பாதுகாப்பு நடவடிக்கைகள் மற்றும் அறுவை சிகிச்சை அறையில் நடப்பவை.',
     'whatToExpect.after.title': 'அறுவை சிகிச்சைக்குப் பின்',
-    'whatToExpect.after.description': 'மீட்சியின் போது எதிர்பார்க்க வேண்டியது, வலி நிவாரண விருப்பங்கள், மற்றும் வீட்டிற்கு சுமுகமான மாற்றத்திற்கான டிஸ்சார்ஜ் திட்டமிடல் பற்றி அறியுங்கள்.',
+    'whatToExpect.after.description': 'மீட்சி செயல்முறை, வலி மேலாண்மை, பக்க விளைவுகள் மற்றும் வீட்டிற்கு செல்லும் திட்டமிடல்.',
     'whatToExpect.learnMore': 'மேலும் அறிய',
 
-    // Before Surgery Page
-    'before.title': 'அறுவை சிகிச்சைக்கு முன்',
-    'before.intro': 'வெற்றிகரமான அறுவை சிகிச்சை அனுபவத்திற்கு தயாரிப்பு முக்கியம். எதிர்பார்க்க வேண்டியது மற்றும் எவ்வாறு தயாரிப்பது என்பதைப் புரிந்துகொள்வது பதட்டத்தைக் குறைக்கவும் சிறந்த முடிவை உறுதிசெய்யவும் உதவும்.',
-
-    // Before Surgery Q&A
-    'before.qa1.question': 'அறுவை சிகிச்சைக்கு முந்தைய மருத்துவப் பரிசோதனை என்றால் என்ன?',
-    'before.qa1.answer1': 'இது உங்கள் மருத்துவ வரலாறு, உடல் பரிசோதனை, இரத்தப் பரிசோதனைகள், ECG மற்றும் பிற ஆய்வுகளை உள்ளடக்கியது. இதன் நோக்கம், மயக்க மருந்து கொடுப்பதற்கு முன் ஏற்படக்கூடிய அபாயங்களைக் கண்டறிந்து, உங்கள் உடல்நிலையை சிறந்த முறையில் தயார் செய்வதாகும்.',
-    'before.qa1.answer2': 'இந்த மதிப்பீட்டின் போது, உங்கள் மயக்க மருந்து நிபுணர்:',
-    'before.qa1.list1': 'உங்கள் மருத்துவ வரலாறு மற்றும் முந்தைய அறுவை சிகிச்சைகளை மதிப்பாய்வு செய்வார்',
-    'before.qa1.list2': 'ஒவ்வாமைகள் மற்றும் தற்போதைய மருந்துகளைப் பற்றி கேட்பார்',
-    'before.qa1.list3': 'உங்கள் இதயம் மற்றும் நுரையீரல்களை மையமாகக் கொண்ட உடல் பரிசோதனை செய்வார்',
-    'before.qa1.list4': 'இரத்தப் பரிசோதனை மற்றும் ECG உட்பட பரிசோதனை முடிவுகளை மதிப்பிடுவார்',
-    'before.qa1.list5': 'மயக்க மருந்து திட்டத்தைப் பற்றி விவாதித்து உங்கள் கேள்விகளுக்கு பதிலளிப்பார்',
-
-    'before.qa2.question': 'உணவு அருந்தாமல் இருப்பது (விரதம்) ஏன் அவசியம்?',
-    'before.qa2.answer1': 'மயக்க நிலையில் இருக்கும்போது, வயிற்றில் உள்ள உணவுப் பொருட்கள் நுரையீரலுக்குள் செல்லும் அபாயத்தைக் குறைப்பதற்காகவே இது தேவைப்படுகிறது.',
-    'before.qa2.guidelines': 'விரத வழிகாட்டுதல்கள்:',
-    'before.qa2.list1': 'திட உணவுகள் மற்றும் பால்: அறுவை சிகிச்சைக்கு 6 மணி நேரத்திற்கு முன் நிறுத்திவிட வேண்டும்',
-    'before.qa2.list2': 'தெளிவான திரவங்கள் (தண்ணீர், பால் இல்லாத தேநீர்): அறுவை சிகிச்சைக்கு 2 மணி நேரத்திற்கு முன் நிறுத்திவிட வேண்டும்',
-    'before.qa2.siptitle': 'Sip Till Send திட்டம்:',
-    'before.qa2.siptext1': 'பல மருத்துவமனைகள் இப்போது அறுவை சிகிச்சைக்கு 2 மணி நேரத்திற்கு முன்பு வரை தெளிவான திரவங்களை குடிக்க நோயாளிகளை ஊக்குவிக்கின்றன. இது நீரிழப்பைத் தடுக்கவும் உங்கள் ஆறுதலை மேம்படுத்தவும் உதவுகிறது.',
-    'before.qa2.siptext2': '"Sip Till Send" அணுகுமுறை பற்றி உங்கள் சுகாதார வழங்குநரிடம் கேட்டுக் கொள்ளுங்கள்.',
-
-    'before.qa3.question': 'எந்த மருந்துகளைத் தவிர்க்க வேண்டும்?',
-    'before.qa3.answer1': 'சில மருந்துகள் மயக்க மருந்துடன் குறுக்கிடலாம் அல்லது அறுவை சிகிச்சையின் போது இரத்தப்போக்கு அபாயத்தை அதிகரிக்கலாம். நீங்கள் எடுத்துக்கொள்ளும் அனைத்து மருந்துகள், சப்ளிமென்ட்கள் உட்பட, பற்றி எப்போதும் உங்கள் மயக்க மருந்து நிபுணரிடம் தெரிவிக்கவும்.',
-    'before.qa3.subtitle': 'நிறுத்த அல்லது சரிசெய்ய வேண்டிய மருந்துகள் அடங்கும்:',
-    'before.qa3.list1': 'இரத்தத்தை நீர்க்கச் செய்யும் மருந்துகள்: ஆஸ்பிரின், க்ளோபிடோக்ரெல், வார்ஃபரின்',
-    'before.qa3.list2': 'NSAIDகள்: இபுப்ரோஃபென், டிக்ளோஃபெனாக்',
-    'before.qa3.list3': 'மூலிகை சப்ளிமென்ட்கள்: ஜின்கோ, பூண்டு, மீன் எண்ணெய்',
-    'before.qa3.important': 'முக்கியம்: முதலில் உங்கள் மருத்துவர் அல்லது மயக்க மருந்து நிபுணருடன் விவாதிக்காமல் எந்த மருந்தையும் நிறுத்த வேண்டாம்.',
-
-    'before.qa4.question': 'மனதளவிலும் உடலளவிலும் நான் எவ்வாறு தயாராக வேண்டும்?',
-    'before.qa4.physical': 'உடல் தயாரிப்பு:',
-    'before.qa4.plist1': 'அறுவை சிகிச்சைக்கு முன் நல்ல இரவு தூக்கம் பெறுங்கள்',
-    'before.qa4.plist2': 'உங்கள் அறுவை சிகிச்சை குழுவின் குறிப்பிட்ட அறிவுரைகளைப் பின்பற்றுங்கள்',
-    'before.qa4.plist3': 'அறுவை சிகிச்சைக்கு ஒரு வாரத்திற்கு முன்பு மது அருந்துவதைத் தவிர்க்கவும்',
-    'before.qa4.plist4': 'நீங்கள் புகைபிடிக்கிறீர்கள் என்றால், அறுவை சிகிச்சைக்கு முன்பு அதை நிறுத்த அல்லது குறைக்க முயற்சிக்கவும்',
-    'before.qa4.plist5': 'அறுவை சிகிச்சைக்கு முந்தைய குளியல் பற்றிய குறிப்பிட்ட அறிவுரைகளைப் பின்பற்றுங்கள்',
-    'before.qa4.mental': 'மன தயாரிப்பு:',
-    'before.qa4.mlist1': 'எந்தவொரு கவலையையும் தீர்க்க உங்கள் அறுவை சிகிச்சைக்கு முந்தைய மதிப்பீட்டின் போது கேள்விகள் கேளுங்கள்',
-    'before.qa4.mlist2': 'ஆழ்ந்த சுவாசம் அல்லது தியானம் போன்ற தளர்வு நுட்பங்களைப் பயிற்சி செய்யுங்கள்',
-    'before.qa4.mlist3': 'மருத்துவமனை வழிகாட்டுதல்களால் அனுமதிக்கப்பட்ட ஆறுதல் பொருட்களைக் கொண்டு வாருங்கள்',
-    'before.qa4.mlist4': 'டிஸ்சார்ஜ் செய்த பிறகு குடும்பம் அல்லது நண்பர்களிடமிருந்து ஆதரவை ஏற்பாடு செய்யுங்கள்',
-    'before.qa4.practical': 'நடைமுறை தயாரிப்பு:',
-    'before.qa4.prlist1': 'மருத்துவமனைக்கு மற்றும் மருத்துவமனையிலிருந்து போக்குவரத்தை ஏற்பாடு செய்யுங்கள்',
-    'before.qa4.prlist2': 'மீட்சிக்காக உங்கள் வீட்டைத் தயார் செய்யுங்கள் (எளிதான உணவுகள், வசதியான ஓய்வு பகுதி)',
-    'before.qa4.prlist3': 'உங்கள் மருந்துகள், ஒவ்வாமைகள் மற்றும் முந்தைய மயக்க மருந்து அனுபவங்களின் பட்டியலைக் கொண்டு வாருங்கள்',
-    'before.qa4.prlist4': 'அறுவை சிகிச்சைக்கு முன் நகைகள், மேக்கப் மற்றும் நெயில் பாலிஷ் ஆகியவற்றை அகற்றுங்கள்',
-    'before.qa4.prlist5': 'அறுவை சிகிச்சைக்கு முந்தைய குளியல் பற்றிய குறிப்பிட்ட அறிவுரைகளைப் பின்பற்றுங்கள்',
-
-    // During Surgery Page
-    'during.title': 'அறுவை சிகிச்சையின் போது',
-    'during.intro': 'உங்கள் மயக்க மருந்தின் போது என்ன நடக்கிறது என்பதைப் புரிந்துகொள்வது பதட்டத்தைக் குறைக்கவும் உங்கள் கவனிப்பு குழுவில் நம்பிக்கையை அளிக்கவும் உதவும்.',
-
-    // During Surgery Q&A
-    'during.qa1.question': 'மயக்க மருந்துகளில் என்னென்ன வகைகள் உள்ளன?',
-    'during.qa1.general': 'பொது மயக்க மருந்து (General Anaesthesia - GA):',
-    'during.qa1.generalDesc': 'நரம்பு வழி மற்றும் சுவாசம் வழி மருந்துகள் மூலம் முழுமையான சுயநினைவற்ற நிலையை ஏற்படுத்துதல். ஒங்கள் அறுவை சிகிச்சையின் போது நீங்கள் முற்றிலும் அறியாமல் இருப்பீர்கள் மற்றும் வலியை உணர மாட்டீர்கள்.',
-    'during.qa1.generalUse': 'பொதுவாக பயன்படுத்தப்படும்: பெரிய அறுவை சिக िचச्छैकளுக्कु, शरीर कुहर அறுवை சிकिच्छैकळु, अथवा अन्य प्रकार उपयुक्त नही होने पर।',
-    'during.qa1.spinal': 'முதুகுத्तण्डु मயक्क मरुन्धु (Spinal/Epidural Anaesthesia):',
-    'during.qa1.spinalDesc': 'இடुপ്पుक്கു कीઝे નરम્પુच্ छैગैकळைत् तडुक्क, तण्डুवडत्তैच् छुऱ्ऱિयुळ্ळ भাગযिल् इन्জেक्शन् মूলম् মরুন्धु छেलুत्तुতल्।',
-    'during.qa1.spinalUse': 'સામાન्ययेन્ પ્રયુજિતા કરનु লबন্নേ: નીચે શરીর অস্ত্রોপচার, સીઝેરિયન કેપીম, ઇગટિયા/દનહિસ অস্ত્রોપચાર।',
-    'during.qa1.nerve': 'குறिप्पिട्ट நरম্પুগळైच् छेયलिळक्கच् छেय्तल् (Peripheral Nerve Blocks):',
-    'during.qa1.nerveDesc': 'நিର्દિष्ট நরम্পুગळ ছুऱ्ऱি (उदाহরणমাক, കൈ অস్ত্রোপচারിکু પুय নরम্પু মുডિচ্ছु) વલિ નિવારণી મરুন্ધैच் છেલুত्तুতল्। इदु আন্তপ পাগतিল् മাত्तুम् নीळ्ळ নেര വলિ निवारણम् આळிক्कুম্।',
-    'during.qa1.nerveUse': 'સામાન्यยेন પયિन्પडुत्तપડુকિরતु: કૈ, ઉરহિસ હોઇ ककুळ અস્ત્રોપચાર সান્ধહા, इळक્કगत વેદના सहনય लাभા दેમિન्।',
-    'during.qa1.sedation': 'ஓরळవু মযক્क நిলै (Conscious Sedation):',
-    'during.qa1.sedationDesc': 'નોયાળિ સুયनિનைવுडன् আনાল् তળর્વান নિলையિল् ઇરুক્ક નરम્પু વઝિ મরুન्धুગळ કોডुক્કપडુম्; નીগळ સિறિয અસાমાન्य स्वयमिનैવ କૈळ કિন्तુ सुখप्रદ અવસ્થામાં હશો।',
-    'during.qa1.sedationUse': 'પયिन્પडুत্তપડુકિરতু: छોট अનुसन्धान પ્રક્રિયાઓ અને એન્ડોસ્કોપી (Endoscopy) போன્றવत્રुক્कુ।',
-
-    'during.qa2.question': 'ஒவ্વொன্றুম் எவ্வাறு செयলપडুকিরতु?',
-    'during.qa2.general': 'સર્વসામાન્ય મયક્ક મरुন्धु:',
-    'during.qa2.generalDesc': 'Propofol போన্ড মরुন્ধુগळ, તसै তન્વન্ত્রিકાએ মাত્তুম् Sevoflurane போન্ড વાયুક્કळ મध্য નરम्পু મણ্ડলત્તિન् છেयલપাટિन় કുறેत્તુ વલિ સমિक્ઞैગळેત् તડুક્કિન્ન।',
-    'during.qa2.generalList1': 'અનુપ્રેરિત કરેছે સુযનিनैવતનम्',
-    'during.qa2.generalList2': 'માંસપेశિ લિહિল् કરयે',
-    'during.qa2.generalList3': 'વેદના સમનय કরयે',
-    'during.qa2.generalList4': 'શરીર ક્રિયાકારિત્વय પવત્વा ગનેયિમ પાલনय કરયે',
-    'during.qa2.generalEnd': 'અસ্ত્રোપચার અવસાન વન વિट, નિর્વિન્ધન વેદ્ય વરયા ઓষધ પાલনય નવત્વનુ આત્, ઓબ ટિકેન ટિક અવદિ વિય હैકిયা।',
-    'during.qa2.spinal': 'સુષુम્ના નિર્વિન્ધનય:',
-    'during.qa2.spinalDesc': 'Bupivacaine போன્ড મরुন્ধুગळ નરম્પु વেરग્ળેच छেન્રडેन્હુ, નরम્পુત् તূન્ડલ્ગळ પરવુવતैત્ તડુક્કિન્ન।',
-    'during.qa2.spinalList1': 'નรम्પु આવેગ કšेरুકાव દિગે મોळયિત્ગমન કিરિम અવહિર કરयે',
-    'during.qa2.spinalList2': 'શરীરયે પહळ કોટસ હિરિવैટી યામત் સલস્વयે',
-    'during.qa2.spinalEnd': 'શલ્યકર્મยെन્ પસુ પેયર 2-4 ક અતુળત નિર્વેદય સામાન્ययેન ઇવત વે.',
-    'during.qa2.nerve': 'પર્યન્ત સ્નાયુ અવહિરયન:',
-    'during.qa2.nerveDesc': 'અલ્ટ્રાસवुન্ড વઝિકાટ્ટુતલুડન, વિશેષિત સ્નાયુ વટા નિર્વેદક એન્નત કરનु લએબે. નીઉંગळ સर्વकાલम् સિહિગિલેન સિટી.',
-    'during.qa2.sedation': 'સેહેલ્લુ કિરીમ (Sedation):',
-    'during.qa2.sedationDesc': 'સેહેલ્લુ કિરીમ ગેમ્બુરત સિદુ કરન વિટ:',
-    'during.qa2.sedationList1': 'વિસન્યોજনય સહ સેહેલ્લુ કિરીમ સન્ધহા સિરાવ હરહા ઓષધ લાભાદેન લદી',
-    'during.qa2.sedationList2': 'વેદનાવ અડુ કિરીમત પેદેસીય નિર્વેદકયद भाविত કळ હैકિય',
-    'during.qa2.sedationList3': 'ઓબ વિહિળુ વલત પ્રતિચાર દैક્ષિય હैકિ નमुત સમ્પૂર્ણયેન દैનુવત્વ નોસિટિય હैકિય',
-    'during.qa2.sedationList4': 'મતક શક્તિય યમ આકારયકત અડુ વિય હैકિય',
-
-    'during.qa3.question': 'અपાયঙ্গল સহ સઙ્કૂલતા મોનવાد?',
-    'during.qa3.minor': 'સામાન્ય સુળુ અતુરુ આભાધ:',
-    'during.qa3.minorList1': 'વેવ્લીમ (20% અવ રোગીઉંગેન)',
-    'during.qa3.minorList2': 'અસ્ત્રોપચારયેન પસુ ઓક્કારય સહ વમનય (25%)',
-    'during.qa3.minorList3': 'હુસ્મ ગેનીમे નલયેન ઉગુરે વેદનાવ (15%)',
-    'during.qa3.minorList4': 'તાવકાલિક વ્યાકૂલત્વય, વિશેષયેન વેડિહિટિયન (10%)',
-    'during.qa3.regional': 'પ્રાદેશીય નિર્વેદન અવદાનમ્:',
-    'during.qa3.regionalList1': 'કशेરુકા સિદુરુ કિરીમેન હિસરદય (1-2%)',
-    'during.qa3.regionalList2': 'તાવકાલિક સ્નાયુક લક્ષણ (0.5%)',
-    'during.qa3.regionalList3': 'પ્રતિકારયત જલય, કેફેન હો અવશ્ય નમ એપિડુરલ રુધિર પેચ આતુળત વે',
-    'during.qa3.serious': 'બરપતল નમુત દુર્લભ સઙ્કૂલતા:',
-    'during.qa3.seriousList1': 'ઉગ્ર અસાત્મિકતા પ્રતિક્રિયાવ (10,000 ટ 1)',
-    'during.qa3.seriousList2': 'પિળિકુल અધિ તાપનય (50,000 ટ 1 ટ વડા અડુ)',
-    'during.qa3.seriousList3': 'સ્નાયુ હાનિય (100,000 ટ 1 ટ વડા અડુ)',
-    'during.qa3.seriousList4': 'પ્રવેશમેન ઇતિહાસય ગેનીમ સહ હદિસિ સૂદાનમ હરહા વેળેક્વીમ',
-    'during.qa3.airway': 'શ્વસન પથ સઙ્કૂલતા:',
-    'during.qa3.airwayList1': 'અપહસુ શ્વસન નળ આતુળુ કિરીમ (1-3%)',
-    'during.qa3.airwayList2': 'શ્વસનય (1% ટ વડા અડુ)',
-    'during.qa3.airwayList3': 'વીડિયો લેરિઙ્ગોસ્કોપિ સહ ઇક્મન અનુક્રમ પ્રેરણ પ્રોટોકોલ સમઙ કળમનાકરણય',
-    'during.qa3.remember': 'મતક તભા ગન્ન: ઓબે નિર્વેદન વેદ્યવરયા મેમ સઙ્કૂલતા વેળેક્વીમ, હદુના ગેનીમ સહ પ્રતિકાર કિરીમ સન્ધહા વિશેષ પુહુણુવ લભા આત. નવીન નિર્વેદનય ઇતા આરક્ષિતયી.',
-
-    'during.qa4.question': 'શલ્યકર્મય અતરતુર ઓબ અધીક્ષણય કરન્નে કેસેદ?',
-    'during.qa4.standard': 'સમ્મત અધીક્ષણય (ASA માર્ગોપદેશ):',
-    'during.qa4.standardList1': 'ECG (હૃદ રિદ્મય)',
-    'during.qa4.standardList2': 'રુધિર પીડનય (NIBP)',
-    'during.qa4.standardList3': 'ઓક્સિજન મટ્ટમ (SpO₂)',
-    'during.qa4.standardList4': 'કાર્બન ડયોક્સયિડ મટ્ટમ (ETCO₂)',
-    'during.qa4.standardList5': 'શરીર ઉષ્ણત્વય',
-    'during.qa4.advanced': 'અવશ્ય વિટ દિયુણુ અધીક્ષણય:',
-    'during.qa4.advancedList1': 'અખણ્ડ રુધિર પીડનય સન્ધહા ધમનિ રેખાવ',
-    'during.qa4.advancedList2': 'મધ્યમ શિરા પીડન અધીક્ષણય',
-    'during.qa4.advancedList3': 'સ્નાયુ માંશ અવહિર અધીક્ષણય',
-    'during.qa4.advancedList4': 'નિર્વેદન ગેમ્બુર અધીક્ષણય (BIS)',
-    'during.qa4.targets': 'સામાન્ય ઇલક્ક પરાસ:',
-    'during.qa4.targetsList1': 'SpO₂ > 95%',
-    'during.qa4.targetsList2': 'ETCO₂ 35-45 mmHg',
-    'during.qa4.targetsList3': 'સામાન્ય ધમનિ પીડનય 65-90 mmHg',
-    'during.qa4.targetsList4': 'મૂલ ઉષ્ણત્વય 36-37°C',
-    'during.qa4.safety': 'આરક્ષણ પ્રોટોકોલ:',
-    'during.qa4.safetyList1': 'પૂર્વ સેકસૂ સીમા સમઙ શ્રવણ અનતુરુ આઙવીમ',
-    'during.qa4.safetyList2': 'ક્ષણિક પ્રતિચાર પ્રોટોકોલ',
-    'during.qa4.safetyList3': 'નિતિપતા ઉપકરણ ક્રમાઙ્કનય',
-    'during.qa4.safetyList4': 'સઞ્ચિત પદ્ધતિ લભા ગત હેકિયા',
-    'during.qa4.safetyList5': 'પુહુણુ વૂ પુદ્ગલયન સેમ વિટમ સિટી',
-    'during.qa4.modern': 'નવીન અધીક્ષણય નિર્વેદનય પેરત વડા આરક્ષિત કરયે.',
-
-    'during.qa5.question': 'શલ્યકર્મય અતરતુર નિર્વેદન વેદ્યવરયાગે ભૂમિકાવ કુમક્દ?',
-    'during.qa5.intro': 'ઓબે નિર્વેદન વેદ્યવરયા શલ્યકર્મય પુરાવત ઓબે કેપ વૂ આરક્ષકયા વન અતર, સમ્પૂર્ણયેન ઓબે આરક્ષાવ સહ સુવપહસુવ કેરેહિ અવધાનય યોમુ કરयે.',
-    'during.qa5.responsibilities': 'પ્રધાન વગકીમ:',
-    'during.qa5.respList1': 'જીવિત સઞ્ઞા, નિર્વેદન ગેમ્બુર સહ દ્રવ તત્વય અખણ્ડવ તક્સેરુ કિરીમ',
-    'during.qa5.respList2': 'રુધિર વહનય હો રુધિર પીડન વેનસ્વીમ વેન હદિસિ અવસ્થાવલત પ્રતિચાર દેક્વીમ',
-    'during.qa5.respList3': 'શલ્યકર્મ અવશ્યતા મત પદનમ્વ ઓષધ માત્રા સકસ કિરીમ',
-    'during.qa5.respList4': 'પ્રશસ્ત રોગી સત્કારય સન્ધહા શલ્યકરુવરુન સહ હેદિયન સમઙ સમ્બન્ધીકરણય',
-    'during.qa5.respList5': 'સિયલુ વેલાવત રોગિયાગે સુવપહસુવ, પૌદ્ગલિકત્વય સહ ગરુત્વય સહતિક કિરીમ',
-    'during.qa5.respList6': 'શલ્યકર્મયेन પસુ વેદના કળમનાકરણય સહ પ્રકૃતિમત વીમ સન્ધહા સેલસુમ કિરીમ',
-    'during.qa5.team': 'કણ્ડાયમ સહયોગિતાવ:',
-    'during.qa5.teamDesc': 'ઓબે નિર્વેદન વેદ્યવરયા સમીપવ કટયુતુ કરयે:',
-    'during.qa5.teamList1': 'વેલાવ સહ સ્થાનગત કિરીમ સમ્બન્ધીકરણયત શલ્યકરુવરુન',
-    'during.qa5.teamList2': 'ઉપકરણ સહ ઓષધ કળમનાકરણય સન્ધહા શલ્યાગાર હેદિયન',
-    'during.qa5.teamList3': 'સુમુદુ સઞ્ક્રમણય સહતિક કિરીમ સન્ધહા પ્રકૃતિમત વીમે કાર્ય મણ્ડલય',
-    'during.qa5.think': 'શલ્યકર્મય અતરતુર ઓબે નિર્વેદન વેદ્યવરયા ઓબે પુદ્ગલિક આરક્ષકયા સહ અનુગામિકયા લેસ સિતન્ન.'
-
-    // Additional parts would continue with After Surgery translations following the same pattern...
-  }
+    // Footer
+    'footer.disclaimer': 'இந்த தகவல்கள் கல்வி நோக்கங்களுக்கு மட்டுமே மற்றும் தொழில்முறை மருத்துவ ஆலோசனையை மாற்றக்கூடாது.',
+    'footer.copyright': '© 2024 இலங்கை மயக்க மருந்து கல்வி முன்முயற்சி. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.',
+  },
 };
 
-const useLanguage = () => {
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
+
+export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [language, setLanguage] = useState<Language>('en');
+
+  const t = (key: string): string => {
+    const keys = key.split('.');
+    let value: any = translations[language];
+    
+    for (const k of keys) {
+      if (value && typeof value === 'object' && k in value) {
+        value = value[k];
+      } else {
+        // Fallback to English if translation not found
+        value = translations['en'];
+        for (const fallbackKey of keys) {
+          if (value && typeof value === 'object' && fallbackKey in value) {
+            value = value[fallbackKey];
+          } else {
+            return key; // Return key if not found in English either
+          }
+        }
+        break;
+      }
+    }
+    
+    return typeof value === 'string' ? value : key;
+  };
+
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
+
+export const useLanguage = () => {
   const context = useContext(LanguageContext);
   if (context === undefined) {
     throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
 };
-
-interface LanguageProviderProps {
-  children: ReactNode;
-}
-
-const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  const [currentLanguage, setCurrentLanguage] = useState<Language>('en');
-
-  const setLanguage = (lang: Language) => {
-    setCurrentLanguage(lang);
-  };
-
-  const t = (key: string): string => {
-    const keys = key.split('.');
-    let value: any = translations[currentLanguage];
-    
-    for (const k of keys) {
-      value = value?.[k];
-      if (!value) break;
-    }
-    
-    return value || key;
-  };
-
-  return (
-    <LanguageContext.Provider value={{ currentLanguage, setLanguage, t }}>
-      {children}
-    </LanguageContext.Provider>
-  );
-};
-
-export { LanguageProvider, useLanguage };
