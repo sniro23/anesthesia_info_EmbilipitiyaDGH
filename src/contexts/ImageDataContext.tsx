@@ -2,37 +2,37 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ImageData } from '@/components/ImageGallery';
 
-// Initial data with images from GitHub public/imageuplodas/ directory
+// Initial data with images from Lovable's upload directory
 const initialImages: Record<string, ImageData[]> = {
   'before.qa1': [
     { 
-      src: "/imageuplodas/608af697-e9b5-487a-befd-b3732af98807.png", 
+      src: "/lovable-uploads/608af697-e9b5-487a-befd-b3732af98807.png", 
       alt: "Doctor and patient consultation in medical office",
       caption: "Pre-anesthesia consultation and assessment"
     }
   ],
   'during.qa1': [
     { 
-      src: "/imageuplodas/0ea6d54e-390a-4ee9-ba5c-109568840422.png", 
+      src: "/lovable-uploads/0ea6d54e-390a-4ee9-ba5c-109568840422.png", 
       alt: "Patient during surgery with monitoring equipment",
       caption: "Anesthesia monitoring during surgery"
     },
     { 
-      src: "/imageuplodas/130acc06-67a9-466f-a6ad-f05f720e7df9.png", 
+      src: "/lovable-uploads/130acc06-67a9-466f-a6ad-f05f720e7df9.png", 
       alt: "Surgical team performing operation in operating room",
       caption: "Medical team during surgery with modern equipment"
     }
   ],
   'during.qa2': [
     { 
-      src: "/imageuplodas/f49d3076-062b-4065-847a-37b4fc4916a3.png", 
+      src: "/lovable-uploads/f49d3076-062b-4065-847a-37b4fc4916a3.png", 
       alt: "Different types of anesthesia administration",
       caption: "Regional anesthesia being administered"
     }
   ],
   'during.qa3': [
     { 
-      src: "/imageuplodas/5e8755f9-3478-4ccc-b5fc-50041e16be04.png", 
+      src: "/lovable-uploads/5e8755f9-3478-4ccc-b5fc-50041e16be04.png", 
       alt: "Surgical team in operating room with patient monitoring",
       caption: "Patient being monitored while the surgeon performs the surgery"
     }
@@ -61,7 +61,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const savedImages = localStorage.getItem(IMAGE_STORAGE_KEY);
       if (savedImages) {
         const parsed = JSON.parse(savedImages);
-        console.log('Loaded images from localStorage (GitHub directory paths):', parsed);
+        console.log('Loaded images from localStorage (Lovable uploads):', parsed);
         // Merge with initial images to ensure we don't lose default content
         return { ...initialImages, ...parsed };
       }
@@ -69,7 +69,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       console.error("Failed to load saved images:", error);
     }
     
-    console.log('Using initial images from GitHub imageuplodas directory:', initialImages);
+    console.log('Using initial images from Lovable uploads directory:', initialImages);
     return initialImages;
   };
 
@@ -79,7 +79,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     try {
       localStorage.setItem(IMAGE_STORAGE_KEY, JSON.stringify(images));
-      console.log("Images saved to localStorage (GitHub directory paths)");
+      console.log("Images saved to localStorage (Lovable uploads)");
     } catch (error) {
       console.error("Failed to save images:", error);
     }
@@ -89,7 +89,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === IMAGE_STORAGE_KEY) {
-        console.log("Storage changed from another tab, reloading GitHub directory images");
+        console.log("Storage changed from another tab, reloading Lovable upload images");
         setImages(loadSavedImages());
       }
     };
@@ -101,24 +101,24 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
   }, []);
 
-  // Ensure all images use the GitHub imageuplodas directory path
+  // Ensure all images use the Lovable uploads directory path
   const processImagePath = (image: ImageData): ImageData => {
     if (!image.src) return image;
     
     let src = image.src;
     
-    // Convert old lovable-uploads paths to GitHub imageuplodas paths
-    if (src.startsWith('/lovable-uploads/')) {
+    // Convert old imageuplodas paths to Lovable uploads paths
+    if (src.startsWith('/imageuplodas/')) {
       const filename = src.split('/').pop();
-      src = `/imageuplodas/${filename}`;
-      console.log(`Converted path to GitHub directory: ${src}`);
+      src = `/lovable-uploads/${filename}`;
+      console.log(`Converted path to Lovable uploads: ${src}`);
     }
     
-    // Ensure all paths use the GitHub imageuplodas directory
-    if (!src.startsWith('/imageuplodas/') && !src.startsWith('http')) {
-      // If it's just a filename, add the GitHub directory path
+    // Ensure all paths use the Lovable uploads directory
+    if (!src.startsWith('/lovable-uploads/') && !src.startsWith('http')) {
+      // If it's just a filename, add the Lovable uploads path
       const filename = src.split('/').pop();
-      src = `/imageuplodas/${filename}`;
+      src = `/lovable-uploads/${filename}`;
     }
     
     return { ...image, src };

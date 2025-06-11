@@ -1,17 +1,16 @@
 
-import { uploadFile } from './api';
-
-// Create a global fetch interceptor for image handling
+// Create a global fetch interceptor for Lovable's native image handling
 const originalFetch = window.fetch;
 
 window.fetch = async function(input, init) {
   // Check if this is a call to our upload API
   if (input === '/api/upload' && init?.method === 'POST') {
-    console.log('Intercepting upload request for GitHub repository storage');
+    console.log('Intercepting upload request for Lovable native storage');
     
-    // Handle file upload
+    // Handle file upload using Lovable's system
     const formData = init.body as FormData;
     const file = formData.get('file') as File;
+    const filename = formData.get('filename') as string;
     
     if (!file) {
       return new Response(JSON.stringify({ error: 'No file provided' }), {
@@ -20,25 +19,45 @@ window.fetch = async function(input, init) {
       });
     }
     
-    // Process the upload using our GitHub storage service
-    const response = await uploadFile(file);
-    
-    console.log('GitHub upload response:', response);
-    
-    // Create a Response object with the correct data structure
-    if (response.success && response.data) {
-      return new Response(JSON.stringify(response.data), {
-        status: 200,
-        headers: {
-          'Content-Type': 'application/json'
-        }
+    try {
+      // Create a data URL for the image
+      const arrayBuffer = await file.arrayBuffer();
+      const blob = new Blob([arrayBuffer], { type: file.type });
+      const dataUrl = await new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.readAsDataURL(blob);
       });
-    } else {
-      return new Response(JSON.stringify({ error: response.error }), {
-        status: 400,
-        headers: {
-          'Content-Type': 'application/json'
-        }
+      
+      // Store in Lovable's upload format
+      const uploadPath = `/lovable-uploads/${filename}`;
+      
+      // Store the file data for retrieval
+      const fileStorage = JSON.parse(localStorage.getItem('lovable-files') || '{}');
+      fileStorage[uploadPath] = {
+        dataUrl: dataUrl,
+        filename: filename,
+        originalName: file.name,
+        contentType: file.type,
+        uploadDate: new Date().toISOString()
+      };
+      localStorage.setItem('lovable-files', JSON.stringify(fileStorage));
+      
+      console.log(`File saved to Lovable storage: ${uploadPath}`);
+      
+      return new Response(JSON.stringify({
+        url: uploadPath,
+        id: filename.split('.')[0]
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+    } catch (error) {
+      console.error('Lovable upload error:', error);
+      return new Response(JSON.stringify({ error: 'Upload failed' }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' }
       });
     }
   }
@@ -47,4 +66,4 @@ window.fetch = async function(input, init) {
   return originalFetch.apply(window, [input, init]);
 };
 
-console.log('Fetch interceptor initialized for GitHub repository file storage');
+console.log('Fetch interceptor initialized for Lovable native file storage');

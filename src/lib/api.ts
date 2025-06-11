@@ -1,15 +1,6 @@
 
-import { githubFileUploadService } from './githubFileUpload';
-
-// Mock API response types
-type ApiResponse<T> = {
-  success: boolean;
-  data?: T;
-  error?: string;
-};
-
-// File Upload API - simulates GitHub upload for development
-export const uploadFile = async (file: File): Promise<ApiResponse<{ url: string; id: string }>> => {
+// File Upload API - uses Lovable's native upload system
+export const uploadFile = async (file: File): Promise<{ success: boolean; data?: { url: string; id: string }; error?: string }> => {
   try {
     if (!file) {
       throw new Error('No file provided');
@@ -27,22 +18,37 @@ export const uploadFile = async (file: File): Promise<ApiResponse<{ url: string;
       throw new Error('File type not supported. Please upload a JPG, PNG, or GIF image.');
     }
     
-    console.log('Starting simulated GitHub upload for file:', file.name);
+    console.log('Starting Lovable native upload for file:', file.name);
     
-    // Upload the file using GitHub service
-    const result = await githubFileUploadService.uploadToGitHub(file);
+    // Generate unique filename
+    const timestamp = Date.now();
+    const randomId = Math.random().toString(36).substring(2, 9);
+    const extension = file.name.split('.').pop() || 'png';
+    const filename = `${timestamp}-${randomId}.${extension}`;
     
-    if (!result.success) {
-      throw new Error(result.error || 'Upload failed');
+    // Use Lovable's upload system - this will be intercepted by the fetch interceptor
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('filename', filename);
+    
+    const response = await fetch('/api/upload', {
+      method: 'POST',
+      body: formData,
+    });
+    
+    if (!response.ok) {
+      throw new Error('Upload failed');
     }
     
-    console.log('Simulated GitHub upload successful:', result);
+    const data = await response.json();
+    
+    console.log('Lovable upload successful:', data);
     
     return {
       success: true,
       data: {
-        url: result.url,
-        id: result.id
+        url: data.url,
+        id: data.id || `img-${timestamp}-${randomId}`
       }
     };
   } catch (error) {
