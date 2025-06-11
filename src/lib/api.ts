@@ -1,5 +1,5 @@
 
-import { mockUploadService } from './mockFileUpload';
+import { githubFileUploadService } from './githubFileUpload';
 
 // Mock API response types
 type ApiResponse<T> = {
@@ -8,7 +8,7 @@ type ApiResponse<T> = {
   error?: string;
 };
 
-// Mock API for file uploads - saves to public/imageuplodas/ directory
+// GitHub File Upload API - saves to public/imageuplodas/ directory in GitHub repo
 export const uploadFile = async (file: File): Promise<ApiResponse<{ url: string; id: string }>> => {
   try {
     if (!file) {
@@ -27,14 +27,23 @@ export const uploadFile = async (file: File): Promise<ApiResponse<{ url: string;
       throw new Error('File type not supported. Please upload a JPG, PNG, or GIF image.');
     }
     
-    // Upload the file using our service that saves to imageuplodas directory
-    const result = await mockUploadService.uploadFile(file);
+    console.log('Starting GitHub upload for file:', file.name);
     
-    console.log('File upload result:', result);
+    // Upload the file using GitHub service
+    const result = await githubFileUploadService.uploadToGitHub(file);
+    
+    if (!result.success) {
+      throw new Error(result.error || 'Upload failed');
+    }
+    
+    console.log('GitHub upload successful:', result);
     
     return {
       success: true,
-      data: result
+      data: {
+        url: result.url,
+        id: result.id
+      }
     };
   } catch (error) {
     console.error('Upload API error:', error);

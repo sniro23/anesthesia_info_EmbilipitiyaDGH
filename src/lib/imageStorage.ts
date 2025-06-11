@@ -1,7 +1,7 @@
 
 /**
  * Image Storage Service - Handles file storage to GitHub repo directory
- * Saves images to public/imageuplodas/ directory
+ * Saves images to public/imageuplodas/ directory in GitHub repository
  */
 
 export interface StoredImageInfo {
@@ -10,6 +10,7 @@ export interface StoredImageInfo {
   originalName: string;
   url: string;
   uploadDate: string;
+  githubPath?: string;
 }
 
 class ImageStorageService {
@@ -38,61 +39,48 @@ class ImageStorageService {
   
   /**
    * Store image file and return permanent URL
-   * This saves to public/imageuplodas/ directory
+   * This saves to public/imageuplodas/ directory in GitHub repo
    */
   public async storeImage(file: File): Promise<StoredImageInfo> {
     const filename = this.generateFilename(file);
     const url = `${this.UPLOAD_PATH}${filename}`;
     const id = `img-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+    const githubPath = `public/imageuplodas/${filename}`;
     
     const imageInfo: StoredImageInfo = {
       id,
       filename,
       originalName: file.name,
       url,
-      uploadDate: new Date().toISOString()
+      uploadDate: new Date().toISOString(),
+      githubPath
     };
     
     // Store in manifest
     this.updateManifest(imageInfo);
     
-    // In a real implementation, this would save the file to the GitHub repo
-    // For now, we'll create a blob URL as a fallback for immediate display
-    const blobUrl = URL.createObjectURL(file);
-    
-    // Store the blob URL mapped to our permanent URL for immediate use
-    const blobMapping = this.getBlobMapping();
-    blobMapping[url] = blobUrl;
-    localStorage.setItem('blob-url-mapping', JSON.stringify(blobMapping));
-    
-    console.log(`Image stored with URL: ${url}`);
+    console.log(`Image will be stored to GitHub at: ${githubPath}`);
+    console.log(`Accessible via URL: ${url}`);
     
     return imageInfo;
   }
   
   /**
-   * Get blob URL mapping for immediate display
-   */
-  private getBlobMapping(): Record<string, string> {
-    try {
-      return JSON.parse(localStorage.getItem('blob-url-mapping') || '{}');
-    } catch {
-      return {};
-    }
-  }
-  
-  /**
-   * Get the actual URL to display
+   * Get the actual URL to display - now points to GitHub repo files
    */
   public getDisplayUrl(permanentUrl: string): string {
-    // First check if it's already a valid path in our imageuplodas directory
+    // Ensure the URL uses the correct imageuplodas path
     if (permanentUrl.startsWith('/imageuplodas/')) {
       return permanentUrl;
     }
     
-    // Check for blob URL mapping
-    const blobMapping = this.getBlobMapping();
-    return blobMapping[permanentUrl] || permanentUrl;
+    // Convert old paths to new structure
+    if (permanentUrl.includes('/')) {
+      const filename = permanentUrl.split('/').pop();
+      return `/imageuplodas/${filename}`;
+    }
+    
+    return permanentUrl;
   }
   
   /**
@@ -132,16 +120,11 @@ class ImageStorageService {
   }
   
   /**
-   * Clean up expired blob URLs
+   * Get GitHub path for an image
    */
-  public cleanupBlobUrls(): void {
-    const blobMapping = this.getBlobMapping();
-    Object.values(blobMapping).forEach(blobUrl => {
-      if (blobUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(blobUrl);
-      }
-    });
-    localStorage.removeItem('blob-url-mapping');
+  public getGitHubPath(url: string): string {
+    const filename = url.split('/').pop() || '';
+    return `public/imageuplodas/${filename}`;
   }
 }
 

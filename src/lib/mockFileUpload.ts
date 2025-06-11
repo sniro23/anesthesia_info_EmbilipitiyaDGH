@@ -1,30 +1,41 @@
 
+import { githubFileUploadService } from './githubFileUpload';
 import { imageStorageService } from './imageStorage';
 
 /**
- * Mock file upload service - saves files to public/imageuplodas/ directory
+ * File upload service - now uploads to GitHub repository
  */
 
-class MockFileUploadService {
-  private static instance: MockFileUploadService;
+class FileUploadService {
+  private static instance: FileUploadService;
   
   private constructor() {}
   
-  public static getInstance(): MockFileUploadService {
-    if (!MockFileUploadService.instance) {
-      MockFileUploadService.instance = new MockFileUploadService();
+  public static getInstance(): FileUploadService {
+    if (!FileUploadService.instance) {
+      FileUploadService.instance = new FileUploadService();
     }
-    return MockFileUploadService.instance;
+    return FileUploadService.instance;
   }
   
   public async uploadFile(file: File): Promise<{ url: string; id: string }> {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 800));
+    console.log('Starting file upload to GitHub repository...');
     
-    // Use our image storage service which saves to imageuplodas directory
+    // Store image metadata
     const imageInfo = await imageStorageService.storeImage(file);
     
-    console.log('File uploaded to imageuplodas directory:', imageInfo);
+    // Upload to GitHub
+    const githubResult = await githubFileUploadService.uploadToGitHub(file);
+    
+    if (!githubResult.success) {
+      throw new Error(githubResult.error || 'Failed to upload to GitHub');
+    }
+    
+    console.log('File successfully uploaded to GitHub:', {
+      url: imageInfo.url,
+      githubPath: imageInfo.githubPath,
+      id: imageInfo.id
+    });
     
     return {
       url: imageInfo.url,
@@ -33,4 +44,4 @@ class MockFileUploadService {
   }
 }
 
-export const mockUploadService = MockFileUploadService.getInstance();
+export const mockUploadService = FileUploadService.getInstance();
