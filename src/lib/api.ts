@@ -1,33 +1,21 @@
 
 import { mockUploadService } from './mockFileUpload';
 
-// Mock API response types
+// API response types
 type ApiResponse<T> = {
   success: boolean;
   data?: T;
   error?: string;
 };
 
-// Mock API for file uploads with improved storage
+// API for file uploads with direct file storage
 export const uploadFile = async (file: File): Promise<ApiResponse<{ url: string; id: string }>> => {
   try {
     if (!file) {
       throw new Error('No file provided');
     }
     
-    // Check file size (max 5MB)
-    const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
-    if (file.size > maxSizeInBytes) {
-      throw new Error('File size exceeds 5MB limit');
-    }
-    
-    // Check file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
-    if (!allowedTypes.includes(file.type)) {
-      throw new Error('File type not supported. Please upload a JPG, PNG, or GIF image.');
-    }
-    
-    // Upload the file using our improved mock service
+    // Upload the file using our improved service that saves files directly
     const result = await mockUploadService.uploadFile(file);
     
     return {

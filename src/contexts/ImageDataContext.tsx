@@ -1,7 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ImageData } from '@/components/ImageGallery';
-import { imageStorageService } from '@/lib/imageStorage';
 
 // Sample initial data
 const initialImages: Record<string, ImageData[]> = {
@@ -100,7 +99,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
   }, []);
 
-  // Process image paths to ensure they work with our storage system
+  // Process image paths to ensure they work with direct file storage
   const processImagePath = (image: ImageData): ImageData => {
     if (!image.src) return image;
     
@@ -111,11 +110,6 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       src = src.replace('public/', '/');
     } else if (src.startsWith('/public/lovable-uploads/')) {
       src = src.replace('/public/', '/');
-    }
-    
-    // Get the display URL from our storage service
-    if (src.startsWith('/lovable-uploads/')) {
-      src = imageStorageService.getDisplayUrl(src);
     }
     
     return { ...image, src };

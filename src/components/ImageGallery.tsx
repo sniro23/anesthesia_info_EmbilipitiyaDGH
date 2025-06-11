@@ -1,9 +1,7 @@
-
 import React, { useState } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { imageStorageService } from '@/lib/imageStorage';
 
 export interface ImageData {
   src: string;
@@ -27,13 +25,15 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
   if (!images || images.length === 0) return null;
 
-  // Process image paths with improved URL handling
+  // Process image paths for direct file storage
   const processedImages = images.map(image => {
     let src = image.src;
     
-    // Use our storage service to get the proper display URL
-    if (src.startsWith('/lovable-uploads/')) {
-      src = imageStorageService.getDisplayUrl(src);
+    // Ensure proper path format for direct file access
+    if (src.startsWith('public/lovable-uploads/')) {
+      src = src.replace('public/', '/');
+    } else if (src.startsWith('/public/lovable-uploads/')) {
+      src = src.replace('/public/', '/');
     }
     
     return { ...image, src };
@@ -123,7 +123,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
             <div className="p-2 text-sm text-center text-neutral-600 bg-neutral-50">
               {activeImage.caption}
             </div>
-          )}
+            )}
           
           {/* Dots indicator */}
           {images.length > 1 && (

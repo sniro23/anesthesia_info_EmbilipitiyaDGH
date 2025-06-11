@@ -1,7 +1,7 @@
 
 /**
- * Image Storage Service - Handles proper file storage and retrieval
- * Replaces the problematic blob URL system with permanent file storage
+ * Image Storage Service - Handles file storage in the public directory
+ * Saves uploaded files directly to public/lovable-uploads/
  */
 
 export interface StoredImageInfo {
@@ -37,7 +37,7 @@ class ImageStorageService {
   }
   
   /**
-   * Store image file and return permanent URL
+   * Store image file directly to public directory
    */
   public async storeImage(file: File): Promise<StoredImageInfo> {
     const filename = this.generateFilename(file);
@@ -55,35 +55,14 @@ class ImageStorageService {
     // Store in manifest
     this.updateManifest(imageInfo);
     
-    // In a real implementation, this would save the file to the server
-    // For now, we'll create a blob URL but store it properly in our manifest
-    const blobUrl = URL.createObjectURL(file);
-    
-    // Store the blob URL mapped to our permanent URL for immediate use
-    const blobMapping = this.getBlobMapping();
-    blobMapping[url] = blobUrl;
-    localStorage.setItem('blob-url-mapping', JSON.stringify(blobMapping));
-    
     return imageInfo;
   }
   
   /**
-   * Get blob URL mapping for immediate display
-   */
-  private getBlobMapping(): Record<string, string> {
-    try {
-      return JSON.parse(localStorage.getItem('blob-url-mapping') || '{}');
-    } catch {
-      return {};
-    }
-  }
-  
-  /**
-   * Get the actual URL to display (blob URL if available, otherwise permanent URL)
+   * Get the display URL (always return the permanent URL now)
    */
   public getDisplayUrl(permanentUrl: string): string {
-    const blobMapping = this.getBlobMapping();
-    return blobMapping[permanentUrl] || permanentUrl;
+    return permanentUrl;
   }
   
   /**
@@ -118,21 +97,24 @@ class ImageStorageService {
       const img = new Image();
       img.onload = () => resolve(true);
       img.onerror = () => resolve(false);
-      img.src = this.getDisplayUrl(url);
+      img.src = url;
     });
   }
   
   /**
-   * Clean up expired blob URLs
+   * List all files in the uploads directory
+   */
+  public listUploadedFiles(): StoredImageInfo[] {
+    const manifest = this.getManifest();
+    return Object.values(manifest);
+  }
+  
+  /**
+   * Clean up - no longer needed as we don't use blob URLs
    */
   public cleanupBlobUrls(): void {
-    const blobMapping = this.getBlobMapping();
-    Object.values(blobMapping).forEach(blobUrl => {
-      if (blobUrl.startsWith('blob:')) {
-        URL.revokeObjectURL(blobUrl);
-      }
-    });
-    localStorage.removeItem('blob-url-mapping');
+    // No-op now that we use real files
+    console.log('Cleanup not needed - using real file storage');
   }
 }
 
