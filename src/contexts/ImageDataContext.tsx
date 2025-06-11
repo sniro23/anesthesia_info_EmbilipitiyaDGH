@@ -251,5 +251,3 @@ export const useImageData = () => {
 };
 
 export default ImageDataProvider;
-
-}
