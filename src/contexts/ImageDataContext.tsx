@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ImageData } from '@/components/ImageGallery';
 import { imageStorageService } from '@/lib/imageStorage';
@@ -51,22 +50,8 @@ const initialImages: Record<string, ImageData[]> = {
   'after.qa1': [
     { 
       src: "/lovable-uploads/dbda5c25-5667-4d04-bff6-865cf577d567.png", 
-      alt: "Patient in recovery room after surgery",
-      caption: "Post-operative recovery and monitoring"
-    }
-  ],
-  'after.qa2': [
-    { 
-      src: "/lovable-uploads/7c19deaa-b716-4c3d-a389-bc93e760d53c.png", 
-      alt: "Patient care after surgery",
-      caption: "Nursing care during recovery period"
-    }
-  ],
-  'after.qa3': [
-    { 
-      src: "/lovable-uploads/82af36d2-1142-4e33-9981-42de8cdebb4e.png", 
-      alt: "Patient discharge planning",
-      caption: "Discharge instructions and follow-up care"
+      alt: "Well equipped recovery room",
+      caption: "Well equipped recovery room"
     }
   ]
 };
@@ -325,3 +310,5 @@ export const useImageData = () => {
 };
 
 export default ImageDataProvider;
+
+}
