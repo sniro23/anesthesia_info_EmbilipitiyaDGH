@@ -8,7 +8,7 @@ type ApiResponse<T> = {
   error?: string;
 };
 
-// GitHub File Upload API - saves to public/imageuplodas/ directory in GitHub repo
+// File Upload API - simulates GitHub upload for development
 export const uploadFile = async (file: File): Promise<ApiResponse<{ url: string; id: string }>> => {
   try {
     if (!file) {
@@ -27,7 +27,7 @@ export const uploadFile = async (file: File): Promise<ApiResponse<{ url: string;
       throw new Error('File type not supported. Please upload a JPG, PNG, or GIF image.');
     }
     
-    console.log('Starting GitHub upload for file:', file.name);
+    console.log('Starting simulated GitHub upload for file:', file.name);
     
     // Upload the file using GitHub service
     const result = await githubFileUploadService.uploadToGitHub(file);
@@ -36,7 +36,7 @@ export const uploadFile = async (file: File): Promise<ApiResponse<{ url: string;
       throw new Error(result.error || 'Upload failed');
     }
     
-    console.log('GitHub upload successful:', result);
+    console.log('Simulated GitHub upload successful:', result);
     
     return {
       success: true,

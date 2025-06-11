@@ -26,13 +26,16 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
   if (!images || images.length === 0) return null;
 
-  // Process image paths to ensure they use imageuplodas directory
+  // Process image paths to get the correct URLs
   const processedImages = images.map(image => {
     let src = image.src;
     
-    // Use our storage service to get the proper display URL
+    // Check if we have a blob URL mapping for this path
     if (src.startsWith('/imageuplodas/')) {
-      src = imageStorageService.getDisplayUrl(src);
+      const imageMapping = JSON.parse(localStorage.getItem('image-url-mapping') || '{}');
+      if (imageMapping[src]) {
+        src = imageMapping[src];
+      }
     }
     
     return { ...image, src };

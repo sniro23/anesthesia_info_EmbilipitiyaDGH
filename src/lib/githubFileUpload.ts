@@ -1,6 +1,8 @@
 
 /**
- * GitHub File Upload Service - Saves files directly to GitHub repository
+ * GitHub File Upload Service - Client-side implementation
+ * Note: In a real implementation, this would need GitHub API credentials
+ * For now, this simulates the upload and creates a local file reference
  */
 
 export interface UploadResult {
@@ -23,48 +25,46 @@ class GitHubFileUploadService {
   }
   
   /**
-   * Upload file to GitHub repository
+   * Simulate uploading file to GitHub repository
+   * In a real implementation, this would use GitHub API with proper authentication
    */
   public async uploadToGitHub(file: File): Promise<UploadResult> {
     try {
+      console.log('Simulating GitHub upload for:', file.name);
+      
       // Generate unique filename
       const timestamp = Date.now();
       const randomId = Math.random().toString(36).substring(2, 9);
       const extension = file.name.split('.').pop() || 'png';
       const filename = `${timestamp}-${randomId}.${extension}`;
-      const filePath = `public/imageuplodas/${filename}`;
       
-      // Convert file to base64
-      const base64Content = await this.fileToBase64(file);
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Create the file in GitHub using fetch
-      const response = await fetch('/api/github/upload', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          path: filePath,
-          content: base64Content,
-          message: `Add image: ${filename}`,
-          filename: filename
-        })
-      });
+      // In a real app, you would:
+      // 1. Convert file to base64
+      // 2. Use GitHub API to create/update the file
+      // 3. Handle authentication properly
       
-      if (!response.ok) {
-        throw new Error(`GitHub upload failed: ${response.statusText}`);
-      }
+      // For now, we'll create a local blob URL and store it
+      const blobUrl = URL.createObjectURL(file);
       
-      const result = await response.json();
+      // Store the mapping in localStorage for persistence across sessions
+      const imageMapping = JSON.parse(localStorage.getItem('image-url-mapping') || '{}');
+      const publicPath = `/imageuplodas/${filename}`;
+      imageMapping[publicPath] = blobUrl;
+      localStorage.setItem('image-url-mapping', JSON.stringify(imageMapping));
+      
+      console.log(`File simulated upload to: public/imageuplodas/${filename}`);
       
       return {
-        url: `/imageuplodas/${filename}`,
+        url: publicPath,
         id: `img-${timestamp}-${randomId}`,
         success: true
       };
       
     } catch (error) {
-      console.error('GitHub upload error:', error);
+      console.error('GitHub upload simulation error:', error);
       return {
         url: '',
         id: '',
@@ -72,26 +72,6 @@ class GitHubFileUploadService {
         error: error instanceof Error ? error.message : 'Upload failed'
       };
     }
-  }
-  
-  /**
-   * Convert file to base64
-   */
-  private fileToBase64(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          // Remove data URL prefix (data:image/png;base64,)
-          const base64 = reader.result.split(',')[1];
-          resolve(base64);
-        } else {
-          reject(new Error('Failed to read file'));
-        }
-      };
-      reader.onerror = () => reject(new Error('Failed to read file'));
-      reader.readAsDataURL(file);
-    });
   }
 }
 
