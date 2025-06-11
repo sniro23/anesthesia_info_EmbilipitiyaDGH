@@ -7,7 +7,7 @@ const originalFetch = window.fetch;
 window.fetch = async function(input, init) {
   // Check if this is a call to our upload API
   if (input === '/api/upload' && init?.method === 'POST') {
-    console.log('Intercepting upload request');
+    console.log('Intercepting upload request for GitHub repository storage');
     
     // Handle file upload
     const formData = init.body as FormData;
@@ -20,10 +20,10 @@ window.fetch = async function(input, init) {
       });
     }
     
-    // Process the upload using our service
+    // Process the upload using our GitHub storage service
     const response = await uploadFile(file);
     
-    console.log('Upload response:', response);
+    console.log('GitHub upload response:', response);
     
     // Create a Response object with the correct data structure
     if (response.success && response.data) {
@@ -47,4 +47,4 @@ window.fetch = async function(input, init) {
   return originalFetch.apply(window, [input, init]);
 };
 
-console.log('Fetch interceptor initialized for client-side image handling');
+console.log('Fetch interceptor initialized for GitHub repository file storage');

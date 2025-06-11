@@ -1,8 +1,8 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ImageData } from '@/components/ImageGallery';
-import { imageStorageService } from '@/lib/imageStorage';
 
-// Initial data with images from public/imageuplodas/ directory
+// Initial data with images from GitHub public/imageuplodas/ directory
 const initialImages: Record<string, ImageData[]> = {
   'before.qa1': [
     { 
@@ -61,7 +61,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const savedImages = localStorage.getItem(IMAGE_STORAGE_KEY);
       if (savedImages) {
         const parsed = JSON.parse(savedImages);
-        console.log('Loaded images from localStorage:', parsed);
+        console.log('Loaded images from localStorage (GitHub directory paths):', parsed);
         // Merge with initial images to ensure we don't lose default content
         return { ...initialImages, ...parsed };
       }
@@ -69,7 +69,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       console.error("Failed to load saved images:", error);
     }
     
-    console.log('Using initial images from imageuplodas directory:', initialImages);
+    console.log('Using initial images from GitHub imageuplodas directory:', initialImages);
     return initialImages;
   };
 
@@ -79,7 +79,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     try {
       localStorage.setItem(IMAGE_STORAGE_KEY, JSON.stringify(images));
-      console.log("Images saved to localStorage successfully");
+      console.log("Images saved to localStorage (GitHub directory paths)");
     } catch (error) {
       console.error("Failed to save images:", error);
     }
@@ -89,7 +89,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === IMAGE_STORAGE_KEY) {
-        console.log("Storage changed from another tab, reloading images");
+        console.log("Storage changed from another tab, reloading GitHub directory images");
         setImages(loadSavedImages());
       }
     };
@@ -101,22 +101,24 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
   }, []);
 
-  // Process image paths to use imageuplodas directory
+  // Ensure all images use the GitHub imageuplodas directory path
   const processImagePath = (image: ImageData): ImageData => {
     if (!image.src) return image;
     
     let src = image.src;
     
-    // Convert old lovable-uploads paths to imageuplodas paths
+    // Convert old lovable-uploads paths to GitHub imageuplodas paths
     if (src.startsWith('/lovable-uploads/')) {
       const filename = src.split('/').pop();
       src = `/imageuplodas/${filename}`;
-      console.log(`Converted path from lovable-uploads to imageuplodas: ${src}`);
+      console.log(`Converted path to GitHub directory: ${src}`);
     }
     
-    // Ensure paths start with /imageuplodas/ for new uploads
-    if (src.startsWith('/imageuplodas/')) {
-      src = imageStorageService.getDisplayUrl(src);
+    // Ensure all paths use the GitHub imageuplodas directory
+    if (!src.startsWith('/imageuplodas/') && !src.startsWith('http')) {
+      // If it's just a filename, add the GitHub directory path
+      const filename = src.split('/').pop();
+      src = `/imageuplodas/${filename}`;
     }
     
     return { ...image, src };

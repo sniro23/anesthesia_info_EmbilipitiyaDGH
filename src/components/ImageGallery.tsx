@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { imageStorageService } from '@/lib/imageStorage';
+import { githubFileUploadService } from '@/lib/githubFileUpload';
 
 export interface ImageData {
   src: string;
@@ -23,28 +23,42 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
+  const [processedImages, setProcessedImages] = useState<ImageData[]>([]);
 
   if (!images || images.length === 0) return null;
 
-  // Process image paths to get the correct URLs
-  const processedImages = images.map(image => {
-    let src = image.src;
-    
-    // Check if we have a blob URL mapping for this path
-    if (src.startsWith('/imageuplodas/')) {
-      const imageMapping = JSON.parse(localStorage.getItem('image-url-mapping') || '{}');
-      if (imageMapping[src]) {
-        src = imageMapping[src];
-      }
-    }
-    
-    return { ...image, src };
-  });
+  // Process image paths to get the correct URLs from GitHub directory
+  useEffect(() => {
+    const processImages = async () => {
+      const processed = await Promise.all(
+        images.map(async (image) => {
+          let src = image.src;
+          
+          // If this is a path to our GitHub imageuplodas directory
+          if (src.startsWith('/imageuplodas/')) {
+            // Try to get the file from our mock GitHub file system
+            const fileUrl = githubFileUploadService.getFileUrl(src);
+            if (fileUrl) {
+              src = fileUrl;
+            }
+            // If file doesn't exist in our system, keep the original path
+            // This allows for images that might be added directly to the public folder
+          }
+          
+          return { ...image, src };
+        })
+      );
+      
+      setProcessedImages(processed);
+    };
 
-  console.log("ImageGallery rendering:", processedImages.length, "images from imageuplodas directory");
+    processImages();
+  }, [images]);
+
+  console.log("ImageGallery rendering:", processedImages.length, "images from GitHub imageuplodas directory");
 
   const handleImageError = (imageSrc: string) => {
-    console.error("Image failed to load from imageuplodas:", imageSrc);
+    console.error("Image failed to load from GitHub imageuplodas:", imageSrc);
     setImageErrors(prev => new Set([...prev, imageSrc]));
   };
 
@@ -60,15 +74,17 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   );
 
   // For a single image display
-  if (layout === 'single' || images.length === 1) {
+  if (layout === 'single' || processedImages.length === 1) {
     const image = processedImages[0];
+    if (!image) return null;
+    
     return (
       <div className={cn("w-full mt-4", className)}>
         <div className="relative rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={16/9} className="bg-neutral-100">
             {imageErrors.has(image.src) ? (
               <div className="w-full h-full flex items-center justify-center text-neutral-400 text-sm">
-                Failed to load image
+                Failed to load image from GitHub directory
               </div>
             ) : (
               renderImage(image, 0)
@@ -87,30 +103,32 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   // For a carousel layout
   if (layout === 'carousel') {
     const activeImage = processedImages[activeIndex];
+    if (!activeImage) return null;
+    
     return (
       <div className={cn("w-full mt-4", className)}>
         <div className="relative rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={16/9} className="bg-neutral-100">
             {imageErrors.has(activeImage.src) ? (
               <div className="w-full h-full flex items-center justify-center text-neutral-400 text-sm">
-                Failed to load image
+                Failed to load image from GitHub directory
               </div>
             ) : (
               renderImage(activeImage, activeIndex)
             )}
             
             {/* Navigation buttons */}
-            {images.length > 1 && (
+            {processedImages.length > 1 && (
               <>
                 <button 
-                  onClick={() => setActiveIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1))}
+                  onClick={() => setActiveIndex((prev) => (prev === 0 ? processedImages.length - 1 : prev - 1))}
                   className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
                   aria-label="Previous image"
                 >
                   <ChevronLeft size={20} />
                 </button>
                 <button 
-                  onClick={() => setActiveIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1))}
+                  onClick={() => setActiveIndex((prev) => (prev === processedImages.length - 1 ? 0 : prev + 1))}
                   className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70"
                   aria-label="Next image"
                 >
@@ -128,9 +146,9 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           )}
           
           {/* Dots indicator */}
-          {images.length > 1 && (
+          {processedImages.length > 1 && (
             <div className="flex justify-center p-2 gap-1">
-              {images.map((_, index) => (
+              {processedImages.map((_, index) => (
                 <button 
                   key={index}
                   onClick={() => setActiveIndex(index)}
@@ -148,8 +166,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   // For a grid layout
   return (
     <div className={cn("w-full mt-4 grid gap-2", 
-      images.length === 2 ? "grid-cols-2" : 
-      images.length >= 3 ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3" : "",
+      processedImages.length === 2 ? "grid-cols-2" : 
+      processedImages.length >= 3 ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3" : "",
       className
     )}>
       {processedImages.map((image, index) => (
@@ -157,7 +175,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           <AspectRatio ratio={1} className="bg-neutral-100">
             {imageErrors.has(image.src) ? (
               <div className="w-full h-full flex items-center justify-center text-neutral-400 text-xs">
-                Failed to load
+                Failed to load from GitHub
               </div>
             ) : (
               renderImage(image, index)
