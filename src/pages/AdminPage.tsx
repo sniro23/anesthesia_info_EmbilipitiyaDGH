@@ -1,8 +1,13 @@
 
 import React, { useState } from 'react';
 import ImageAdmin from '@/components/admin/ImageAdmin';
+import { useImageData } from '@/contexts/ImageDataContext';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 const AdminPage: React.FC = () => {
+  const { clearAllImages } = useImageData();
+  
   // These are example section IDs that would match your content structure
   const allSectionIds = [
     'during.qa1', 'during.qa2', 'during.qa3', 'during.qa4', 'during.qa5',
@@ -23,12 +28,24 @@ const AdminPage: React.FC = () => {
   const filteredSectionIds = activeGroup === 'all' 
     ? allSectionIds 
     : sectionGroups[activeGroup as keyof typeof sectionGroups];
+
+  const handleClearAllImages = () => {
+    if (confirm('Are you sure you want to clear all images? This action cannot be undone.')) {
+      clearAllImages();
+      toast.success('All images cleared successfully');
+    }
+  };
   
   return (
     <div className="container mx-auto px-4 py-6 md:py-12">
-      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-center">
-        Admin Dashboard
-      </h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold">
+          Admin Dashboard
+        </h1>
+        <Button onClick={handleClearAllImages} variant="destructive">
+          Clear All Images
+        </Button>
+      </div>
       
       <div className="flex justify-center mb-8">
         <div className="inline-flex rounded-md shadow-sm" role="group">

@@ -7,27 +7,27 @@ window.fetch = async function(input, init) {
   if (input === '/api/upload' && init?.method === 'POST') {
     console.log('Intercepting upload request for Lovable native storage');
     
-    // Handle file upload using Lovable's system
-    const formData = init.body as FormData;
-    if (!formData) {
-      return new Response(JSON.stringify({ error: 'No form data provided' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-
-    const file = formData.get('file') as File;
-    const filename = formData.get('filename') as string;
-    
-    if (!file) {
-      return new Response(JSON.stringify({ error: 'No file provided' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-    
     try {
-      // Create a data URL for the image
+      const formData = init.body as FormData;
+      if (!formData) {
+        throw new Error('No form data provided');
+      }
+
+      const file = formData.get('file') as File;
+      if (!file) {
+        throw new Error('No file provided');
+      }
+      
+      console.log('Processing file upload:', file.name, file.type, file.size);
+      
+      // Generate unique filename
+      const timestamp = Date.now();
+      const randomId = Math.random().toString(36).substring(2, 9);
+      const extension = file.name.split('.').pop() || 'png';
+      const filename = `${timestamp}-${randomId}.${extension}`;
+      const uploadPath = `/lovable-uploads/${filename}`;
+      
+      // Convert file to data URL for storage
       const arrayBuffer = await file.arrayBuffer();
       const blob = new Blob([arrayBuffer], { type: file.type });
       const dataUrl = await new Promise<string>((resolve, reject) => {
@@ -37,33 +37,32 @@ window.fetch = async function(input, init) {
         reader.readAsDataURL(blob);
       });
       
-      // Store in Lovable's upload format
-      const uploadPath = `/lovable-uploads/${filename || `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${file.type.split('/')[1] || 'png'}`}`;
-      
-      // Store the file data for retrieval
+      // Store in localStorage for retrieval
       const fileStorage = JSON.parse(localStorage.getItem('lovable-files') || '{}');
       fileStorage[uploadPath] = {
         dataUrl: dataUrl,
-        filename: filename || file.name,
+        filename: filename,
         originalName: file.name,
         contentType: file.type,
         uploadDate: new Date().toISOString()
       };
       localStorage.setItem('lovable-files', JSON.stringify(fileStorage));
       
-      console.log(`File saved to Lovable storage: ${uploadPath}`);
+      console.log(`File uploaded and stored: ${uploadPath}`);
       
       return new Response(JSON.stringify({
         url: uploadPath,
-        id: uploadPath.split('/').pop()?.split('.')[0] || `img-${Date.now()}`
+        id: filename.split('.')[0]
       }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
       });
       
     } catch (error) {
-      console.error('Lovable upload error:', error);
-      return new Response(JSON.stringify({ error: 'Upload failed' }), {
+      console.error('Upload error:', error);
+      return new Response(JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Upload failed' 
+      }), {
         status: 500,
         headers: { 'Content-Type': 'application/json' }
       });

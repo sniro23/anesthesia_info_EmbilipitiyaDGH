@@ -25,36 +25,37 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
   const [processedImages, setProcessedImages] = useState<ImageData[]>([]);
 
-  if (!images || images.length === 0) return null;
-
-  // Process image paths for Lovable's upload system
+  // Process image paths to use stored data URLs when available
   useEffect(() => {
-    const processImages = async () => {
-      const processed = await Promise.all(
-        images.map(async (image) => {
-          let src = image.src;
-          
-          // If this is a Lovable uploads path, check if we have a stored data URL
-          if (src.startsWith('/lovable-uploads/')) {
+    const processImages = () => {
+      const processed = images.map((image) => {
+        let src = image.src;
+        
+        // If this is a Lovable uploads path, check localStorage for stored data URL
+        if (src.startsWith('/lovable-uploads/')) {
+          try {
             const fileStorage = JSON.parse(localStorage.getItem('lovable-files') || '{}');
             const storedFile = fileStorage[src];
             if (storedFile && storedFile.dataUrl) {
+              console.log(`Using stored data URL for: ${src}`);
               src = storedFile.dataUrl;
+            } else {
+              console.log(`No stored data found for: ${src}`);
             }
-            // If no stored file, keep the original path (might be a file that exists in public)
+          } catch (error) {
+            console.error('Error accessing stored files:', error);
           }
-          
-          return { ...image, src };
-        })
-      );
+        }
+        
+        return { ...image, src };
+      });
       
       setProcessedImages(processed);
+      console.log(`ImageGallery processed ${processed.length} images`);
     };
 
     processImages();
   }, [images]);
-
-  console.log("ImageGallery rendering:", processedImages.length, "images");
 
   const handleImageError = (imageSrc: string) => {
     console.error("Image failed to load:", imageSrc);
@@ -72,10 +73,13 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
     />
   );
 
+  if (!processedImages || processedImages.length === 0) {
+    return null;
+  }
+
   // For a single image display
   if (layout === 'single' || processedImages.length === 1) {
     const image = processedImages[0];
-    if (!image) return null;
     
     return (
       <div className={cn("w-full mt-4", className)}>
@@ -102,7 +106,6 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   // For a carousel layout
   if (layout === 'carousel') {
     const activeImage = processedImages[activeIndex];
-    if (!activeImage) return null;
     
     return (
       <div className={cn("w-full mt-4", className)}>
