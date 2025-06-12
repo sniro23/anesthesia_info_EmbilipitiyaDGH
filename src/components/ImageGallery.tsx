@@ -28,7 +28,16 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   // Process image paths to use stored data URLs when available
   useEffect(() => {
     const processImages = () => {
-      const processed = images.map((image) => {
+      // Filter out images with empty or invalid src first
+      const validImages = images.filter(image => {
+        if (!image.src || image.src.trim() === '') {
+          console.warn('Filtering out image with empty src:', image);
+          return false;
+        }
+        return true;
+      });
+
+      const processed = validImages.map((image) => {
         let src = image.src;
         
         // If this is a Lovable uploads path, check localStorage for stored data URL
@@ -73,6 +82,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
     />
   );
 
+  // Don't render anything if no valid images
   if (!processedImages || processedImages.length === 0) {
     return null;
   }
