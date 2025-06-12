@@ -1,8 +1,45 @@
 
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ImageData } from '@/components/ImageGallery';
 
-const initialImages: Record<string, ImageData[]> = {};
+// Hard-coded image data that persists between sessions
+const STATIC_IMAGES: Record<string, ImageData[]> = {
+  'before.qa1': [
+    {
+      src: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'Medical consultation',
+      caption: 'Pre-anesthesia assessment'
+    }
+  ],
+  'before.qa2': [
+    {
+      src: 'https://images.unsplash.com/photo-1584362917165-526f4bb96fa4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'Fasting guidelines',
+      caption: 'Fasting before surgery'
+    }
+  ],
+  'before.qa4': [
+    {
+      src: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'Surgery preparation',
+      caption: 'Preparing for surgery'
+    }
+  ],
+  'during.qa1': [
+    {
+      src: 'https://images.unsplash.com/photo-1551190822-a9333d879b1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'Operating room',
+      caption: 'Modern operating room'
+    }
+  ],
+  'during.qa3': [
+    {
+      src: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+      alt: 'Anesthesia monitoring',
+      caption: 'Patient monitoring during anesthesia'
+    }
+  ]
+};
 
 interface ImageContextProps {
   images: Record<string, ImageData[]>;
@@ -17,14 +54,13 @@ interface ImageContextProps {
 const ImageDataContext = createContext<ImageContextProps | undefined>(undefined);
 
 export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [images, setImages] = useState<Record<string, ImageData[]>>(initialImages);
+  const [images, setImages] = useState<Record<string, ImageData[]>>(STATIC_IMAGES);
 
   const getImagesForSection = (sectionId: string) => {
     return images[sectionId] || [];
   };
 
   const updateImagesForSection = (sectionId: string, newImages: ImageData[]) => {
-    // Filter out any images with empty src
     const validImages = newImages.filter(img => img.src && img.src.trim() !== '');
     
     setImages(prev => ({
@@ -34,7 +70,6 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const addImage = (sectionId: string, image: ImageData) => {
-    // Don't add images with empty src
     if (!image.src || image.src.trim() === '') {
       console.warn('Attempted to add image with empty src');
       return;
@@ -61,7 +96,6 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const updateImage = (sectionId: string, index: number, image: ImageData) => {
-    // Don't update to an image with empty src
     if (!image.src || image.src.trim() === '') {
       console.warn('Attempted to update to image with empty src');
       return;
@@ -81,8 +115,8 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const clearAllImages = () => {
-    setImages({});
-    console.log('All images cleared');
+    setImages(STATIC_IMAGES);
+    console.log('Images reset to static defaults');
   };
 
   return (
