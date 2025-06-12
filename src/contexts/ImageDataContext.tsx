@@ -1,8 +1,9 @@
 
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ImageData } from '@/components/ImageGallery';
 
-// Hard-coded image data that persists between sessions
+// Hard-coded image data that serves as defaults
 const STATIC_IMAGES: Record<string, ImageData[]> = {
   'before.qa1': [
     {
@@ -41,6 +42,8 @@ const STATIC_IMAGES: Record<string, ImageData[]> = {
   ]
 };
 
+const STORAGE_KEY = 'lovable-image-data';
+
 interface ImageContextProps {
   images: Record<string, ImageData[]>;
   getImagesForSection: (sectionId: string) => ImageData[];
@@ -53,8 +56,51 @@ interface ImageContextProps {
 
 const ImageDataContext = createContext<ImageContextProps | undefined>(undefined);
 
+// Load saved images from localStorage or use static defaults
+const loadInitialImages = (): Record<string, ImageData[]> => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      console.log('Loaded saved images from localStorage:', parsed);
+      return { ...STATIC_IMAGES, ...parsed };
+    }
+  } catch (error) {
+    console.warn('Failed to load saved images:', error);
+  }
+  console.log('Using static default images');
+  return STATIC_IMAGES;
+};
+
+// Save images to localStorage
+const saveImages = (images: Record<string, ImageData[]>) => {
+  try {
+    // Only save sections that differ from static defaults
+    const customImages: Record<string, ImageData[]> = {};
+    Object.keys(images).forEach(sectionId => {
+      const currentImages = images[sectionId];
+      const staticImages = STATIC_IMAGES[sectionId] || [];
+      
+      // Check if images are different from static defaults
+      if (JSON.stringify(currentImages) !== JSON.stringify(staticImages)) {
+        customImages[sectionId] = currentImages;
+      }
+    });
+    
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(customImages));
+    console.log('Saved custom images to localStorage:', customImages);
+  } catch (error) {
+    console.warn('Failed to save images:', error);
+  }
+};
+
 export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [images, setImages] = useState<Record<string, ImageData[]>>(STATIC_IMAGES);
+  const [images, setImages] = useState<Record<string, ImageData[]>>(loadInitialImages);
+
+  // Save to localStorage whenever images change
+  useEffect(() => {
+    saveImages(images);
+  }, [images]);
 
   const getImagesForSection = (sectionId: string) => {
     return images[sectionId] || [];
@@ -116,7 +162,8 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   const clearAllImages = () => {
     setImages(STATIC_IMAGES);
-    console.log('Images reset to static defaults');
+    localStorage.removeItem(STORAGE_KEY);
+    console.log('Images reset to static defaults and localStorage cleared');
   };
 
   return (
@@ -143,3 +190,4 @@ export const useImageData = () => {
 };
 
 export default ImageDataProvider;
+
