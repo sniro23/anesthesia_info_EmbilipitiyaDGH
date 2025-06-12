@@ -1,5 +1,4 @@
-
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useImageData } from '@/contexts/ImageDataContext';
 import { ImageData } from '@/components/ImageGallery';
 import { Plus, X, Upload, Edit, Image, RefreshCcw } from 'lucide-react';
@@ -14,25 +13,13 @@ interface ImageFormProps {
 
 const ImageForm: React.FC<ImageFormProps> = ({ image, onChange }) => {
   const [isUploading, setIsUploading] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     
-    // Before upload, show a local preview
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        setPreviewUrl(reader.result);
-      }
-    };
-    reader.readAsDataURL(file);
-    
-    // Start upload process
     setIsUploading(true);
     
-    // We're using a simple FormData to upload the file
     const formData = new FormData();
     formData.append('file', file);
 
@@ -48,9 +35,7 @@ const ImageForm: React.FC<ImageFormProps> = ({ image, onChange }) => {
       
       const data = await response.json();
       
-      // Store the URL without the 'public/' prefix since it's served from the root
-      const imagePath = data.url;
-      onChange({ ...image, src: imagePath });
+      onChange({ ...image, src: data.url });
       toast.success('Image uploaded successfully');
     } catch (error) {
       console.error('Upload error:', error);
@@ -111,21 +96,16 @@ const ImageForm: React.FC<ImageFormProps> = ({ image, onChange }) => {
         </div>
       </div>
       
-      {(image.src || previewUrl) && (
+      {image.src && (
         <div className="mt-2 p-2 border rounded">
           <img
-            src={previewUrl || image.src}
+            src={image.src}
             alt={image.alt || "Preview"}
             className="max-h-40 mx-auto object-contain"
             onError={(e) => {
               (e.target as HTMLImageElement).src = "/placeholder.svg";
             }}
           />
-          {previewUrl && !image.src && (
-            <div className="text-center text-sm text-neutral-500 mt-2">
-              Preview (upload in progress)
-            </div>
-          )}
         </div>
       )}
     </div>
@@ -270,7 +250,6 @@ interface ImageAdminProps {
 }
 
 const ImageAdmin: React.FC<ImageAdminProps> = ({ sections }) => {
-  // Force refresh to ensure localStorage changes are reflected
   const [refreshKey, setRefreshKey] = useState(0);
   
   const handleRefresh = () => {
@@ -281,7 +260,7 @@ const ImageAdmin: React.FC<ImageAdminProps> = ({ sections }) => {
   return (
     <div className="p-6 max-w-4xl mx-auto" key={refreshKey}>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">Image Administration</h2>
+        <h2 className="text-2xl font-bold">Image Administration - Fresh Start</h2>
         <button 
           onClick={handleRefresh}
           className="flex items-center gap-1 px-3 py-2 bg-slate-200 text-slate-800 rounded hover:bg-slate-300"
@@ -291,11 +270,11 @@ const ImageAdmin: React.FC<ImageAdminProps> = ({ sections }) => {
         </button>
       </div>
       
-      <div className="mb-6 p-4 bg-slate-100 rounded-lg">
-        <h3 className="text-lg font-medium mb-2">Upload Instructions</h3>
+      <div className="mb-6 p-4 bg-green-100 rounded-lg">
+        <h3 className="text-lg font-medium mb-2">System Reset Complete</h3>
         <p className="text-sm text-neutral-700">
-          Use the upload button to add images directly. You can also enter image URLs manually.
-          For best results, use images that are at least 800x600 pixels. Supported formats: JPEG, PNG, GIF.
+          All old image data has been cleared. Upload new images to start fresh. 
+          Images will now work consistently between sandbox and published versions.
         </p>
       </div>
       

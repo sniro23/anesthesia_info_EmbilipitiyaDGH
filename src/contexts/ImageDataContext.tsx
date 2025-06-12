@@ -21,53 +21,16 @@ const ImageDataContext = createContext<ImageContextProps | undefined>(undefined)
 export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [images, setImages] = useState<Record<string, ImageData[]>>(initialImages);
   
-  // Load saved images on mount and clean up bad data
+  // Clear all old localStorage data on mount to start fresh
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    try {
-      const savedImages = localStorage.getItem(IMAGE_STORAGE_KEY);
-      if (savedImages) {
-        const parsed = JSON.parse(savedImages);
-        
-        // Clean up the data - convert old paths and remove invalid entries
-        const cleanedImages: Record<string, ImageData[]> = {};
-        
-        Object.entries(parsed).forEach(([sectionId, sectionImages]) => {
-          if (Array.isArray(sectionImages)) {
-            const validImages = (sectionImages as ImageData[]).filter(img => {
-              // Remove images with empty src or invalid paths
-              if (!img.src || img.src.trim() === '') {
-                console.log('Removing image with empty src from', sectionId);
-                return false;
-              }
-              
-              // Convert old imageuplodas paths to lovable-uploads
-              if (img.src.includes('/imageuplodas/')) {
-                img.src = img.src.replace('/imageuplodas/', '/lovable-uploads/');
-                console.log('Converted imageuplodas path to Lovable uploads:', img.src);
-              }
-              
-              return true;
-            });
-            
-            if (validImages.length > 0) {
-              cleanedImages[sectionId] = validImages;
-            }
-          }
-        });
-        
-        console.log('Loaded and cleaned images from localStorage:', cleanedImages);
-        setImages(cleanedImages);
-        
-        // Save the cleaned data back
-        localStorage.setItem(IMAGE_STORAGE_KEY, JSON.stringify(cleanedImages));
-      }
-    } catch (error) {
-      console.error("Failed to load saved images:", error);
-      // Clear corrupted data
-      localStorage.removeItem(IMAGE_STORAGE_KEY);
-    }
+    console.log('Clearing all old image data to start fresh');
+    localStorage.removeItem(IMAGE_STORAGE_KEY);
+    localStorage.removeItem('lovable-files');
+    
+    // Initialize with empty state
+    setImages({});
   }, []);
   
   // Save images to localStorage whenever they change

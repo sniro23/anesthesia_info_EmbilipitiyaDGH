@@ -1,5 +1,5 @@
 
-// File Upload API - uses Lovable's native upload system
+// File Upload API - simplified for real file uploads
 export const uploadFile = async (file: File): Promise<{ success: boolean; data?: { url: string; id: string }; error?: string }> => {
   try {
     if (!file) {
@@ -18,7 +18,7 @@ export const uploadFile = async (file: File): Promise<{ success: boolean; data?:
       throw new Error('File type not supported. Please upload a JPG, PNG, or GIF image.');
     }
     
-    console.log('Starting Lovable native upload for file:', file.name);
+    console.log('Starting file upload for:', file.name);
     
     // Generate unique filename
     const timestamp = Date.now();
@@ -26,7 +26,7 @@ export const uploadFile = async (file: File): Promise<{ success: boolean; data?:
     const extension = file.name.split('.').pop() || 'png';
     const filename = `${timestamp}-${randomId}.${extension}`;
     
-    // Use Lovable's upload system - this will be intercepted by the fetch interceptor
+    // Use the upload system
     const formData = new FormData();
     formData.append('file', file);
     formData.append('filename', filename);
@@ -42,7 +42,7 @@ export const uploadFile = async (file: File): Promise<{ success: boolean; data?:
     
     const data = await response.json();
     
-    console.log('Lovable upload successful:', data);
+    console.log('Upload successful:', data);
     
     return {
       success: true,
