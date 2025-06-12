@@ -1,46 +1,6 @@
 
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ImageData } from '@/components/ImageGallery';
-
-// Hard-coded image data that serves as defaults
-const STATIC_IMAGES: Record<string, ImageData[]> = {
-  'before.qa1': [
-    {
-      src: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      alt: 'Medical consultation',
-      caption: 'Pre-anesthesia assessment'
-    }
-  ],
-  'before.qa2': [
-    {
-      src: 'https://images.unsplash.com/photo-1584362917165-526f4bb96fa4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      alt: 'Fasting guidelines',
-      caption: 'Fasting before surgery'
-    }
-  ],
-  'before.qa4': [
-    {
-      src: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      alt: 'Surgery preparation',
-      caption: 'Preparing for surgery'
-    }
-  ],
-  'during.qa1': [
-    {
-      src: 'https://images.unsplash.com/photo-1551190822-a9333d879b1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      alt: 'Operating room',
-      caption: 'Modern operating room'
-    }
-  ],
-  'during.qa3': [
-    {
-      src: 'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-      alt: 'Anesthesia monitoring',
-      caption: 'Patient monitoring during anesthesia'
-    }
-  ]
-};
 
 const STORAGE_KEY = 'lovable-image-data';
 
@@ -56,39 +16,27 @@ interface ImageContextProps {
 
 const ImageDataContext = createContext<ImageContextProps | undefined>(undefined);
 
-// Load saved images from localStorage or use static defaults
+// Load saved images from localStorage only - no static defaults
 const loadInitialImages = (): Record<string, ImageData[]> => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
       console.log('Loaded saved images from localStorage:', parsed);
-      return { ...STATIC_IMAGES, ...parsed };
+      return parsed;
     }
   } catch (error) {
     console.warn('Failed to load saved images:', error);
   }
-  console.log('Using static default images');
-  return STATIC_IMAGES;
+  console.log('Starting with empty image data - admin can add images');
+  return {};
 };
 
-// Save images to localStorage
+// Save all images to localStorage
 const saveImages = (images: Record<string, ImageData[]>) => {
   try {
-    // Only save sections that differ from static defaults
-    const customImages: Record<string, ImageData[]> = {};
-    Object.keys(images).forEach(sectionId => {
-      const currentImages = images[sectionId];
-      const staticImages = STATIC_IMAGES[sectionId] || [];
-      
-      // Check if images are different from static defaults
-      if (JSON.stringify(currentImages) !== JSON.stringify(staticImages)) {
-        customImages[sectionId] = currentImages;
-      }
-    });
-    
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(customImages));
-    console.log('Saved custom images to localStorage:', customImages);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(images));
+    console.log('Saved images to localStorage:', images);
   } catch (error) {
     console.warn('Failed to save images:', error);
   }
@@ -161,9 +109,9 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const clearAllImages = () => {
-    setImages(STATIC_IMAGES);
+    setImages({});
     localStorage.removeItem(STORAGE_KEY);
-    console.log('Images reset to static defaults and localStorage cleared');
+    console.log('All images cleared - starting fresh');
   };
 
   return (
@@ -190,4 +138,3 @@ export const useImageData = () => {
 };
 
 export default ImageDataProvider;
-
