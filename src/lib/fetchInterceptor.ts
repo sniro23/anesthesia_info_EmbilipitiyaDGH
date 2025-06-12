@@ -9,6 +9,13 @@ window.fetch = async function(input, init) {
     
     // Handle file upload using Lovable's system
     const formData = init.body as FormData;
+    if (!formData) {
+      return new Response(JSON.stringify({ error: 'No form data provided' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
     const file = formData.get('file') as File;
     const filename = formData.get('filename') as string;
     
@@ -23,20 +30,21 @@ window.fetch = async function(input, init) {
       // Create a data URL for the image
       const arrayBuffer = await file.arrayBuffer();
       const blob = new Blob([arrayBuffer], { type: file.type });
-      const dataUrl = await new Promise<string>((resolve) => {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
         reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error('Failed to read file'));
         reader.readAsDataURL(blob);
       });
       
       // Store in Lovable's upload format
-      const uploadPath = `/lovable-uploads/${filename}`;
+      const uploadPath = `/lovable-uploads/${filename || `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${file.type.split('/')[1] || 'png'}`}`;
       
       // Store the file data for retrieval
       const fileStorage = JSON.parse(localStorage.getItem('lovable-files') || '{}');
       fileStorage[uploadPath] = {
         dataUrl: dataUrl,
-        filename: filename,
+        filename: filename || file.name,
         originalName: file.name,
         contentType: file.type,
         uploadDate: new Date().toISOString()
@@ -47,7 +55,7 @@ window.fetch = async function(input, init) {
       
       return new Response(JSON.stringify({
         url: uploadPath,
-        id: filename.split('.')[0]
+        id: uploadPath.split('/').pop()?.split('.')[0] || `img-${Date.now()}`
       }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }

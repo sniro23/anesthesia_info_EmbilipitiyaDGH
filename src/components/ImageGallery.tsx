@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -33,9 +34,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
         images.map(async (image) => {
           let src = image.src;
           
-          // If this is a path to our Lovable uploads directory but might be stored as data URL
+          // If this is a Lovable uploads path, check if we have a stored data URL
           if (src.startsWith('/lovable-uploads/')) {
-            // Check if we have a stored data URL for this path
             const fileStorage = JSON.parse(localStorage.getItem('lovable-files') || '{}');
             const storedFile = fileStorage[src];
             if (storedFile && storedFile.dataUrl) {
@@ -54,10 +54,10 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
     processImages();
   }, [images]);
 
-  console.log("ImageGallery rendering:", processedImages.length, "images from Lovable uploads");
+  console.log("ImageGallery rendering:", processedImages.length, "images");
 
   const handleImageError = (imageSrc: string) => {
-    console.error("Image failed to load from Lovable uploads:", imageSrc);
+    console.error("Image failed to load:", imageSrc);
     setImageErrors(prev => new Set([...prev, imageSrc]));
   };
 
@@ -83,7 +83,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           <AspectRatio ratio={16/9} className="bg-neutral-100">
             {imageErrors.has(image.src) ? (
               <div className="w-full h-full flex items-center justify-center text-neutral-400 text-sm">
-                Failed to load image from Lovable uploads
+                Failed to load image
               </div>
             ) : (
               renderImage(image, 0)
@@ -110,7 +110,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           <AspectRatio ratio={16/9} className="bg-neutral-100">
             {imageErrors.has(activeImage.src) ? (
               <div className="w-full h-full flex items-center justify-center text-neutral-400 text-sm">
-                Failed to load image from Lovable uploads
+                Failed to load image
               </div>
             ) : (
               renderImage(activeImage, activeIndex)
@@ -151,7 +151,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
                 <button 
                   key={index}
                   onClick={() => setActiveIndex(index)}
-                  className={`w-2 h-2 rounded-full ${index === activeIndex ? 'bg-indigo' : 'bg-neutral-300'}`}
+                  className={`w-2 h-2 rounded-full ${index === activeIndex ? 'bg-indigo-600' : 'bg-neutral-300'}`}
                   aria-label={`Go to image ${index + 1}`}
                 />
               ))}
@@ -174,7 +174,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
           <AspectRatio ratio={1} className="bg-neutral-100">
             {imageErrors.has(image.src) ? (
               <div className="w-full h-full flex items-center justify-center text-neutral-400 text-xs">
-                Failed to load from Lovable
+                Failed to load image
               </div>
             ) : (
               renderImage(image, index)

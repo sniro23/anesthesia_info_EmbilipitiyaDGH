@@ -61,7 +61,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const savedImages = localStorage.getItem(IMAGE_STORAGE_KEY);
       if (savedImages) {
         const parsed = JSON.parse(savedImages);
-        console.log('Loaded images from localStorage (Lovable uploads):', parsed);
+        console.log('Loaded images from localStorage:', parsed);
         // Merge with initial images to ensure we don't lose default content
         return { ...initialImages, ...parsed };
       }
@@ -79,7 +79,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     try {
       localStorage.setItem(IMAGE_STORAGE_KEY, JSON.stringify(images));
-      console.log("Images saved to localStorage (Lovable uploads)");
+      console.log("Images saved to localStorage");
     } catch (error) {
       console.error("Failed to save images:", error);
     }
@@ -89,7 +89,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === IMAGE_STORAGE_KEY) {
-        console.log("Storage changed from another tab, reloading Lovable upload images");
+        console.log("Storage changed from another tab, reloading images");
         setImages(loadSavedImages());
       }
     };
@@ -101,7 +101,7 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     };
   }, []);
 
-  // Ensure all images use the Lovable uploads directory path
+  // Convert all image paths to use Lovable uploads directory
   const processImagePath = (image: ImageData): ImageData => {
     if (!image.src) return image;
     
@@ -111,11 +111,11 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (src.startsWith('/imageuplodas/')) {
       const filename = src.split('/').pop();
       src = `/lovable-uploads/${filename}`;
-      console.log(`Converted path to Lovable uploads: ${src}`);
+      console.log(`Converted imageuplodas path to Lovable uploads: ${src}`);
     }
     
     // Ensure all paths use the Lovable uploads directory
-    if (!src.startsWith('/lovable-uploads/') && !src.startsWith('http')) {
+    if (!src.startsWith('/lovable-uploads/') && !src.startsWith('http') && !src.startsWith('data:')) {
       // If it's just a filename, add the Lovable uploads path
       const filename = src.split('/').pop();
       src = `/lovable-uploads/${filename}`;
