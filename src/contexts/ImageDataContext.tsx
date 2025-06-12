@@ -4,6 +4,17 @@ import { ImageData } from '@/components/ImageGallery';
 
 const STORAGE_KEY = 'lovable-image-data';
 
+// This will be populated with exported data for published versions
+const PUBLISHED_IMAGES: Record<string, ImageData[]> = {
+  "before.qa1": [
+    {
+      "src": "https://res.cloudinary.com/dotj571pv/image/upload/v1749714168/Pre-Op_Assesment_c13djk.png",
+      "alt": "patient being assessed prior to surgery",
+      "caption": "patient being assessed prior to surgery"
+    }
+  ]
+};
+
 interface ImageContextProps {
   images: Record<string, ImageData[]>;
   getImagesForSection: (sectionId: string) => ImageData[];
@@ -12,11 +23,12 @@ interface ImageContextProps {
   removeImage: (sectionId: string, index: number) => void;
   updateImage: (sectionId: string, index: number, image: ImageData) => void;
   clearAllImages: () => void;
+  exportImages: () => string;
 }
 
 const ImageDataContext = createContext<ImageContextProps | undefined>(undefined);
 
-// Load saved images from localStorage only - no static defaults
+// Load images: first try localStorage, then fall back to published data
 const loadInitialImages = (): Record<string, ImageData[]> => {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
@@ -28,6 +40,13 @@ const loadInitialImages = (): Record<string, ImageData[]> => {
   } catch (error) {
     console.warn('Failed to load saved images:', error);
   }
+  
+  // If no localStorage data, use published images (for production)
+  if (Object.keys(PUBLISHED_IMAGES).length > 0) {
+    console.log('Using published images:', PUBLISHED_IMAGES);
+    return PUBLISHED_IMAGES;
+  }
+  
   console.log('Starting with empty image data - admin can add images');
   return {};
 };
@@ -114,6 +133,10 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     console.log('All images cleared - starting fresh');
   };
 
+  const exportImages = () => {
+    return JSON.stringify(images, null, 2);
+  };
+
   return (
     <ImageDataContext.Provider value={{ 
       images, 
@@ -122,7 +145,8 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       addImage,
       removeImage,
       updateImage,
-      clearAllImages
+      clearAllImages,
+      exportImages
     }}>
       {children}
     </ImageDataContext.Provider>

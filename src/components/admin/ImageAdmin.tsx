@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { useImageData } from '@/contexts/ImageDataContext';
 import { ImageData } from '@/components/ImageGallery';
-import { Plus, X, Edit, Image, RefreshCcw } from 'lucide-react';
+import { Plus, X, Edit, Image, RefreshCcw, Download, Copy } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
@@ -205,32 +204,59 @@ interface ImageAdminProps {
 }
 
 const ImageAdmin: React.FC<ImageAdminProps> = ({ sections }) => {
+  const { exportImages } = useImageData();
   const [refreshKey, setRefreshKey] = useState(0);
+  const [showExportDialog, setShowExportDialog] = useState(false);
+  const [exportedData, setExportedData] = useState('');
   
   const handleRefresh = () => {
     setRefreshKey(prev => prev + 1);
     toast.success("Image data refreshed");
   };
 
+  const handleExport = () => {
+    const data = exportImages();
+    setExportedData(data);
+    setShowExportDialog(true);
+  };
+
+  const handleCopyExport = () => {
+    navigator.clipboard.writeText(exportedData);
+    toast.success("Image data copied to clipboard!");
+  };
+
   return (
     <div className="p-6 max-w-4xl mx-auto" key={refreshKey}>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Image Administration</h2>
-        <button 
-          onClick={handleRefresh}
-          className="flex items-center gap-1 px-3 py-2 bg-slate-200 text-slate-800 rounded hover:bg-slate-300"
-        >
-          <RefreshCcw size={14} />
-          Refresh
-        </button>
+        <div className="flex gap-2">
+          <button 
+            onClick={handleExport}
+            className="flex items-center gap-1 px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+          >
+            <Download size={14} />
+            Export for Publishing
+          </button>
+          <button 
+            onClick={handleRefresh}
+            className="flex items-center gap-1 px-3 py-2 bg-slate-200 text-slate-800 rounded hover:bg-slate-300"
+          >
+            <RefreshCcw size={14} />
+            Refresh
+          </button>
+        </div>
       </div>
       
       <div className="mb-6 p-4 bg-blue-100 rounded-lg">
-        <h3 className="text-lg font-medium mb-2">External URL System</h3>
-        <p className="text-sm text-neutral-700">
-          Add images using external URLs from image hosting services like Cloudinary, Imgur, or direct links to images. 
-          This ensures images work consistently in both development and published environments.
+        <h3 className="text-lg font-medium mb-2">Publishing Images</h3>
+        <p className="text-sm text-neutral-700 mb-2">
+          To ensure your images appear in the published version:
         </p>
+        <ol className="list-decimal list-inside text-sm text-neutral-700 space-y-1">
+          <li>Add all your images using the admin panel</li>
+          <li>Click "Export for Publishing" to get the image data</li>
+          <li>Send the exported data to the developer to update the published version</li>
+        </ol>
       </div>
       
       <div className="space-y-8">
@@ -238,6 +264,37 @@ const ImageAdmin: React.FC<ImageAdminProps> = ({ sections }) => {
           <SectionImages key={`${sectionId}-${refreshKey}`} sectionId={sectionId} />
         ))}
       </div>
+
+      <Dialog open={showExportDialog} onOpenChange={setShowExportDialog}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Export Image Data for Publishing</DialogTitle>
+            <DialogDescription>
+              Copy this data and send it to update the published version
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="bg-gray-100 p-4 rounded-lg">
+              <pre className="text-xs whitespace-pre-wrap break-all">{exportedData}</pre>
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowExportDialog(false)}
+                className="px-4 py-2 border rounded hover:bg-neutral-100"
+              >
+                Close
+              </button>
+              <button
+                onClick={handleCopyExport}
+                className="flex items-center gap-1 px-4 py-2 bg-indigo text-white rounded hover:bg-indigo-light"
+              >
+                <Copy size={16} />
+                Copy to Clipboard
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
