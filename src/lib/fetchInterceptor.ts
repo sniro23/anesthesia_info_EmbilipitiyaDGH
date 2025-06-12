@@ -1,3 +1,4 @@
+
 // Create a global fetch interceptor for Lovable's native image handling
 const originalFetch = window.fetch;
 
@@ -56,6 +57,7 @@ const cleanupOldFiles = () => {
   }
 };
 
+// Enhanced fetch interceptor
 window.fetch = async function(input, init) {
   // Check if this is a call to our upload API
   if (input === '/api/upload' && init?.method === 'POST') {
@@ -77,42 +79,47 @@ window.fetch = async function(input, init) {
       // Clean up old files first
       cleanupOldFiles();
       
-      // Generate unique filename
+      // Generate unique filename with UUID-like structure
       const timestamp = Date.now();
-      const randomId = Math.random().toString(36).substring(2, 9);
+      const randomId = crypto.randomUUID ? crypto.randomUUID() : 
+        Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
       const extension = file.name.split('.').pop() || 'png';
-      const filename = `${timestamp}-${randomId}.${extension}`;
+      const filename = `${randomId}.${extension}`;
       const uploadPath = `/lovable-uploads/${filename}`;
       
       // Compress the image to reduce storage size
       const compressedDataUrl = await compressImage(file);
       
-      // Store in localStorage
+      // Store in localStorage with enhanced metadata
       const fileStorage = JSON.parse(localStorage.getItem('lovable-files') || '{}');
-      fileStorage[uploadPath] = {
+      const fileData = {
         dataUrl: compressedDataUrl,
         filename: filename,
         originalName: file.name,
         contentType: file.type,
-        uploadDate: new Date().toISOString()
+        uploadDate: new Date().toISOString(),
+        size: file.size,
+        compressed: true
       };
+      
+      fileStorage[uploadPath] = fileData;
       
       try {
         localStorage.setItem('lovable-files', JSON.stringify(fileStorage));
+        console.log(`File uploaded and stored successfully: ${uploadPath}`);
       } catch (storageError) {
-        // If storage still fails, try one more cleanup and retry
-        console.warn('Storage full, attempting additional cleanup');
+        // If storage fails, try one more cleanup and retry
+        console.warn('Storage full, attempting emergency cleanup');
         localStorage.removeItem('lovable-files');
         const minimalStorage: Record<string, any> = {};
-        minimalStorage[uploadPath] = fileStorage[uploadPath];
+        minimalStorage[uploadPath] = fileData;
         localStorage.setItem('lovable-files', JSON.stringify(minimalStorage));
+        console.log('Emergency storage successful');
       }
-      
-      console.log(`File uploaded and stored: ${uploadPath}`);
       
       return new Response(JSON.stringify({
         url: uploadPath,
-        id: filename.split('.')[0]
+        id: randomId
       }), {
         status: 200,
         headers: { 'Content-Type': 'application/json' }
@@ -129,8 +136,36 @@ window.fetch = async function(input, init) {
     }
   }
   
+  // Handle requests for uploaded files
+  if (typeof input === 'string' && input.startsWith('/lovable-uploads/')) {
+    try {
+      const fileStorage = JSON.parse(localStorage.getItem('lovable-files') || '{}');
+      const storedFile = fileStorage[input];
+      
+      if (storedFile && storedFile.dataUrl) {
+        // Convert data URL to blob for proper response
+        const response = await fetch(storedFile.dataUrl);
+        const blob = await response.blob();
+        
+        return new Response(blob, {
+          status: 200,
+          headers: {
+            'Content-Type': storedFile.contentType || 'image/jpeg',
+            'Cache-Control': 'public, max-age=31536000'
+          }
+        });
+      } else {
+        console.warn(`File not found in storage: ${input}`);
+        return new Response('File not found', { status: 404 });
+      }
+    } catch (error) {
+      console.error('Error serving file:', error);
+      return new Response('Internal server error', { status: 500 });
+    }
+  }
+  
   // For all other requests, use the original fetch
   return originalFetch.apply(window, [input, init]);
 };
 
-console.log('Fetch interceptor initialized for Lovable native file storage');
+console.log('Enhanced fetch interceptor initialized for Lovable native file storage');

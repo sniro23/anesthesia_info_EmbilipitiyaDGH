@@ -27,7 +27,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 
   // Process image paths to use stored data URLs when available
   useEffect(() => {
-    const processImages = () => {
+    const processImages = async () => {
       // Filter out images with empty or invalid src first
       const validImages = images.filter(image => {
         if (!image.src || image.src.trim() === '') {
@@ -37,7 +37,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
         return true;
       });
 
-      const processed = validImages.map((image) => {
+      const processed = await Promise.all(validImages.map(async (image) => {
         let src = image.src;
         
         // If this is a Lovable uploads path, check localStorage for stored data URL
@@ -49,7 +49,8 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
               console.log(`Using stored data URL for: ${src}`);
               src = storedFile.dataUrl;
             } else {
-              console.log(`No stored data found for: ${src}`);
+              console.log(`No stored data found for: ${src}, will try direct fetch`);
+              // Don't change src - let it try to fetch from the server
             }
           } catch (error) {
             console.error('Error accessing stored files:', error);
@@ -57,7 +58,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
         }
         
         return { ...image, src };
-      });
+      }));
       
       setProcessedImages(processed);
       console.log(`ImageGallery processed ${processed.length} images`);
@@ -66,21 +67,25 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
     processImages();
   }, [images]);
 
-  const handleImageError = (imageSrc: string) => {
+  const handleImageError = (imageSrc: string, originalSrc: string) => {
     console.error("Image failed to load:", imageSrc);
-    setImageErrors(prev => new Set([...prev, imageSrc]));
+    setImageErrors(prev => new Set([...prev, originalSrc]));
   };
 
-  const renderImage = (image: ImageData, index: number) => (
-    <img 
-      key={`${image.src}-${index}`}
-      src={image.src} 
-      alt={image.alt || "Image"} 
-      className="w-full h-full object-cover" 
-      onError={() => handleImageError(image.src)}
-      loading="lazy"
-    />
-  );
+  const renderImage = (image: ImageData, index: number) => {
+    const originalSrc = images.find(img => img.alt === image.alt)?.src || image.src;
+    
+    return (
+      <img 
+        key={`${image.src}-${index}`}
+        src={image.src} 
+        alt={image.alt || "Image"} 
+        className="w-full h-full object-cover" 
+        onError={() => handleImageError(image.src, originalSrc)}
+        loading="lazy"
+      />
+    );
+  };
 
   // Don't render anything if no valid images
   if (!processedImages || processedImages.length === 0) {
@@ -90,12 +95,13 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   // For a single image display
   if (layout === 'single' || processedImages.length === 1) {
     const image = processedImages[0];
+    const originalSrc = images.find(img => img.alt === image.alt)?.src || image.src;
     
     return (
       <div className={cn("w-full mt-4", className)}>
         <div className="relative rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={16/9} className="bg-neutral-100">
-            {imageErrors.has(image.src) ? (
+            {imageErrors.has(originalSrc) ? (
               <div className="w-full h-full flex items-center justify-center text-neutral-400 text-sm">
                 Failed to load image
               </div>
@@ -116,12 +122,13 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
   // For a carousel layout
   if (layout === 'carousel') {
     const activeImage = processedImages[activeIndex];
+    const originalSrc = images.find(img => img.alt === activeImage.alt)?.src || activeImage.src;
     
     return (
       <div className={cn("w-full mt-4", className)}>
         <div className="relative rounded-lg overflow-hidden shadow-md">
           <AspectRatio ratio={16/9} className="bg-neutral-100">
-            {imageErrors.has(activeImage.src) ? (
+            {imageErrors.has(originalSrc) ? (
               <div className="w-full h-full flex items-center justify-center text-neutral-400 text-sm">
                 Failed to load image
               </div>
@@ -182,24 +189,28 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
       processedImages.length >= 3 ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3" : "",
       className
     )}>
-      {processedImages.map((image, index) => (
-        <div key={`${image.src}-${index}`} className="rounded-lg overflow-hidden shadow-md">
-          <AspectRatio ratio={1} className="bg-neutral-100">
-            {imageErrors.has(image.src) ? (
-              <div className="w-full h-full flex items-center justify-center text-neutral-400 text-xs">
-                Failed to load image
+      {processedImages.map((image, index) => {
+        const originalSrc = images.find(img => img.alt === image.alt)?.src || image.src;
+        
+        return (
+          <div key={`${image.src}-${index}`} className="rounded-lg overflow-hidden shadow-md">
+            <AspectRatio ratio={1} className="bg-neutral-100">
+              {imageErrors.has(originalSrc) ? (
+                <div className="w-full h-full flex items-center justify-center text-neutral-400 text-xs">
+                  Failed to load image
+                </div>
+              ) : (
+                renderImage(image, index)
+              )}
+            </AspectRatio>
+            {image.caption && (
+              <div className="p-2 text-xs text-center text-neutral-600 bg-neutral-50 truncate">
+                {image.caption}
               </div>
-            ) : (
-              renderImage(image, index)
             )}
-          </AspectRatio>
-          {image.caption && (
-            <div className="p-2 text-xs text-center text-neutral-600 bg-neutral-50 truncate">
-              {image.caption}
-            </div>
-          )}
-        </div>
-      ))}
+          </div>
+        );
+      })}
     </div>
   );
 };
