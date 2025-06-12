@@ -1,7 +1,8 @@
-import React, { useState, useCallback, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { useImageData } from '@/contexts/ImageDataContext';
 import { ImageData } from '@/components/ImageGallery';
-import { Plus, X, Upload, Edit, Image, RefreshCcw } from 'lucide-react';
+import { Plus, X, Edit, Image, RefreshCcw } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { Input } from '@/components/ui/input';
@@ -12,85 +13,21 @@ interface ImageFormProps {
 }
 
 const ImageForm: React.FC<ImageFormProps> = ({ image, onChange }) => {
-  const [isUploading, setIsUploading] = useState(false);
-  const [previewSrc, setPreviewSrc] = useState(image.src);
-
-  // Update preview when image.src changes, checking for uploaded files
-  useEffect(() => {
-    if (image.src.startsWith('/lovable-uploads/')) {
-      const filename = image.src.replace('/lovable-uploads/', '');
-      const storageKey = `uploaded-file-${filename}`;
-      const base64Data = localStorage.getItem(storageKey);
-      
-      if (base64Data) {
-        setPreviewSrc(base64Data);
-      } else {
-        setPreviewSrc(image.src);
-      }
-    } else {
-      setPreviewSrc(image.src);
-    }
-  }, [image.src]);
-
-  const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    
-    setIsUploading(true);
-    
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-      
-      if (!response.ok) {
-        throw new Error('Upload failed');
-      }
-      
-      const data = await response.json();
-      
-      onChange({ ...image, src: data.url });
-      toast.success('Image uploaded successfully');
-    } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('Failed to upload image. Please try again.');
-    } finally {
-      setIsUploading(false);
-    }
-  }, [image, onChange]);
-
   return (
     <div className="space-y-4">
       <div className="grid gap-4">
         <div>
           <label className="block text-sm font-medium mb-1">Image URL</label>
-          <div className="flex gap-2">
-            <Input
-              type="text"
-              value={image.src}
-              onChange={(e) => onChange({ ...image, src: e.target.value })}
-              className="flex-1"
-              placeholder="Enter image URL or upload a file"
-            />
-            <label className="cursor-pointer flex items-center justify-center px-4 py-2 border rounded bg-neutral-100 hover:bg-neutral-200">
-              <Upload size={16} className="mr-2" />
-              <span>Upload</span>
-              <input
-                type="file"
-                className="hidden"
-                accept="image/*"
-                onChange={handleFileChange}
-                disabled={isUploading}
-              />
-            </label>
-          </div>
-          {isUploading && (
-            <div className="mt-2 text-sm text-neutral-500">Uploading image, please wait...</div>
-          )}
+          <Input
+            type="text"
+            value={image.src}
+            onChange={(e) => onChange({ ...image, src: e.target.value })}
+            className="w-full"
+            placeholder="Enter image URL (e.g., https://example.com/image.jpg)"
+          />
+          <p className="text-xs text-neutral-500 mt-1">
+            Use external image URLs from services like Cloudinary, Imgur, or direct links to images
+          </p>
         </div>
         
         <div>
@@ -114,10 +51,10 @@ const ImageForm: React.FC<ImageFormProps> = ({ image, onChange }) => {
         </div>
       </div>
       
-      {previewSrc && (
+      {image.src && (
         <div className="mt-2 p-2 border rounded">
           <img
-            src={previewSrc}
+            src={image.src}
             alt={image.alt || "Preview"}
             className="max-h-40 mx-auto object-contain"
             onError={(e) => {
@@ -165,17 +102,6 @@ const SectionImages: React.FC<SectionImagesProps> = ({ sectionId }) => {
     setIsDialogOpen(false);
   };
 
-  // Helper function to get display source for uploaded images
-  const getDisplaySrc = (imageSrc: string) => {
-    if (imageSrc.startsWith('/lovable-uploads/')) {
-      const filename = imageSrc.replace('/lovable-uploads/', '');
-      const storageKey = `uploaded-file-${filename}`;
-      const base64Data = localStorage.getItem(storageKey);
-      return base64Data || imageSrc;
-    }
-    return imageSrc;
-  };
-
   return (
     <div className="mt-4">
       <div className="flex justify-between items-center mb-3">
@@ -198,7 +124,7 @@ const SectionImages: React.FC<SectionImagesProps> = ({ sectionId }) => {
               <div className="h-32 overflow-hidden bg-neutral-100">
                 {image.src ? (
                   <img
-                    src={getDisplaySrc(image.src)}
+                    src={image.src}
                     alt={image.alt}
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -247,7 +173,7 @@ const SectionImages: React.FC<SectionImagesProps> = ({ sectionId }) => {
               {editingIndex !== null ? 'Edit Image' : 'Add New Image'}
             </DialogTitle>
             <DialogDescription>
-              {editingIndex !== null ? 'Update image details' : 'Add a new image to this section'}
+              {editingIndex !== null ? 'Update image details' : 'Add a new image to this section using an external URL'}
             </DialogDescription>
           </DialogHeader>
           <ImageForm 
@@ -300,10 +226,10 @@ const ImageAdmin: React.FC<ImageAdminProps> = ({ sections }) => {
       </div>
       
       <div className="mb-6 p-4 bg-blue-100 rounded-lg">
-        <h3 className="text-lg font-medium mb-2">Upload System Active</h3>
+        <h3 className="text-lg font-medium mb-2">External URL System</h3>
         <p className="text-sm text-neutral-700">
-          Upload images directly through the admin panel. Files are stored locally and will persist in your browser. 
-          Make sure to backup important images externally.
+          Add images using external URLs from image hosting services like Cloudinary, Imgur, or direct links to images. 
+          This ensures images work consistently in both development and published environments.
         </p>
       </div>
       

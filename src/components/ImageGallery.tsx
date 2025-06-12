@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState } from 'react';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -22,32 +23,9 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
 }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set());
-  const [resolvedImages, setResolvedImages] = useState<ImageData[]>([]);
-
-  // Resolve image sources (check if they're uploaded files in localStorage)
-  useEffect(() => {
-    const resolveImageSources = async () => {
-      const resolved = images.map(image => {
-        if (image.src.startsWith('/lovable-uploads/')) {
-          const filename = image.src.replace('/lovable-uploads/', '');
-          const storageKey = `uploaded-file-${filename}`;
-          const base64Data = localStorage.getItem(storageKey);
-          
-          if (base64Data) {
-            return { ...image, src: base64Data };
-          }
-        }
-        return image;
-      });
-      
-      setResolvedImages(resolved);
-    };
-
-    resolveImageSources();
-  }, [images]);
 
   // Filter out images with empty or invalid src
-  const validImages = resolvedImages.filter(image => {
+  const validImages = images.filter(image => {
     if (!image.src || image.src.trim() === '') {
       console.warn('Filtering out image with empty src:', image);
       return false;
