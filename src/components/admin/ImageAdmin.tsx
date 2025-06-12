@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useImageData } from '@/contexts/ImageDataContext';
 import { ImageData } from '@/components/ImageGallery';
 import { Plus, X, Upload, Edit, Image, RefreshCcw } from 'lucide-react';
@@ -13,6 +13,24 @@ interface ImageFormProps {
 
 const ImageForm: React.FC<ImageFormProps> = ({ image, onChange }) => {
   const [isUploading, setIsUploading] = useState(false);
+  const [previewSrc, setPreviewSrc] = useState(image.src);
+
+  // Update preview when image.src changes, checking for uploaded files
+  useEffect(() => {
+    if (image.src.startsWith('/lovable-uploads/')) {
+      const filename = image.src.replace('/lovable-uploads/', '');
+      const storageKey = `uploaded-file-${filename}`;
+      const base64Data = localStorage.getItem(storageKey);
+      
+      if (base64Data) {
+        setPreviewSrc(base64Data);
+      } else {
+        setPreviewSrc(image.src);
+      }
+    } else {
+      setPreviewSrc(image.src);
+    }
+  }, [image.src]);
 
   const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -96,10 +114,10 @@ const ImageForm: React.FC<ImageFormProps> = ({ image, onChange }) => {
         </div>
       </div>
       
-      {image.src && (
+      {previewSrc && (
         <div className="mt-2 p-2 border rounded">
           <img
-            src={image.src}
+            src={previewSrc}
             alt={image.alt || "Preview"}
             className="max-h-40 mx-auto object-contain"
             onError={(e) => {
@@ -147,6 +165,17 @@ const SectionImages: React.FC<SectionImagesProps> = ({ sectionId }) => {
     setIsDialogOpen(false);
   };
 
+  // Helper function to get display source for uploaded images
+  const getDisplaySrc = (imageSrc: string) => {
+    if (imageSrc.startsWith('/lovable-uploads/')) {
+      const filename = imageSrc.replace('/lovable-uploads/', '');
+      const storageKey = `uploaded-file-${filename}`;
+      const base64Data = localStorage.getItem(storageKey);
+      return base64Data || imageSrc;
+    }
+    return imageSrc;
+  };
+
   return (
     <div className="mt-4">
       <div className="flex justify-between items-center mb-3">
@@ -169,7 +198,7 @@ const SectionImages: React.FC<SectionImagesProps> = ({ sectionId }) => {
               <div className="h-32 overflow-hidden bg-neutral-100">
                 {image.src ? (
                   <img
-                    src={image.src}
+                    src={getDisplaySrc(image.src)}
                     alt={image.alt}
                     className="w-full h-full object-cover"
                     onError={(e) => {
@@ -260,7 +289,7 @@ const ImageAdmin: React.FC<ImageAdminProps> = ({ sections }) => {
   return (
     <div className="p-6 max-w-4xl mx-auto" key={refreshKey}>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold">Image Administration - Fresh Start</h2>
+        <h2 className="text-2xl font-bold">Image Administration</h2>
         <button 
           onClick={handleRefresh}
           className="flex items-center gap-1 px-3 py-2 bg-slate-200 text-slate-800 rounded hover:bg-slate-300"
@@ -270,11 +299,11 @@ const ImageAdmin: React.FC<ImageAdminProps> = ({ sections }) => {
         </button>
       </div>
       
-      <div className="mb-6 p-4 bg-green-100 rounded-lg">
-        <h3 className="text-lg font-medium mb-2">System Reset Complete</h3>
+      <div className="mb-6 p-4 bg-blue-100 rounded-lg">
+        <h3 className="text-lg font-medium mb-2">Upload System Active</h3>
         <p className="text-sm text-neutral-700">
-          All old image data has been cleared. Upload new images to start fresh. 
-          Images will now work consistently between sandbox and published versions.
+          Upload images directly through the admin panel. Files are stored locally and will persist in your browser. 
+          Make sure to backup important images externally.
         </p>
       </div>
       
