@@ -26,6 +26,20 @@ const PUBLISHED_IMAGES: Record<string, ImageData[]> = {
       "alt": "",
       "caption": "modern well equipped recovery room"
     }
+  ],
+  "during.qa3": [
+    {
+      "src": "https://res.cloudinary.com/dotj571pv/image/upload/v1749714164/DuringQA3_rtnye8.jpg",
+      "alt": "modern operating theatre",
+      "caption": "modern operating theatre"
+    }
+  ],
+  "before.qa4": [
+    {
+      "src": "https://res.cloudinary.com/dotj571pv/image/upload/v1749714164/WhatsApp_Image_2025-05-10_at_10.29.49_AM_fojmfg.jpg",
+      "alt": "patients waiting in the waiting room",
+      "caption": "patients waiting in the waiting room"
+    }
   ]
 };
 
