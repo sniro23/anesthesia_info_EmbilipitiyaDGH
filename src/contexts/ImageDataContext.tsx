@@ -42,27 +42,37 @@ interface ImageContextProps {
 
 const ImageDataContext = createContext<ImageContextProps | undefined>(undefined);
 
-// Load images: first try localStorage, then fall back to published data
+// Load images: try localStorage first, then merge with published data
 const loadInitialImages = (): Record<string, ImageData[]> => {
+  console.log('Loading initial images...');
+  console.log('Published images available:', PUBLISHED_IMAGES);
+  
+  // Start with published images as base
+  let mergedImages = { ...PUBLISHED_IMAGES };
+  
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      console.log('Loaded saved images from localStorage:', parsed);
-      return parsed;
+      console.log('Found localStorage images:', parsed);
+      
+      // Merge localStorage images with published images
+      // localStorage takes precedence for sections that exist in both
+      Object.keys(parsed).forEach(sectionId => {
+        if (parsed[sectionId] && parsed[sectionId].length > 0) {
+          mergedImages[sectionId] = parsed[sectionId];
+        }
+      });
+    } else {
+      console.log('No localStorage data found, using published images only');
     }
   } catch (error) {
-    console.warn('Failed to load saved images:', error);
+    console.warn('Failed to load saved images from localStorage:', error);
+    console.log('Falling back to published images only');
   }
   
-  // If no localStorage data, use published images (for production)
-  if (Object.keys(PUBLISHED_IMAGES).length > 0) {
-    console.log('Using published images:', PUBLISHED_IMAGES);
-    return PUBLISHED_IMAGES;
-  }
-  
-  console.log('Starting with empty image data - admin can add images');
-  return {};
+  console.log('Final merged images:', mergedImages);
+  return mergedImages;
 };
 
 // Save all images to localStorage
@@ -78,13 +88,18 @@ const saveImages = (images: Record<string, ImageData[]>) => {
 export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [images, setImages] = useState<Record<string, ImageData[]>>(loadInitialImages);
 
-  // Save to localStorage whenever images change
+  // Save to localStorage whenever images change (only in admin/development)
   useEffect(() => {
-    saveImages(images);
+    // Only save to localStorage if we have admin functionality available
+    if (typeof localStorage !== 'undefined') {
+      saveImages(images);
+    }
   }, [images]);
 
   const getImagesForSection = (sectionId: string) => {
-    return images[sectionId] || [];
+    const sectionImages = images[sectionId] || [];
+    console.log(`Getting images for section ${sectionId}:`, sectionImages);
+    return sectionImages;
   };
 
   const updateImagesForSection = (sectionId: string, newImages: ImageData[]) => {
@@ -142,9 +157,12 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const clearAllImages = () => {
-    setImages({});
-    localStorage.removeItem(STORAGE_KEY);
-    console.log('All images cleared - starting fresh');
+    // Reset to published images only
+    setImages({ ...PUBLISHED_IMAGES });
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+    console.log('All localStorage images cleared - reset to published images');
   };
 
   const exportImages = () => {
