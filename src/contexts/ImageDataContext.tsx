@@ -12,6 +12,20 @@ const PUBLISHED_IMAGES: Record<string, ImageData[]> = {
       "alt": "patient being assessed prior to surgery",
       "caption": "patient being assessed prior to surgery"
     }
+  ],
+  "during.qa1": [
+    {
+      "src": "https://res.cloudinary.com/dotj571pv/image/upload/v1749714142/During_qa1_k1qbql.jpg",
+      "alt": "",
+      "caption": "patient being monitored during surgery"
+    }
+  ],
+  "after.qa1": [
+    {
+      "src": "https://res.cloudinary.com/dotj571pv/image/upload/v1749715940/WaitingRoom_sgaoou.jpg",
+      "alt": "",
+      "caption": "modern well equipped recovery room"
+    }
   ]
 };
 
