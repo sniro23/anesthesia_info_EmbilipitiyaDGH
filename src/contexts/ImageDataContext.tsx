@@ -21,16 +21,20 @@ const ImageDataContext = createContext<ImageContextProps | undefined>(undefined)
 export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [images, setImages] = useState<Record<string, ImageData[]>>(initialImages);
   
-  // Clear all old localStorage data on mount to start fresh
+  // Load existing images from localStorage on mount (don't clear them!)
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    console.log('Clearing all old image data to start fresh');
-    localStorage.removeItem(IMAGE_STORAGE_KEY);
-    localStorage.removeItem('lovable-files');
-    
-    // Initialize with empty state
-    setImages({});
+    try {
+      const savedImages = localStorage.getItem(IMAGE_STORAGE_KEY);
+      if (savedImages) {
+        const parsedImages = JSON.parse(savedImages);
+        console.log('Loading saved images from localStorage:', parsedImages);
+        setImages(parsedImages);
+      }
+    } catch (error) {
+      console.error('Failed to load saved images:', error);
+    }
   }, []);
   
   // Save images to localStorage whenever they change
@@ -116,7 +120,12 @@ export const ImageDataProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const clearAllImages = () => {
     setImages({});
     localStorage.removeItem(IMAGE_STORAGE_KEY);
-    localStorage.removeItem('lovable-files');
+    // Clean up any old uploaded file data
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('uploaded-file-')) {
+        localStorage.removeItem(key);
+      }
+    });
     console.log('All images cleared');
   };
 
