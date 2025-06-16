@@ -47,7 +47,7 @@ const HomePage: React.FC = () => {
             <div className="shadow-md p-4 sm:p-6 md:p-8 rounded-xl bg-slate-100">
               <div className="mb-4 md:mb-6">
                 <h3 className="text-lg sm:text-xl font-semibold mb-2">{t('about.whoTitle')}</h3>
-                <p className="text-sm sm:text-base">{t('about.who')}</p>
+                <p className="text-sm sm:text-base whitespace-pre-line">{t('about.who')}</p>
               </div>
               <div>
                 <h3 className="text-lg sm:text-xl font-semibold mb-2">{t('about.whyTitle')}</h3>
