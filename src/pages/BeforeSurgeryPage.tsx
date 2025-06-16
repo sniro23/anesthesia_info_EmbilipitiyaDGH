@@ -12,7 +12,7 @@ const BeforeSurgeryPage: React.FC = () => {
     <div className="container mx-auto px-4 py-6 md:py-12">
       <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6 text-center">{t('before.title')}</h1>
       <p className="text-base sm:text-lg text-neutral-dark max-w-3xl mx-auto mb-6 md:mb-10 text-center">
-        {currentLanguage === 'si' ? 'නිර්වේදනය යනු ඔබට වේදනාවෙන් තොරව සහ ආරක්ෂිතව ශල්‍යකර්මයකට භාජනය වීමට ඉඩ සලසන ක්‍රමයකි. නිර්වින්දන වෛද්‍යවරයෙකු විසින් ඔබව පරික්ශා කිරීමෙන් පසුව ආරක්ශාකාරී සහ සුවපහසු ලෙස ශල්යකර්මය සිදු කිරීමට පහසුකම් සලස දෙයි.' : t('before.intro')}
+        {currentLanguage === 'si' ? 'නිර්වින්දනය යනු ඔබට වේදනාවෙන් තොරව සහ ආරක්ෂිතව ශල්‍යකර්මයකට භාජනය වීමට ඉඩ සලසන ක්‍රමයකි. නිර්වින්දන වෛද්‍යවරයෙකු විසින් ඔබව පරික්ශා කිරීමෙන් පසුව ආරක්ශාකාරී සහ සුවපහසු ලෙස ශල්යකර්මය සිදු කිරීමට පහසුකම් සලස දෙයි.' : t('before.intro')}
       </p>
 
       <div className="max-w-3xl mx-auto">
