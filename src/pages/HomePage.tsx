@@ -2,6 +2,7 @@ import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Link } from 'react-router-dom';
 import { useIsMobile } from '@/hooks/use-mobile';
+
 const HomePage: React.FC = () => {
   const {
     t
@@ -107,4 +108,5 @@ const HomePage: React.FC = () => {
       </section>
     </div>;
 };
+
 export default HomePage;
