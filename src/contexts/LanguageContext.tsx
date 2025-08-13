@@ -443,11 +443,11 @@ const translations: Record<Language, Record<string, string>> = {
     'during.qa4.standardList3': 'SpO₂ - නබ්‍ස් ඔක්සිමීටරය හරහා ඔක්සිජන් සම්පෘක්තතාව',
     'during.qa4.standardList4': 'ETCO₂ - නිසි ලෙස හුස්ම ගැනීම තහවුරු කිරීම සඳහා අවසාන කාබන් ඩයොක්සයිඩ්',
     'during.qa4.standardList5': 'උෂ්ණත්වය - හයිපොතර්මියාව හෝ හයිපර්තර්මියාව අනාවරණය කර ගැනීමට සහ වැළැක්වීමට',
-    'during.qa4.advanced': 'උසස් අධීක්ෂණය (අවශ්‍ය පරිදි):',
-    'during.qa4.advancedList1': 'ධමනි රේඛාව - අඛණ්ඩ රුධිර පීඩන අධීක්ෂණය සඳහා',
-    'during.qa4.advancedList2': 'මධ්‍යම ශිරා පීඩනය - සංකීර්ණ සිද්ධීන් හෝ දරුණු ලෙස රෝගී රෝගීන් සඳහා',
-    'during.qa4.advancedList3': 'ස්නායුපේශි අවහිරතා මොනිටර - සුදුසු මාංශපේශි ලිහිල් වීම සහතික කිරීමට',
-    'during.qa4.advancedList4': 'BIS (Bispectral Index) - නිර්වේදනයේ ගැඹුර අධීක්ෂණය කිරීමට',
+    'during.qa4.advanced': 
+    'during.qa4.advancedList1': 
+    'during.qa4.advancedList2': 
+    'during.qa4.advancedList3': 
+    'during.qa4.advancedList4':
     'during.qa4.targets': 'සාමාන්‍ය ඉලක්ක අගයන්:',
     'during.qa4.targetsList1': 'SpO₂: > 95%',
     'during.qa4.targetsList2': 'ETCO₂: 35-45 mmHg',
