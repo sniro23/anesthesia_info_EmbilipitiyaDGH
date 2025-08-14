@@ -36,7 +36,7 @@ const PUBLISHED_IMAGES: Record<string, ImageData[]> = {
   ],
   "before.qa4": [
     {
-      "src": "https://res.cloudinary.com/dotj571pv/image/upload/v1749714164/WhatsApp_Image_2025-05-10_at_10.29.49_AM_fojmfg.jpg",
+      "src": "https://res.cloudinary.com/dotj571pv/image/upload/v1755157279/Whisk_19c857db52_2_egxhxj.jpg",
       "alt": "patients waiting in the waiting room",
       "caption": "patients waiting in the waiting room"
     }
