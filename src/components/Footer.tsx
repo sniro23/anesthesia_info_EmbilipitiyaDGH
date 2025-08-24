@@ -10,17 +10,19 @@ const Footer: React.FC = () => {
     <footer className="border-t border-neutral-mid py-10 mt-20 bg-slate-100">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 className="text-lg font-semibold mb-3">Safe Anaesthesia SL</h3>
-            <p className="text-neutral-dark text-sm">
-              {t('about.who')}
-            </p>
-            <img
-              src="https://res.cloudinary.com/dotj571pv/image/upload/v1756016794/WhatsApp_Image_2025-08-18_at_10.15.30_AM_f36fli.jpg"
-              alt="DGH Hambantota Logo"
-              className="mt-4 w-24 h-auto"
-            />
-          </div>
+          <div>
+             <h3 className="text-lg font-semibold mb-3">Safe Anaesthesia SL</h3>
+             <div className="flex items-center"> {/* Added a flex container */}
+              <p className="text-neutral-dark text-sm mr-2"> {/* Added margin-right to the text */}
+               {t('about.who')}
+              </p>
+              <img
+               src="https://res.cloudinary.com/dotj571pv/image/upload/v1756016794/WhatsApp_Image_2025-08-18_at_10.15.30_AM_f36fli.jpg"
+               alt="DGH Hambantota Logo"
+               className="w-16 h-auto" {/* Reduced the width for inline alignment */}
+              />
+             </div>
+            </div>
           
           <div>
             <h3 className="text-lg font-semibold mb-3">Quick Links</h3>
