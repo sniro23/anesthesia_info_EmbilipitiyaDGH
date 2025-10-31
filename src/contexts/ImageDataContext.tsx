@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ImageData } from '@/components/ImageGallery';
 
-const STORAGE_KEY = 'lovable-image-data';
+const STORAGE_KEY = 'anesthesia-image-data';
 
 // This will be populated with exported data for published versions
 const PUBLISHED_IMAGES: Record<string, ImageData[]> = {

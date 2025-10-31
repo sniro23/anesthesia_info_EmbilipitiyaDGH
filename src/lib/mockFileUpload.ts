@@ -1,6 +1,6 @@
 
 /**
- * Legacy file upload service - now redirects to Lovable's native system
+ * Legacy file upload service
  * This file is kept for backward compatibility but should not be used
  */
 

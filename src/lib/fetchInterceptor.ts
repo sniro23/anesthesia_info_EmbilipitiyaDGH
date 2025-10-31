@@ -41,7 +41,7 @@ window.fetch = async function(input, init) {
       const storageKey = `uploaded-file-${filename}`;
       localStorage.setItem(storageKey, base64Data);
       
-      const uploadPath = `/lovable-uploads/${filename}`;
+      const uploadPath = `/uploads/${filename}`;
       
       console.log(`File uploaded and stored: ${uploadPath}`);
       

@@ -107,7 +107,7 @@ const SectionImages: React.FC<SectionImagesProps> = ({ sectionId }) => {
         <h3 className="text-lg font-medium">Images for Section: {sectionId}</h3>
         <button
           onClick={handleAddImage}
-          className="flex items-center gap-1 px-3 py-1 bg-indigo text-white rounded hover:bg-indigo-light"
+          className="flex items-center gap-1 px-3 py-1 bg-primary text-white rounded hover:bg-primary/90"
         >
           <Plus size={16} />
           Add Image
@@ -188,7 +188,7 @@ const SectionImages: React.FC<SectionImagesProps> = ({ sectionId }) => {
             </button>
             <button
               onClick={handleSaveImage}
-              className="px-4 py-2 bg-indigo text-white rounded hover:bg-indigo-light"
+              className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
             >
               Save
             </button>
@@ -247,7 +247,7 @@ const ImageAdmin: React.FC<ImageAdminProps> = ({ sections }) => {
         </div>
       </div>
       
-      <div className="mb-6 p-4 bg-blue-100 rounded-lg">
+      <div className="mb-6 p-4 bg-green-100 rounded-lg">
         <h3 className="text-lg font-medium mb-2">Publishing Images</h3>
         <p className="text-sm text-neutral-700 mb-2">
           To ensure your images appear in the published version:
@@ -286,7 +286,7 @@ const ImageAdmin: React.FC<ImageAdminProps> = ({ sections }) => {
               </button>
               <button
                 onClick={handleCopyExport}
-                className="flex items-center gap-1 px-4 py-2 bg-indigo text-white rounded hover:bg-indigo-light"
+                className="flex items-center gap-1 px-4 py-2 bg-primary text-white rounded hover:bg-primary/90"
               >
                 <Copy size={16} />
                 Copy to Clipboard

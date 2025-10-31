@@ -52,28 +52,28 @@ const AdminPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setActiveGroup('all')}
-            className={`px-4 py-2 text-sm font-medium border ${activeGroup === 'all' ? 'bg-indigo text-white' : 'bg-white text-gray-700'} rounded-l-md`}
+            className={`px-4 py-2 text-sm font-medium border ${activeGroup === 'all' ? 'bg-primary text-white' : 'bg-white text-gray-700'} rounded-l-md`}
           >
             All Sections
           </button>
           <button
             type="button"
             onClick={() => setActiveGroup('before')}
-            className={`px-4 py-2 text-sm font-medium border-t border-b border-r ${activeGroup === 'before' ? 'bg-indigo text-white' : 'bg-white text-gray-700'}`}
+            className={`px-4 py-2 text-sm font-medium border-t border-b border-r ${activeGroup === 'before' ? 'bg-primary text-white' : 'bg-white text-gray-700'}`}
           >
             Before Surgery
           </button>
           <button
             type="button"
             onClick={() => setActiveGroup('during')}
-            className={`px-4 py-2 text-sm font-medium border-t border-b border-r ${activeGroup === 'during' ? 'bg-indigo text-white' : 'bg-white text-gray-700'}`}
+            className={`px-4 py-2 text-sm font-medium border-t border-b border-r ${activeGroup === 'during' ? 'bg-primary text-white' : 'bg-white text-gray-700'}`}
           >
             During Surgery
           </button>
           <button
             type="button"
             onClick={() => setActiveGroup('after')}
-            className={`px-4 py-2 text-sm font-medium border-t border-b border-r ${activeGroup === 'after' ? 'bg-indigo text-white' : 'bg-white text-gray-700'} rounded-r-md`}
+            className={`px-4 py-2 text-sm font-medium border-t border-b border-r ${activeGroup === 'after' ? 'bg-primary text-white' : 'bg-white text-gray-700'} rounded-r-md`}
           >
             After Surgery
           </button>

@@ -133,7 +133,7 @@ const ImageGallery: React.FC<ImageGalleryProps> = ({
                 <button 
                   key={index}
                   onClick={() => setActiveIndex(index)}
-                  className={`w-2 h-2 rounded-full ${index === activeIndex ? 'bg-indigo-600' : 'bg-neutral-300'}`}
+                  className={`w-2 h-2 rounded-full ${index === activeIndex ? 'bg-primary' : 'bg-neutral-300'}`}
                   aria-label={`Go to image ${index + 1}`}
                 />
               ))}

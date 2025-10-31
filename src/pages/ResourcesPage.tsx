@@ -24,7 +24,7 @@ const ResourcesPage: React.FC = () => {
                   href="https://www.rcoa.ac.uk/patients/patient-information-resources/patient-information-leaflets-video-resources/you-your-anaesthetic"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-indigo text-white font-medium py-2 px-4 rounded-lg inline-block hover:bg-indigo-light transition-colors"
+                  className="bg-primary text-white font-medium py-2 px-4 rounded-lg inline-block hover:bg-primary/90 transition-colors"
                 >
                   Download PDF
                 </a>
@@ -42,7 +42,7 @@ const ResourcesPage: React.FC = () => {
                   href="https://www.rcoa.ac.uk/patients/patient-information-resources/patient-information-leaflets-video-resources/your-spinal-anaesthetic"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-indigo text-white font-medium py-2 px-4 rounded-lg inline-block hover:bg-indigo-light transition-colors"
+                  className="bg-primary text-white font-medium py-2 px-4 rounded-lg inline-block hover:bg-primary/90 transition-colors"
                 >
                   Download PDF
                 </a>
@@ -60,7 +60,7 @@ const ResourcesPage: React.FC = () => {
                   href="https://www.rcoa.ac.uk/patients/patient-information-resources/patient-information-leaflets-video-resources/caring-for-someone-recovering-from-ga"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-indigo text-white font-medium py-2 px-4 rounded-lg inline-block hover:bg-indigo-light transition-colors"
+                  className="bg-primary text-white font-medium py-2 px-4 rounded-lg inline-block hover:bg-primary/90 transition-colors"
                 >
                   Download PDF
                 </a>
@@ -78,7 +78,7 @@ const ResourcesPage: React.FC = () => {
                   href="https://www.rcoa.ac.uk/patients/patient-information-resources/patient-information-leaflets-video-resources/your-airway"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-indigo text-white font-medium py-2 px-4 rounded-lg inline-block hover:bg-indigo-light transition-colors"
+                  className="bg-primary text-white font-medium py-2 px-4 rounded-lg inline-block hover:bg-primary/90 transition-colors"
                 >
                   Download PDF
                 </a>
@@ -96,7 +96,7 @@ const ResourcesPage: React.FC = () => {
                   href="https://www.rcoa.ac.uk/sites/default/files/documents/2024-12/Child-Infographics2022_0.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-indigo text-white font-medium py-2 px-4 rounded-lg inline-block hover:bg-indigo-light transition-colors"
+                  className="bg-primary text-white font-medium py-2 px-4 rounded-lg inline-block hover:bg-primary/90 transition-colors"
                 >
                   View Infographic
                 </a>
@@ -116,7 +116,7 @@ const ResourcesPage: React.FC = () => {
                   href="https://www.rcoa.ac.uk/patients" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-indigo hover:text-indigo-light font-medium mt-1 inline-block"
+                  className="text-primary hover:text-primary/90 font-medium mt-1 inline-block"
                 >
                   Visit website
                 </a>
@@ -128,7 +128,7 @@ const ResourcesPage: React.FC = () => {
                   href="https://www.asahq.org/madeforthismoment" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-indigo hover:text-indigo-light font-medium mt-1 inline-block"
+                  className="text-primary hover:text-primary/90 font-medium mt-1 inline-block"
                 >
                   Visit website
                 </a>
@@ -140,7 +140,7 @@ const ResourcesPage: React.FC = () => {
                   href="https://cpoc.org.uk/patients" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-indigo hover:text-indigo-light font-medium mt-1 inline-block"
+                  className="text-primary hover:text-primary/90 font-medium mt-1 inline-block"
                 >
                   Visit website
                 </a>
@@ -163,7 +163,7 @@ const ResourcesPage: React.FC = () => {
                 <input 
                   type="text" 
                   id="name" 
-                  className="w-full px-4 py-2 border border-neutral-mid rounded-lg focus:ring-2 focus:ring-indigo focus:border-indigo outline-none"
+                  className="w-full px-4 py-2 border border-neutral-mid rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none"
                   placeholder="Your name"
                 />
               </div>
@@ -173,7 +173,7 @@ const ResourcesPage: React.FC = () => {
                 <input 
                   type="email" 
                   id="email" 
-                  className="w-full px-4 py-2 border border-neutral-mid rounded-lg focus:ring-2 focus:ring-indigo focus:border-indigo outline-none"
+                  className="w-full px-4 py-2 border border-neutral-mid rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none"
                   placeholder="Your email address"
                 />
               </div>
@@ -183,14 +183,14 @@ const ResourcesPage: React.FC = () => {
                 <textarea 
                   id="message" 
                   rows={4} 
-                  className="w-full px-4 py-2 border border-neutral-mid rounded-lg focus:ring-2 focus:ring-indigo focus:border-indigo outline-none"
+                  className="w-full px-4 py-2 border border-neutral-mid rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none"
                   placeholder="Your question or feedback"
                 ></textarea>
               </div>
               
               <button 
                 type="submit" 
-                className="bg-indigo hover:bg-indigo-light text-white font-medium py-2 px-6 rounded-lg transition-colors"
+                className="bg-primary hover:bg-primary/90 text-white font-medium py-2 px-6 rounded-lg transition-colors"
               >
                 Send Message
               </button>

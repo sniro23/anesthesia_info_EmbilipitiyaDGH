@@ -83,7 +83,7 @@ const BeforeSurgeryPage: React.FC = () => {
                     href="https://cpoc.org.uk/sites/cpoc/files/documents/2025-01/Sip%20Til%20Send%20information%20for%20patients_0.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-indigo hover:text-indigo-light underline break-words"
+                    className="text-primary hover:text-primary/90 underline break-words"
                   >
                     "සිප් ටිල් සෙන්ඩ්" ක්‍රමය ගැන ඔබේ සෞඛ්‍ය සේවා සපයන්නාගෙන් විමසන්න.
                   </a>
@@ -112,7 +112,7 @@ const BeforeSurgeryPage: React.FC = () => {
                     href="https://cpoc.org.uk/sites/cpoc/files/documents/2025-01/Sip%20Til%20Send%20information%20for%20patients_0.pdf"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-indigo hover:text-indigo-light underline break-words"
+                    className="text-primary hover:text-primary/90 underline break-words"
                   >
                     {t('before.qa2.siptext2')}
                   </a>

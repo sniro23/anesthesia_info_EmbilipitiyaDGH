@@ -10,7 +10,7 @@ const HomePage: React.FC = () => {
   const isMobile = useIsMobile();
   return <div>
       {/* Hero Section */}
-      <section className="py-8 md:py-16 lg:py-20 bg-gradient-to-br from-indigo/10 to-emerald/10">
+      <section className="py-8 md:py-16 lg:py-20 bg-gradient-to-br from-green-500/10 to-emerald/10">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6">
@@ -23,13 +23,13 @@ const HomePage: React.FC = () => {
               {t('hero.intro')}
             </p>
             <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-3 md:gap-6 justify-center`}>
-              <Link to="/before-surgery" className="bg-indigo hover:bg-indigo-light text-white font-medium py-2 md:py-3 px-4 md:px-6 rounded-xl transition-colors text-sm sm:text-base w-full sm:w-auto">
+              <Link to="/before-surgery" className="bg-primary hover:bg-primary/90 text-white font-medium py-2 md:py-3 px-4 md:px-6 rounded-xl transition-colors text-sm sm:text-base w-full sm:w-auto">
                 {t('cta.before')}
               </Link>
-              <Link to="/during-surgery" className="bg-indigo hover:bg-indigo-light text-white font-medium py-2 md:py-3 px-4 md:px-6 rounded-xl transition-colors text-sm sm:text-base w-full sm:w-auto">
+              <Link to="/during-surgery" className="bg-primary hover:bg-primary/90 text-white font-medium py-2 md:py-3 px-4 md:px-6 rounded-xl transition-colors text-sm sm:text-base w-full sm:w-auto">
                 {t('cta.during')}
               </Link>
-              <Link to="/after-surgery" className="bg-indigo hover:bg-indigo-light text-white font-medium py-2 md:py-3 px-4 md:px-6 rounded-xl transition-colors text-sm sm:text-base w-full sm:w-auto">
+              <Link to="/after-surgery" className="bg-primary hover:bg-primary/90 text-white font-medium py-2 md:py-3 px-4 md:px-6 rounded-xl transition-colors text-sm sm:text-base w-full sm:w-auto">
                 {t('cta.after')}
               </Link>
             </div>
@@ -66,11 +66,11 @@ const HomePage: React.FC = () => {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
             <div className="bg-white shadow-md rounded-2xl p-4 sm:p-6 hover:shadow-lg transition-shadow">
-              <h3 className="text-lg sm:text-xl font-semibold mb-2 md:mb-3 text-indigo">{t('whatToExpect.before.title')}</h3>
+              <h3 className="text-lg sm:text-xl font-semibold mb-2 md:mb-3 text-primary">{t('whatToExpect.before.title')}</h3>
               <p className="text-neutral-dark mb-3 md:mb-4 text-sm sm:text-base">
                 {t('whatToExpect.before.description')}
               </p>
-              <Link to="/before-surgery" className="text-indigo hover:text-indigo-light font-medium inline-flex items-center text-sm sm:text-base">
+              <Link to="/before-surgery" className="text-primary hover:text-primary/90 font-medium inline-flex items-center text-sm sm:text-base">
                 {t('whatToExpect.learnMore')}
                 <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
@@ -79,11 +79,11 @@ const HomePage: React.FC = () => {
             </div>
 
             <div className="bg-white shadow-md rounded-2xl p-4 sm:p-6 hover:shadow-lg transition-shadow">
-              <h3 className="text-lg sm:text-xl font-semibold mb-2 md:mb-3 text-indigo">{t('whatToExpect.during.title')}</h3>
+              <h3 className="text-lg sm:text-xl font-semibold mb-2 md:mb-3 text-primary">{t('whatToExpect.during.title')}</h3>
               <p className="text-neutral-dark mb-3 md:mb-4 text-sm sm:text-base">
                 {t('whatToExpect.during.description')}
               </p>
-              <Link to="/during-surgery" className="text-indigo hover:text-indigo-light font-medium inline-flex items-center text-sm sm:text-base">
+              <Link to="/during-surgery" className="text-primary hover:text-primary/90 font-medium inline-flex items-center text-sm sm:text-base">
                 {t('whatToExpect.learnMore')}
                 <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
@@ -92,11 +92,11 @@ const HomePage: React.FC = () => {
             </div>
 
             <div className="bg-white shadow-md rounded-2xl p-4 sm:p-6 hover:shadow-lg transition-shadow sm:col-span-2 md:col-span-1">
-              <h3 className="text-lg sm:text-xl font-semibold mb-2 md:mb-3 text-indigo">{t('whatToExpect.after.title')}</h3>
+              <h3 className="text-lg sm:text-xl font-semibold mb-2 md:mb-3 text-primary">{t('whatToExpect.after.title')}</h3>
               <p className="text-neutral-dark mb-3 md:mb-4 text-sm sm:text-base">
                 {t('whatToExpect.after.description')}
               </p>
-              <Link to="/after-surgery" className="text-indigo hover:text-indigo-light font-medium inline-flex items-center text-sm sm:text-base">
+              <Link to="/after-surgery" className="text-primary hover:text-primary/90 font-medium inline-flex items-center text-sm sm:text-base">
                 {t('whatToExpect.learnMore')}
                 <svg className="ml-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
