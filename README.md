@@ -1,10 +1,10 @@
 # Safe Anaesthesia SL
 
-A comprehensive patient information website for understanding anaesthesia before, during, and after surgery. Developed for DGH Hambantota.
+A comprehensive patient information website for understanding anaesthesia before, during, and after surgery. Developed for DGH Embilipitya.
 
 ## Project Overview
 
-This website provides trustworthy patient information about anaesthesia, developed as a collaborative initiative by anaesthesia and critical care teams at DGH Hambantota.
+This website provides trustworthy patient information about anaesthesia, developed as a collaborative initiative by anaesthesia and critical care teams at DGH Embilipitya.
 
 ## Technologies Used
 
